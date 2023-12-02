@@ -1,7 +1,12 @@
 const userModel = require("../models/user.m");
 
 const bcrypt = require("bcrypt");
+const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+
+const URLSever = process.env.URLSEVER;
+
+const passport = require('../../config/passport');
 require("dotenv").config();
 
 let refreshTokens = [];
@@ -58,6 +63,95 @@ const authController = {
     }
   },
 
+  // [POST] /register-email
+  registerUserByEmail: async (req, res) => {
+    // check if email exists
+    const checkEmail = await userModel.getUserByEmail(req.body.email);
+    const { email, password, fullName } = req.body;
+    if (checkEmail != null) {
+      return res.status(404).json("Email already exists!");
+    }
+
+    // email does not exist yet
+    const token = jwt.sign(
+      { email, password, fullName },
+      process.env.JWT_SECRETKEY_MAIL,
+      {
+        expiresIn: "10m",
+      }
+    );
+
+    const mailConfigurations = {
+      from: process.env.EMAIL_ADDRESS || "webnangcao.final@gmail.com",
+      to: email,
+      subject: "Email Verification - Localhost Website",
+      text: `Hi! There, You have recently visited 
+     our website and entered your email.
+     Please follow the given link to verify your email
+     ${URLSever}/auth/verify-email/${token}
+     Thanks`,
+    };
+
+    const transporter = nodemailer.createTransport({
+      service: process.env.EMAIL_SERVICE,
+      auth: {
+        user: process.env.EMAIL_ADDRESS,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    transporter.sendMail(mailConfigurations, function (error) {
+      if (error) {
+        return res.status(400).send({
+          status: "failed",
+          message: "Server is error now",
+        });
+      } else {
+        return res.status(200).send({
+          status: "success",
+          message: "Check verify code in your email.",
+        });
+      }
+    });
+  },
+
+  // [GET] /verify-email/token
+  verifySignupTokenFromMail: async (req, res) => {
+    const { token } = req.params;
+
+    jwt.verify(token, process.env.JWT_SECRETKEY_MAIL, async (err, decoded) => {
+      if (!err) {
+        // token is correct => save data to db.
+        // hash password
+        const salt = await bcrypt.genSalt(11);
+        const passwordHashed = await bcrypt.hash(decoded.password, salt);
+
+        // create new user
+        const user = {
+          email: decoded.email,
+          password: passwordHashed,
+          fullName: decoded.fullName,
+        };
+
+        // save user to database
+        try {
+          await userModel.addUser(user);
+          return res.status(200).json(others);
+        } catch (error) {
+          return res.status(401).send({
+            status: "failed",
+            message: "Error register, please check information again.",
+          });
+        }
+      }
+      // token is incorrect
+      return res.status(401).send({
+        status: "failed",
+        message: "Token is not valid or expired",
+      });
+    });
+  },
+
   // [POST] /login
   loginUser: async (req, res) => {
     try {
@@ -67,7 +161,10 @@ const authController = {
         return res.status(404).json("Account doesn't exist!");
       }
 
-      const validPassword = await bcrypt.compare(req.body.password, user.password);
+      const validPassword = await bcrypt.compare(
+        req.body.password,
+        user.password
+      );
       if (!validPassword) {
         res.status(404).json("Wrong password!");
       } else {
@@ -134,10 +231,27 @@ const authController = {
 
   // [POST] /logout
   logoutUser: async (req, res) => {
-    refreshTokens = refreshTokens.filter((token) => token !== req.cookies.refreshToken);
+    refreshTokens = refreshTokens.filter(
+      (token) => token !== req.cookies.refreshToken
+    );
     res.clearCookie("refreshToken");
     res.status(200).json("Logged out successfully!");
   },
+
+  googleAuth: async(req,res) =>{
+    console.log('start passport');
+    passport.authenticate('google', { scope: ['profile', 'email'] });
+    console.log('end passport');
+    res.status(200).json("passport success!");
+  },
+
+  googleAuthCallback: async(req,res) =>{
+    passport.authenticate('google', { failureRedirect: 'http://localhost:3000/' }),
+  (req, res) => {
+    res.redirect('/oauth2/redirect/google');
+    res.status(200).json("passport success!");
+  }
+  }
 };
 
 module.exports = authController;

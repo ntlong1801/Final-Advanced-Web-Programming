@@ -45,7 +45,7 @@ module.exports = {
   },
   changePassword: async (user) => {
     try {
-      const rs = await db.one("UPDATE users SET password = $2 WHERE id = $1 RETURNING *;", [user.id, user.password]);
+      const rs = await db.one("UPDATE users SET password = $2 WHERE email = $1 RETURNING *;", [user.email, user.password]);
       return rs;
     } catch (err) {
       console.log("Error in changePassword in user.m: ", err);
