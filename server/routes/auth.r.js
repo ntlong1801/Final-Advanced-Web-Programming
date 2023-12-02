@@ -136,4 +136,8 @@ router.post("/refresh", authController.requestRefreshToken);
  */
 router.post("/logout", middlewareController.verifyToken, authController.logoutUser);
 
+router.post("/register-email", authController.registerUserByEmail);
+
+router.get("/verify-email/:token", authController.verifyLoginTokenFromMail);
+
 module.exports = router;
