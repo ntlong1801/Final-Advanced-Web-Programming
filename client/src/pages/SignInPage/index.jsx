@@ -26,8 +26,8 @@ export default function SignInPage() {
     setIsLoading(true);
     const response = await instance.post('auth/login', data);
     setIsLoading(false);
-    if (response.data?.msg) {
-      setErrorMessage(response.data?.msg);
+    if (response.data.status === 'failed') {
+      setErrorMessage(response.data.message);
     } else {
       localStorage.setItem('access_token', response.data.access_token);
       localStorage.setItem('user_profile', JSON.stringify(response.data.user));
@@ -48,11 +48,11 @@ export default function SignInPage() {
         <form autoComplete="off" onSubmit={handleSubmit(onSubmit)} className="p-fluid justify-content-center">
           <TextInput
             type="text"
-            name="username"
+            name="email"
             autoFocus
             control={control}
             errors={errors}
-            label="Username"
+            label="Email"
             isRequired
           />
           <TextInput

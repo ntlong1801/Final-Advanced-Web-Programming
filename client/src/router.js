@@ -6,6 +6,8 @@ import SignUpPage from 'pages/SignUpPage';
 import DashBoardPage from 'pages/DashBoardPage';
 import UserPage from 'pages/UserPage';
 import ChangePassword from 'pages/ChangePassword';
+import ForgotPassword from 'pages/ForgotPassword';
+import WaitingConfirmEmail from 'pages/WaitingConfirmEmail';
 import C404 from 'pages/404Page';
 
 export default createBrowserRouter([
@@ -32,6 +34,14 @@ export default createBrowserRouter([
   {
     path: '/changepassword',
     element: <ChangePassword />
+  },
+  {
+    path: '/forgot-password-email',
+    element: <ForgotPassword />
+  },
+  {
+    path: '/verify-token-email/:type/:token',
+    element: <WaitingConfirmEmail />
   },
   {
     path: '*',

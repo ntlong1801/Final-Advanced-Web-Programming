@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 
 const URLSever = process.env.URLSEVER;
 
-const passport = require('../../config/passport');
+const passport = require("../../config/passport");
 require("dotenv").config();
 
 let refreshTokens = [];
@@ -156,17 +156,16 @@ const authController = {
   loginUser: async (req, res) => {
     try {
       // get user from database
-      const user = await userModel.getUserByEmail(req.body.email);
+      const { email, password } = req.body;
+      const user = await userModel.getUserByEmail(email);
       if (user == null) {
-        return res.status(404).json("Account doesn't exist!");
+        return res.json({status: "failed", message:"Account or password is incorect"});
       }
 
-      const validPassword = await bcrypt.compare(
-        req.body.password,
-        user.password
-      );
+      const validPassword = await bcrypt.compare(password, user.password);
+
       if (!validPassword) {
-        res.status(404).json("Wrong password!");
+        res.json({status: "failed", message:"Account or password is incorect"});
       } else {
         const accessToken = authController.generateAccessToken(user);
         const refreshToken = authController.generateRefreshToken(user);
@@ -181,10 +180,16 @@ const authController = {
         });
 
         const { password, ...others } = user;
-        res.status(200).json({ ...others, accessToken });
+
+        res.json({
+          user: others,
+          accessToken,
+          status: "success",
+          message: "login successfully!",
+        });
       }
     } catch (error) {
-      res.status(500).json(error);
+      res.json({ error, status: "failed", message: "login failure." });
     }
   },
 
@@ -233,20 +238,22 @@ const authController = {
     res.status(200).json("Logged out successfully!");
   },
 
-  googleAuth: async(req,res) =>{
-    console.log('start passport');
-    passport.authenticate('google', { scope: ['profile', 'email'] });
-    console.log('end passport');
+  googleAuth: async (req, res) => {
+    console.log("start passport");
+    passport.authenticate("google", { scope: ["profile", "email"] });
+    console.log("end passport");
     res.status(200).json("passport success!");
   },
 
-  googleAuthCallback: async(req,res) =>{
-    passport.authenticate('google', { failureRedirect: 'http://localhost:3000/' }),
-  (req, res) => {
-    res.redirect('/oauth2/redirect/google');
-    res.status(200).json("passport success!");
-  }
-  }
+  googleAuthCallback: async (req, res) => {
+    passport.authenticate("google", {
+      failureRedirect: "http://localhost:3000/",
+    }),
+      (req, res) => {
+        res.redirect("/oauth2/redirect/google");
+        res.status(200).json("passport success!");
+      };
+  },
 };
 
 module.exports = authController;
