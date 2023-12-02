@@ -138,7 +138,7 @@ router.post("/logout", middlewareController.verifyToken, authController.logoutUs
 
 router.post("/register-email", authController.registerUserByEmail);
 
-router.get("/verify-email/:token", authController.verifyLoginTokenFromMail);
+router.get("/verify-email/:token", authController.verifySignupTokenFromMail);
 
 // Google authentication route
 /**

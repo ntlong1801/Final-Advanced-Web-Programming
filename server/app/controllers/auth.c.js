@@ -116,7 +116,7 @@ const authController = {
   },
 
   // [GET] /verify-email/token
-  verifyLoginTokenFromMail: async (req, res) => {
+  verifySignupTokenFromMail: async (req, res) => {
     const { token } = req.params;
 
     jwt.verify(token, process.env.JWT_SECRETKEY_MAIL, async (err, decoded) => {
