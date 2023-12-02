@@ -1,4 +1,5 @@
 const db = require("../../config/connect_db");
+const {v4 : uuidv4} = require('uuid')
 
 module.exports = {
   getUsers: async () => {
@@ -6,8 +7,7 @@ module.exports = {
     return rs;
   },
   addUser: async (user) => {
-    console.log(user)
-    const rs = await db.one("INSERT INTO users (email, password, fullName) VALUES ($1, $2, $3) RETURNING *;", [user.email, user.password, user.fullName]);
+    const rs = await db.one("INSERT INTO users (id, email, password, full_name) VALUES ($1, $2, $3, $4) RETURNING *;", [uuidv4(), user.email, user.password, user.fullName]);
     return rs;
   },
   getUserByEmail: async (email) => {
@@ -24,7 +24,7 @@ module.exports = {
   },
   getUserByID: async (id) => {
     try {
-      const rs = await db.one("SELECT id, email, password, fullName FROM users WHERE id = $1;", [id]);
+      const rs = await db.one("SELECT id, email, password, full_name FROM users WHERE id = $1;", [id]);
       return rs;
     } catch (err) {
       if (err.code === 0) {
@@ -36,7 +36,7 @@ module.exports = {
   },
   updateProfile: async (user) => {
     try {
-      const rs = await db.one("UPDATE users SET fullName = $2 WHERE id = $1 RETURNING *;", [user.id, user.fullName]);
+      const rs = await db.one("UPDATE users SET full_name = $2 WHERE id = $1 RETURNING *;", [user.id, user.fullName]);
       return rs;
     } catch (err) {
       console.log("Error in updateProfile in user.m: ", err);
