@@ -6,6 +6,7 @@ module.exports = {
     return rs;
   },
   addUser: async (user) => {
+    console.log(user)
     const rs = await db.one("INSERT INTO users (email, password, fullName) VALUES ($1, $2, $3) RETURNING *;", [user.email, user.password, user.fullName]);
     return rs;
   },

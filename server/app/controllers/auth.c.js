@@ -66,14 +66,14 @@ const authController = {
   registerUserByEmail: async (req, res) => {
     // check if email exists
     const checkEmail = await userModel.getUserByEmail(req.body.email);
-    const { email, password } = req.body;
+    const { email, password, fullName } = req.body;
     if (checkEmail != null) {
       return res.status(404).json("Email already exists!");
     }
 
     // email does not exist yet
     const token = jwt.sign(
-      { checkEmail, password },
+      { email, password, fullName },
       process.env.JWT_SECRETKEY_MAIL,
       {
         expiresIn: "10m",
@@ -101,7 +101,6 @@ const authController = {
 
     transporter.sendMail(mailConfigurations, function (error) {
       if (error) {
-        console.log(error);
         return res.status(400).send({
           status: "failed",
           message: "Server is error now",
@@ -117,23 +116,39 @@ const authController = {
 
   // [GET] /verify-email/token
   verifyLoginTokenFromMail: async (req, res) => {
-    const { token } = req.body;
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRETKEY_MAIL);
+    const { token } = req.params;
 
-      console.log("DECODED: ", decoded)
+    jwt.verify(token, process.env.JWT_SECRETKEY_MAIL, async (err, decoded) => {
+      if (!err) {
+        // token is correct => save data to db.
+        // hash password
+        const salt = await bcrypt.genSalt(11);
+        const passwordHashed = await bcrypt.hash(decoded.password, salt);
 
-      return res.status(200).send({
-        status: "success",
-        user: result,
-        message: "Verify successfully",
-      });
-    } catch (error) {
+        // create new user
+        const user = {
+          email: decoded.email,
+          password: passwordHashed,
+          fullName: decoded.fullName,
+        };
+
+        // save user to database
+        try {
+          await userModel.addUser(user);
+          return res.status(200).json(others);
+        } catch (error) {
+          return res.status(401).send({
+            status: "failed",
+            message: "Error register, please check information again.",
+          });
+        }
+      }
+      // token is incorrect
       return res.status(401).send({
         status: "failed",
         message: "Token is not valid or expired",
       });
-    }
+    });
   },
 
   // [POST] /login
