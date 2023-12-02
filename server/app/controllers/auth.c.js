@@ -2,6 +2,7 @@ const userModel = require("../models/user.m");
 
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const passport = require('../../config/passport');
 require("dotenv").config();
 
 let refreshTokens = [];
@@ -133,6 +134,21 @@ const authController = {
     res.clearCookie("refreshToken");
     res.status(200).json("Logged out successfully!");
   },
+
+  googleAuth: async(req,res) =>{
+    console.log('start passport');
+    passport.authenticate('google', { scope: ['profile', 'email'] });
+    console.log('end passport');
+    res.status(200).json("passport success!");
+  },
+
+  googleAuthCallback: async(req,res) =>{
+    passport.authenticate('google', { failureRedirect: 'http://localhost:3000/' }),
+  (req, res) => {
+    res.redirect('/oauth2/redirect/google');
+    res.status(200).json("passport success!");
+  }
+  }
 };
 
 module.exports = authController;

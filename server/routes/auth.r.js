@@ -136,4 +136,30 @@ router.post("/refresh", authController.requestRefreshToken);
  */
 router.post("/logout", middlewareController.verifyToken, authController.logoutUser);
 
+// Google authentication route
+/**
+ * @swagger
+ * /auth/google:
+ *  get:
+ *   summary: Redirects the user to Google for authentication.
+ *   tags: [/auth]
+ *   responses:
+ *     '302':
+ *       description: Redirects to the Google authentication page.
+ */
+router.get('/google',authController.googleAuth);
+
+// Google callback route
+/**
+ * @swagger
+ * /auth/google/callback:
+ *  get:
+ *   summary: Handles the callback from Google after authentication.
+ *   tags: [/auth]
+ *   responses:
+ *     '302':
+ *       description: Redirects to the home page after successful authentication.
+ */
+router.get('/google/callback',authController.googleAuthCallback);
+
 module.exports = router;
