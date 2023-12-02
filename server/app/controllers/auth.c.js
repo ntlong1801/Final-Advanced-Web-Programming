@@ -1,7 +1,11 @@
 const userModel = require("../models/user.m");
 
 const bcrypt = require("bcrypt");
+const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
+
+const URLSever = process.env.URLSEVER;
+
 const passport = require('../../config/passport');
 require("dotenv").config();
 
@@ -59,6 +63,80 @@ const authController = {
     }
   },
 
+  // [POST] /register-email
+  registerUserByEmail: async (req, res) => {
+    // check if email exists
+    const checkEmail = await userModel.getUserByEmail(req.body.email);
+    const { email, password } = req.body;
+    if (checkEmail != null) {
+      return res.status(404).json("Email already exists!");
+    }
+
+    // email does not exist yet
+    const token = jwt.sign(
+      { checkEmail, password },
+      process.env.JWT_SECRETKEY_MAIL,
+      {
+        expiresIn: "10m",
+      }
+    );
+
+    const mailConfigurations = {
+      from: process.env.EMAIL_ADDRESS || "webnangcao.final@gmail.com",
+      to: email,
+      subject: "Email Verification - Localhost Website",
+      text: `Hi! There, You have recently visited 
+     our website and entered your email.
+     Please follow the given link to verify your email
+     ${URLSever}/auth/verify-email/${token}
+     Thanks`,
+    };
+
+    const transporter = nodemailer.createTransport({
+      service: process.env.EMAIL_SERVICE,
+      auth: {
+        user: process.env.EMAIL_ADDRESS,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
+
+    transporter.sendMail(mailConfigurations, function (error) {
+      if (error) {
+        console.log(error);
+        return res.status(400).send({
+          status: "failed",
+          message: "Server is error now",
+        });
+      } else {
+        return res.status(200).send({
+          status: "success",
+          message: "Check verify code in your email.",
+        });
+      }
+    });
+  },
+
+  // [GET] /verify-email/token
+  verifyLoginTokenFromMail: async (req, res) => {
+    const { token } = req.body;
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRETKEY_MAIL);
+
+      console.log("DECODED: ", decoded)
+
+      return res.status(200).send({
+        status: "success",
+        user: result,
+        message: "Verify successfully",
+      });
+    } catch (error) {
+      return res.status(401).send({
+        status: "failed",
+        message: "Token is not valid or expired",
+      });
+    }
+  },
+
   // [POST] /login
   loginUser: async (req, res) => {
     try {
@@ -68,7 +146,10 @@ const authController = {
         return res.status(404).json("Account doesn't exist!");
       }
 
-      const validPassword = await bcrypt.compare(req.body.password, user.password);
+      const validPassword = await bcrypt.compare(
+        req.body.password,
+        user.password
+      );
       if (!validPassword) {
         res.status(404).json("Wrong password!");
       } else {
@@ -130,7 +211,9 @@ const authController = {
 
   // [POST] /logout
   logoutUser: async (req, res) => {
-    refreshTokens = refreshTokens.filter((token) => token !== req.cookies.refreshToken);
+    refreshTokens = refreshTokens.filter(
+      (token) => token !== req.cookies.refreshToken
+    );
     res.clearCookie("refreshToken");
     res.status(200).json("Logged out successfully!");
   },
