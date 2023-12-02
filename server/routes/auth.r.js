@@ -1,5 +1,30 @@
 const authController = require("../app/controllers/auth.c");
 const middlewareController = require("../middleware/middleware.js");
+var passport = require('passport');
+var FacebookStrategy = require('passport-facebook');
+require('dotenv').config();
+
+passport.use(new FacebookStrategy({
+    clientID: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    callbackURL: process.env.CALL_BACK_URL,
+  },
+  function verify(accessToken, refreshToken, profile, cb) {
+  return (cb, 'a')
+  }));
+
+  passport.serializeUser(function(user, cb) {
+    process.nextTick(function() {
+        console.log(user);
+      cb(null, { id: user.id, username: user.username, name: user.name });
+    });
+  });
+  
+  passport.deserializeUser(function(user, cb) {
+    process.nextTick(function() {
+      return cb(null, user);
+    });
+  });
 
 const router = require("express").Router();
 
@@ -86,6 +111,20 @@ router.post("/register", authController.registerUser);
  *       description: Internal server error
  */
 router.post("/login", authController.loginUser);
+
+/**
+ * @swagger
+ * /auth/facebook:
+ *  get:
+ *   summary: user login with facebook
+ *   tags: [/auth]
+ *   responses:
+
+ */
+router.get('/facebook', passport.authenticate('facebook'));
+
+router.get('/facebook/callback',   passport.authenticate('facebook', { failureRedirect: '/' }),
+authController.loginWithFaceBook)
 
 /**
  * @swagger

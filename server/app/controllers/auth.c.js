@@ -91,6 +91,11 @@ const authController = {
     }
   },
 
+  // [POST] /facebook/callback
+  loginWithFaceBook: async (req, res) => {
+    res.status(200).json("abc");
+  },
+
   // [POST] /refresh
   requestRefreshToken: async (req, res) => {
     // take refresh token from user
