@@ -58,13 +58,18 @@ export default function SignUpPage() {
         <form autoComplete="off" onSubmit={handleSubmit(onSubmit)} className="p-fluid justify-content-center">
           <TextInput
             type="text"
-            name="username"
-            autoFocus
+            name="email"
             control={control}
             errors={errors}
-            label="Username"
-            isRequired
-            errorMessage={errors.username?.message || ''}
+            label="Email"
+            errorMessage={errors.email?.message || ''}
+          />
+          <TextInput
+            type="text"
+            name="fullName"
+            control={control}
+            errors={errors}
+            label="Full Name"
           />
           <TextInput
             type="password"
@@ -76,19 +81,13 @@ export default function SignUpPage() {
             errorMessage={errors.password?.message || ''}
           />
           <TextInput
-            type="text"
-            name="fullName"
+            type="password"
+            name="re-password"
             control={control}
             errors={errors}
-            label="Full Name"
-          />
-          <TextInput
-            type="text"
-            name="email"
-            control={control}
-            errors={errors}
-            label="Email"
-            errorMessage={errors.email?.message || ''}
+            label="Re-password"
+            isRequired
+            errorMessage={errors.password?.message || ''}
           />
           <div className="text-center mt-4">
             <Button label="Sign up" type="submit" style={{ minWidth: '100px', width: '160px' }} />
