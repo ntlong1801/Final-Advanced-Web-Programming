@@ -9,6 +9,8 @@ import ChangePassword from 'pages/ChangePassword';
 import ForgotPassword from 'pages/ForgotPassword';
 import WaitingConfirmForgotEmail from 'pages/WaitingConfirmForgotEmail';
 import WaitingConfirmSignupEmail from 'pages/WaitingConfirmSignupEmail';
+import GoogleAuthCallback from 'pages/GoogleAuthCallBack';
+import FacebookAuthCallBack from 'pages/FacebookAuthCallBack';
 import C404 from 'pages/404Page';
 
 export default createBrowserRouter([
@@ -27,6 +29,14 @@ export default createBrowserRouter([
   {
     path: '/dashboard',
     element: <DashBoardPage />
+  },
+  {
+    path: '/auth/google/callback',
+    element: <GoogleAuthCallback />
+  },
+  {
+    path: '/auth/facebook/callback',
+    element: <FacebookAuthCallBack />
   },
   {
     path: '/me',

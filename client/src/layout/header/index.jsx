@@ -4,6 +4,7 @@ import { Button } from 'primereact/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { useRef } from 'react';
+import instance from 'config';
 
 export default function Header() {
   const navigate = useNavigate();
@@ -13,7 +14,8 @@ export default function Header() {
   const showProfileModal = (event) => {
     profileRef.current.toggle(event);
   };
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    instance.post('/auth/logout');
     localStorage.removeItem('access_token');
     localStorage.removeItem('user_profile');
     navigate('/signin');
@@ -59,9 +61,9 @@ export default function Header() {
               <div className="flex align-items-center p-3">
                 <i className="pi pi-user text-2xl" />
                 <div className="ml-4">
-                  <h6 className="m-0">{user.username}</h6>
+                  <h6 className="m-0">{user.email}</h6>
                   <p>
-                    {user.fullName}
+                    {user.full_name}
                   </p>
                 </div>
               </div>

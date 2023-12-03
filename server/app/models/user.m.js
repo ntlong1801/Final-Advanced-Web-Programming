@@ -36,7 +36,8 @@ module.exports = {
   },
   updateProfile: async (user) => {
     try {
-      const rs = await db.one("UPDATE users SET full_name = $2 WHERE id = $1 RETURNING *;", [user.id, user.fullName]);
+      const rs = await db.one("UPDATE users SET full_name = $2, address = $3, phone_number = $4 WHERE id = $1 RETURNING *;", 
+      [ user.id, user.full_name, user.address, user.phone_number]);
       return rs;
     } catch (err) {
       console.log("Error in updateProfile in user.m: ", err);

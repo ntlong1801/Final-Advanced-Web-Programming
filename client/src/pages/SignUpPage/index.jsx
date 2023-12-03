@@ -33,7 +33,6 @@ export default function SignUpPage() {
   };
 
   const onSubmit = async (data) => {
-    showError(data);
     setIsLoading(true);
     const response = await instance.post('/auth/register-email', data);
     setIsLoading(false);
@@ -53,7 +52,10 @@ export default function SignUpPage() {
         <Link to="/">
           <i className="pi pi-home" style={{ fontSize: '2rem' }} />
         </Link>
-        <h1 className="text-center text-primary">Sign Up</h1>
+        <h1 className="text-center text-primary mb-2">Sign Up</h1>
+        <div className="my-2 flex justify-content-center">
+          Already have an account? <Link to="/signin">&nbsp;Sign in here</Link>
+        </div>
         <form autoComplete="off" onSubmit={handleSubmit(onSubmit)} className="p-fluid justify-content-center">
           <TextInput
             type="text"
@@ -61,14 +63,8 @@ export default function SignUpPage() {
             control={control}
             errors={errors}
             label="Email"
+            isRequired
             errorMessage={errors.email?.message || ''}
-          />
-          <TextInput
-            type="text"
-            name="fullName"
-            control={control}
-            errors={errors}
-            label="Full Name"
           />
           <TextInput
             type="password"
@@ -80,22 +76,17 @@ export default function SignUpPage() {
             errorMessage={errors.password?.message || ''}
           />
           <TextInput
-            type="password"
-            name="re-password"
+            type="text"
+            name="fullName"
             control={control}
             errors={errors}
-            label="Re-password"
-            isRequired
-            errorMessage={errors.password?.message || ''}
+            label="Full Name"
           />
           <div className="text-center mt-4">
-            <Button label="Sign up" type="submit" style={{ minWidth: '100px', width: '160px' }} />
+            <Button label="Sign up" type="submit" />
           </div>
         </form>
 
-        <div className="mt-2">
-          Already have an account? <Link to="/signin"> Sign in here</Link>
-        </div>
         {isLoading && <Loading />}
       </div>
     </div>

@@ -1,10 +1,6 @@
 import yup from '../yupGlobal';
 
 const checkSignUp = yup.object().shape({
-  username: yup
-    .string()
-    .required('Required')
-    .min(6),
   password: yup
     .string()
     .required('Required')

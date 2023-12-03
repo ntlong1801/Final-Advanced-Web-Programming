@@ -103,11 +103,12 @@ router.post("/login", authController.loginUser);
 router.get('/facebook', passport.authenticate('facebook', { scope:
     [ 'email', 'public_profile' ] }));
 
-router.get('/facebook/callback', passport.authenticate( 'facebook', {
-    successRedirect: '/auth/facebook/success',
-    failureRedirect: '/auth/facebook/failure'
-}));
-router.get('/facebook/success', authController.faceBookAuthSuccess)
+router.get('/facebook/callback',  (req, res, next) => {
+    passport.authenticate('facebook', (err, profile) => {
+        req.user = profile
+        next()
+    })(req, res, next)
+}, authController.facebookAuth);
 
 
 /**
@@ -157,7 +158,7 @@ router.post("/refresh", authController.requestRefreshToken);
  *     '500':
  *       description: Internal server error
  */
-router.post("/logout", middlewareController.verifyToken, authController.logoutUser);
+router.post("/logout", authController.logoutUser);
 
 router.post("/register-email", authController.registerUserByEmail);
 
@@ -190,11 +191,11 @@ router.get('/google', passport.authenticate('google', { scope:
  */
 // router.get('/google/callback',authController.googleAuthCallback);
 
-router.get('/google/callback',
-    passport.authenticate( 'google', {
-        successRedirect: '/auth/google/success',
-        failureRedirect: '/user/login'
-}));
-router.get('/google/success', authController.googleAuth)
+router.get('/google/callback', (req, res, next) => {
+    passport.authenticate('google', (err, profile) => {
+        req.user = profile
+        next()
+    })(req, res, next)
+}, authController.googleAuth)
 
 module.exports = router;

@@ -29,11 +29,12 @@ export default function SignInPage() {
     if (response.data.status === 'failed') {
       setErrorMessage(response.data.message);
     } else {
-      localStorage.setItem('access_token', response.data.access_token);
+      localStorage.setItem('access_token', response.data.accessToken);
       localStorage.setItem('user_profile', JSON.stringify(response.data.user));
       navigate('/dashboard');
     }
   };
+
   return (
 
     <div className="flex align-items-center justify-content-center background">
@@ -44,7 +45,10 @@ export default function SignInPage() {
         <Link to="/">
           <i className="pi pi-home" style={{ fontSize: '2rem' }} />
         </Link>
-        <h1 className="text-center text-primary">Sign In</h1>
+        <h1 className="text-center text-primary mb-2">Sign In</h1>
+        <div className="my-2 flex justify-content-center">
+          Don&apos;t have an account yet? <Link to="/signup">&nbsp;Sign up now</Link>
+        </div>
         <form autoComplete="off" onSubmit={handleSubmit(onSubmit)} className="p-fluid justify-content-center">
           <TextInput
             type="text"
@@ -64,17 +68,36 @@ export default function SignInPage() {
             isRequired
           />
           <span className="text-red-500">{errorMessage}</span>
+          <div className="mt-2 flex justify-content-end">
+            <Link to="/forgot-password-email"> Forgot password?</Link>
+          </div>
           <div className="text-center mt-4">
-            <Button label="Sign In" type="submit" style={{ minWidth: '100px', width: '160px' }} />
+            <Button label="Sign In" type="submit" severity="info" />
+
           </div>
         </form>
+        <div className="flex flex-column align-items-center">
+          <p className="m-1 pl-4 font-semibold">OR</p>
+          <a
+            href={`${process.env.REACT_APP_API_URL}/auth/google`}
+            className="flex p-button w-full justify-content-between bg-red-600"
+          >
+            <i className="pi pi-google" />
+            <span className="flex flex-1 justify-content-center font-bold">
+              Sign in with google
+            </span>
+          </a>
+          <a
+            href={`${process.env.REACT_APP_API_URL}/auth/facebook`}
+            className="flex p-button w-full justify-content-between mt-2"
+          >
+            <i className="pi pi-facebook" />
+            <span className="flex flex-1 justify-content-center font-bold">
+              Sign in with facebook
+            </span>
+          </a>
+        </div>
 
-        <div className="mt-2">
-          Don&apos;t have an account yet? <Link to="/signup"> Sign up now</Link>
-        </div>
-        <div className="mt-2">
-          <Link to="/forgot-password-email"> Forgot password?</Link>
-        </div>
         {isLoading && <Loading />}
       </div>
     </div>

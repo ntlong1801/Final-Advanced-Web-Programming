@@ -25,7 +25,9 @@ const userController = {
     try {
       const infoUser = {
         id: req.body.id,
-        name: req.body.fullName,
+        full_name: req.body.fullName,
+        address: req.body.address,
+        phone_number: req.body.phoneNumber
       };
 
       const updatedInfoUser = await userModel.updateProfile(infoUser);
@@ -42,7 +44,7 @@ const userController = {
   changePassword: async (req, res) => {
     try {
       // check old password
-      const user = await userModel.getUserByID(req.body.id);
+      const user = await userModel.getUserByEmail(req.body.email);
       const validPassword = await bcrypt.compare(
         req.body.oldPassword,
         user.password
@@ -59,7 +61,7 @@ const userController = {
 
         // create user with new password
         const infoUser = {
-          id: req.body.id,
+          email: req.body.email,
           password: hashedNewPass,
         };
 

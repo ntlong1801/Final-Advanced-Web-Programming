@@ -68,6 +68,7 @@ const authController = {
   registerUserByEmail: async (req, res) => {
     // check if email exists
     const checkEmail = await userModel.getUserByEmail(req.body.email);
+    console.log(req.body);
     const { email, password, fullName } = req.body;
     if (checkEmail != null) {
       return res.json({
@@ -207,11 +208,6 @@ const authController = {
     }
   },
 
-  // [POST] /facebook/callback
-  loginWithFaceBook: async (req, res) => {
-    res.status(200).json("abc");
-  },
-
   // [POST] /refresh
   requestRefreshToken: async (req, res) => {
     // take refresh token from user
@@ -259,23 +255,51 @@ const authController = {
 
   googleAuth: async (req, res) =>{
     if (req.user) {
-      res.status(200).json({status: 'success',
-    user: req.user});
+      const accessToken = authController.generateAccessToken(req.user);
+        const refreshToken = authController.generateRefreshToken(req.user);
+
+        refreshTokens.push(refreshToken);
+
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: true,
+          path: "/",
+          sameSite: "none",
+        });
+
+        const { password, ...others } = req.user;
+
+        res.json({
+          user: others,
+          accessToken,
+          status: "success",
+          message: "login successfully!",
+        });
     }
   },
 
-  googleAuthCallback: async (req,res) =>{
-    passport.authenticate('google', { failureRedirect: 'http://localhost:3000/' }),
-  (req, res) => {
-    res.redirect('/oauth2/redirect/google');
-    res.status(200).json("passport success!");
-  }
-  },
-
-  faceBookAuthSuccess: async (req, res) => {
+  facebookAuth: async (req, res) => {
     if (req.user) {
-      res.status(200).json({status: 'success',
-    user: req.user});
+      const accessToken = authController.generateAccessToken(req.user);
+        const refreshToken = authController.generateRefreshToken(req.user);
+
+        refreshTokens.push(refreshToken);
+
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: true,
+          path: "/",
+          sameSite: "none",
+        });
+
+        const { password, ...others } = req.user;
+
+        res.json({
+          user: others,
+          accessToken,
+          status: "success",
+          message: "login successfully!",
+        });
     }
   }
 };

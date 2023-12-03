@@ -32,8 +32,8 @@ export default function UserPage() {
   const onSubmit = async (data) => {
     setIsLoading(true);
     try {
-      const response = await instance.post('users/changeProfile', {
-        username: user?.username,
+      const response = await instance.post('user/updateProfile', {
+        id: user?.id,
         ...data
       });
       localStorage.setItem('user_profile', JSON.stringify(response.data));
@@ -73,25 +73,36 @@ export default function UserPage() {
               control={control}
               errors={errors}
               label="Full name"
-              defaultValue={user?.fullName}
+              defaultValue={user?.full_name}
             />
             <TextInput
               type="text"
-              name="email"
+              name="address"
               control={control}
               errors={errors}
-              label="Email"
-              defaultValue={user?.email}
+              label="Address"
+              defaultValue={user?.address}
               errorMessage={errors?.email?.message || ''}
             />
-            <Link to="/changepassword">
-              Change password
-            </Link>
+            <TextInput
+              type="text"
+              name="phoneNumber"
+              control={control}
+              errors={errors}
+              label="Phone number"
+              defaultValue={user?.phone_number}
+              errorMessage={errors?.email?.message || ''}
+            />
+            <div className="flex justify-content-end">
+              <Link to="/changepassword">
+                Change password
+              </Link>
+            </div>
+
             <div className="text-center mt-4">
               <Button
                 label="Change"
                 type="submit"
-                style={{ minWidth: '100px', width: '160px' }}
               />
             </div>
           </form>

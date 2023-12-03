@@ -40,8 +40,8 @@ export default function UserPage() {
       setIsLoading(true);
       setErrorSamePassword(false);
       try {
-        const response = await instance.post('users/changePassword', {
-          username: user?.username,
+        const response = await instance.post('user/changePassword', {
+          email: user?.email,
           ...data
         });
 
@@ -83,7 +83,7 @@ export default function UserPage() {
             </div>
             <TextInput
               type="password"
-              name="oldpassword"
+              name="oldPassword"
               autoFocus
               control={control}
               errors={errors}
@@ -92,7 +92,7 @@ export default function UserPage() {
             />
             <TextInput
               type="password"
-              name="newpassword"
+              name="newPassword"
               control={control}
               errors={errors}
               label="New password"
@@ -100,7 +100,7 @@ export default function UserPage() {
             />
             <TextInput
               type="password"
-              name="renewpassword"
+              name="renewPassword"
               control={control}
               errors={errors}
               label="Re-New password"
@@ -111,7 +111,6 @@ export default function UserPage() {
               <Button
                 label="Change"
                 type="submit"
-                style={{ minWidth: '100px', width: '160px' }}
               />
             </div>
           </form>
