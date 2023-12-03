@@ -14,7 +14,7 @@ passport.serializeUser((user, done) => {
 });
 
 passport.deserializeUser((email, done) => {
-  db.one('SELECT * FROM user WHERE email = $1', email)
+  db.one('SELECT * FROM users WHERE email = $1', email)
     .then(user => done(null, user))
     .catch(err => done(err, null));
 });
@@ -34,13 +34,13 @@ passport.use(new GoogleStrategy({
   };
 
   // Check if the user exists in the database, if not, add them
-  db.oneOrNone('SELECT * FROM user WHERE email = $1', user.email)
+  db.oneOrNone('SELECT * FROM users WHERE email = $1', user.email)
     .then(existingUser => {
       if (existingUser) {
         return done(null, existingUser);
       } else {
         return db.one(
-          'INSERT INTO user (email, password, fullName) VALUES ($1, $2, $3) RETURNING *',
+          'INSERT INTO users (email, password, fullName) VALUES ($1, $2, $3) RETURNING *',
           [user.email, user.id, user.fullName]
         ).then(newUser => done(null, newUser));
       }
