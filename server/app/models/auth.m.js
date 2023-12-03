@@ -63,8 +63,8 @@ module.exports = app => {
         const salt =await bcrypt.genSalt(11);
         const hashPassword = await bcrypt.hash('hello1', salt);
         const newUser = await db.one(
-          'INSERT INTO users (id, email, password, full_name) VALUES ($1, $2, $3, $4) RETURNING *',
-          [user.id, user.email, hashPassword, user.fullName]
+          'INSERT INTO users (id, email, password, full_name, activation) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+          [user.id, user.email, hashPassword, user.fullName, true]
         )
         return done(null, newUser)
       }
@@ -92,8 +92,8 @@ module.exports = app => {
           const salt =await bcrypt.genSalt(11);
           const hashPassword = await bcrypt.hash('hello1', salt);
           const newUser = await db.one(
-            'INSERT INTO users (id, email, password, full_name) VALUES ($1, $2, $3, $4) RETURNING *',
-            [user.id, user.email, hashPassword, user.fullName]
+            'INSERT INTO users (id, email, password, full_name, activation) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+            [user.id, user.email, hashPassword, user.fullName, true]
           )
           return done(null, newUser)
         }

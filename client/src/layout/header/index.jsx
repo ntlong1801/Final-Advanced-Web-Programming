@@ -15,7 +15,7 @@ export default function Header() {
     profileRef.current.toggle(event);
   };
   const handleLogout = async () => {
-    instance.post('/auth/logout');
+    await instance.post('/auth/logout');
     localStorage.removeItem('access_token');
     localStorage.removeItem('user_profile');
     navigate('/signin');

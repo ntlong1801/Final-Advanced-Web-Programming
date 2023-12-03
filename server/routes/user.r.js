@@ -103,4 +103,6 @@ router.post("/changePassword", middlewareController.verifyToken, userController.
 router.post("/forgot-password-email", userController.forgotPasswordEmail);
 router.get("/verify-forgot-password-email/:token", userController.verifyForgotPasswordTokenFromMail);
 
+router.post('/renew-password-by-forgot-email/:token', userController.renewPasswordByForgotEmail);
+
 module.exports = router;

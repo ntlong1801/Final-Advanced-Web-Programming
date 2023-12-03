@@ -1,13 +1,19 @@
 import './style.scss';
 
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import instance from 'config';
 import { Toast } from 'primereact/toast';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState } from 'react';
 import Loading from 'components/Loading';
+import { useForm, useFormState } from 'react-hook-form';
+import TextInput from 'components/FormControl/TextInput';
+import { Button } from 'primereact/button';
 
 export default function WaitingConfirmForgotEmail() {
+  const { handleSubmit, control } = useForm({ mode: 'onChange' });
+
+  const navigate = useNavigate();
+  const { errors } = useFormState({ control });
   const [isLoading, setIsLoading] = useState(false);
   const toast = useRef(null);
 
@@ -19,20 +25,42 @@ export default function WaitingConfirmForgotEmail() {
     toast.current.show({ severity: 'error', summary: 'Fail', detail: msg, life: 3000 });
   };
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   setIsLoading(true);
+  //   const fetchData = async () => {
+  //     const token = window.location.href.split('/forgot-password/')[1];
+  //     const response = await instance.get(`/user/verify-forgot-password-email/${token}`);
+  //     setIsLoading(false);
+  //     if (response.data.status === 'failed') {
+  //       showError(response.data.message);
+  //     } else {
+  //       showSuccess(response.data.message);
+  //     }
+  //   };
+  //   fetchData();
+  // }, []);
+
+  const onSubmit = async (data) => {
     setIsLoading(true);
-    const fetchData = async () => {
+    try {
       const token = window.location.href.split('/forgot-password/')[1];
-      const response = await instance.get(`/user/verify-forgot-password-email/${token}`);
-      setIsLoading(false);
-      if (response.data.status === 'failed') {
-        showError(response.data.message);
+      const response = await instance.post(`user/renew-password-by-forgot-email/${token}`, {
+        ...data
+      });
+
+      if (response.data?.msg) {
+        showError(response.data?.msg);
       } else {
-        showSuccess(response.data.message);
+        showSuccess('Change password successful, you will redirect to sign in now!');
+        setTimeout(() => { navigate('/signin'); }, 2000);
       }
-    };
-    fetchData();
-  }, []);
+    } catch (error) {
+      if (error.response?.data?.message === 'Unauthorized') {
+        navigate('/signin');
+      }
+    }
+    setIsLoading(false);
+  };
 
   return (
     <div className="flex align-items-center justify-content-center background">
@@ -44,7 +72,30 @@ export default function WaitingConfirmForgotEmail() {
         <Link to="/">
           <i className="pi pi-home" style={{ fontSize: '2rem' }} />
         </Link>
-        <h1 className="text-center text-primary"> Confirm Token Email</h1>
+        <form autoComplete="off" onSubmit={handleSubmit(onSubmit)} className="p-fluid justify-content-center mt-4">
+          <TextInput
+            type="password"
+            name="newPassword"
+            control={control}
+            errors={errors}
+            label="New password"
+            defaultValue=""
+          />
+          <TextInput
+            type="password"
+            name="renewPassword"
+            control={control}
+            errors={errors}
+            label="Re-New password"
+            defaultValue=""
+          />
+          <div className="text-center mt-4">
+            <Button
+              label="Change"
+              type="submit"
+            />
+          </div>
+        </form>
         <div className="mt-2">
           Want to singin? <Link to="/signin"> Sign in here</Link>
         </div>

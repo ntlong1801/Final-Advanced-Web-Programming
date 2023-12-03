@@ -213,6 +213,51 @@ const userController = {
       });
     });
   },
+
+  // [POST] /user/renew-password-by-forgot-email/:token
+  renewPasswordByForgotEmail: async (req, res) => { 
+    const { token } = req.params;
+    const { newPassword } = req.body; 
+
+    jwt.verify(token, process.env.JWT_SECRETKEY_MAIL, async (err, decoded) => {
+      if (!err) {
+        // token is correct => update password for user by email.
+        // hash password
+        const salt = await bcrypt.genSalt(11);
+
+        const newPasswordHashed = await bcrypt.hash(newPassword, salt);
+
+        // create new user
+
+        const user = {
+          email: decoded.email,
+          password: newPasswordHashed,
+        };
+
+        try {
+          // save user to database
+          await userModel.changePassword(user);
+          // send new password to user's email
+
+          return res.json({
+            status: "success",
+            message: "Change password successfully",
+          });
+        } catch (error) {
+          return res.json({
+            status: "failed",
+            message:
+              "Error forgot password, please check information and try again.",
+          });
+        }
+      }
+      // token is incorrect
+      return res.json({
+        status: "failed",
+        message: "Token is invalid or expired",
+      });
+    });
+  }
 };
 
 module.exports = userController;

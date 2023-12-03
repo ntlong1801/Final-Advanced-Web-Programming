@@ -158,7 +158,7 @@ router.post("/refresh", authController.requestRefreshToken);
  *     '500':
  *       description: Internal server error
  */
-router.post("/logout", authController.logoutUser);
+router.post("/logout", middlewareController.verifyToken, authController.logoutUser);
 
 router.post("/register-email", authController.registerUserByEmail);
 

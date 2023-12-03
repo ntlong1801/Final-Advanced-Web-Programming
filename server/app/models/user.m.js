@@ -10,7 +10,17 @@ module.exports = {
     const rs = await db.one("INSERT INTO users (id, email, password, full_name) VALUES ($1, $2, $3, $4) RETURNING *;", [uuidv4(), user.email, user.password, user.fullName]);
     return rs;
   },
-  getUserByEmail: async (email) => {
+  updateUserByEmail: async (user) => {
+    try {
+      const rs = await db.one("UPDATE users SET full_name = $2, password = $3 WHERE email = $1 RETURNING *;", 
+      [ user.email, user.fullName, user.password]);
+      return rs;
+    } catch (err) {
+      console.log("Error in updateUser in user.m: ", err);
+      return null;
+    }
+  },
+  getUserByEmail: async (email) => { 
     try {
       const rs = await db.one("SELECT * FROM users WHERE email = $1;", [email]);
       return rs;
@@ -53,4 +63,13 @@ module.exports = {
       return null;
     }
   },
+  activeUser: async (user) => {
+    try {
+      const rs = await db.one("UPDATE users SET activation = $2 WHERE email = $1 RETURNING *;", [user.email, true]);
+      return rs;
+    } catch (err) {
+      console.log("Error in activeUser in user.m: ", err);
+      return null;
+    }
+  }
 };

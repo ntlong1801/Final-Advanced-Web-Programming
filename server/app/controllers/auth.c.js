@@ -68,60 +68,78 @@ const authController = {
   registerUserByEmail: async (req, res) => {
     // check if email exists
     const checkEmail = await userModel.getUserByEmail(req.body.email);
-    console.log(req.body);
+    console.log(checkEmail);
     const { email, password, fullName } = req.body;
-    if (checkEmail != null) {
+    if (checkEmail?.activation) {
       return res.json({
         status: "failed",
         message: "Email already exists!"
       });
     }
 
+    const salt = await bcrypt.genSalt(11);
+    const passwordHashed = await bcrypt.hash(password, salt);
+
+    // create new user
+    const user = {
+      email: email,
+      password: passwordHashed,
+      fullName: fullName,
+    };
+
     // email does not exist yet
     const token = jwt.sign(
-      { email, password, fullName },
+      { email },
       process.env.JWT_SECRETKEY_MAIL,
       {
         expiresIn: "10m",
       }
     );
 
-
-
-    console.log("signup: ", token)
-
-    const mailConfigurations = {
-      from: process.env.EMAIL_ADDRESS || "webnangcao.final@gmail.com",
-      to: email,
-      subject: "Email Verification - Localhost Website",
-      text: `Hi! There, You have recently visited 
-     our website and entered your email.
-     Please follow the given link to verify your email
-     ${URLClient}/verify-token-email/sigup-email/${token}
-     Thanks`,
-    };
-
-    const transporter = nodemailer.createTransport({
-      service: process.env.EMAIL_SERVICE,
-      auth: {
-        user: process.env.EMAIL_ADDRESS,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    });
-
-    transporter.sendMail(mailConfigurations, function (error) {
-      if (error) {
-        return res.json({
-          status: "failed",
-          message: "Server is error now",
-        });
-      } else {
-        return res.json({
-          status: "success",
-          message: "Check verify code in your email.",
-        });
+    try {
+      if (checkEmail?.activation === false) {
+        await userModel.updateUserByEmail(user);
       }
-    });
+      else {
+        await userModel.addUser(user);
+      }
+
+      const mailConfigurations = {
+        from: process.env.EMAIL_ADDRESS || "webnangcao.final@gmail.com",
+        to: email,
+        subject: "Email Verification - Classroom App",
+        text: `Hi! There, you have recently visited 
+      our website and entered your email.
+      Please follow the given link to verify your email
+      ${URLClient}/verify-token-email/sigup-email/${token}
+      Thanks`,
+      };
+
+      const transporter = nodemailer.createTransport({
+        service: process.env.EMAIL_SERVICE,
+        auth: {
+          user: process.env.EMAIL_ADDRESS,
+          pass: process.env.EMAIL_PASSWORD,
+        },
+      });
+
+      transporter.sendMail(mailConfigurations, function (error) {
+        if (error) {
+          return res.json({
+            status: "failed",
+            message: "Server is error now",
+          });
+        } else {
+          return res.json({
+            status: "success",
+            message: "Check verify code in your email.",
+          });
+        }
+      });
+    } catch (error) { return res.json({
+      status: "failed",
+      message: "Error register, please check information again.",
+    }); }
   },
 
   // [GET] /verify-email/token
@@ -132,30 +150,24 @@ const authController = {
 
     jwt.verify(token, process.env.JWT_SECRETKEY_MAIL, async (err, decoded) => {
       if (!err) {
-        // token is correct => save data to db.
-        // hash password
-        const salt = await bcrypt.genSalt(11);
-        const passwordHashed = await bcrypt.hash(decoded.password, salt);
 
         // create new user
         const user = {
           email: decoded.email,
-          password: passwordHashed,
-          fullName: decoded.fullName,
         };
 
         // save user to database
         try {
-          await userModel.addUser(user);
+          await userModel.activeUser(user);
           // console.log("success", others, )
           return res.json({
             status: "success",
-            message: "Register successfully!"
+            message: "Active successfully!"
           });
         } catch (error) {
           return res.json({
             status: "failed",
-            message: "Error register, please check information again.",
+            message: "Error active, please try agian!",
           });
         }
       }
@@ -182,6 +194,9 @@ const authController = {
       if (!validPassword) {
         res.json({status: "failed", message:"Account or password is incorect"});
       } else {
+        if (!user.activation) {
+          return res.json({status: "failed", message:"Please check your email to activate your account!"});
+        }
         const accessToken = authController.generateAccessToken(user);
         const refreshToken = authController.generateRefreshToken(user);
 
