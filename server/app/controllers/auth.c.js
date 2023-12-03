@@ -7,7 +7,7 @@ const jwt = require("jsonwebtoken");
 // const URLSever = process.env.URLSEVER;
 const URLClient = process.env.URL_CLIENT;
 
-const passport = require("../../config/passport");
+const passport = require('passport');
 require("dotenv").config();
 
 let refreshTokens = [];
@@ -259,7 +259,8 @@ const authController = {
 
   googleAuth: async (req, res) =>{
     if (req.user) {
-      res.status(200).json('passport success!')
+      res.status(200).json({status: 'success',
+    user: req.user});
     }
   },
 
@@ -272,7 +273,10 @@ const authController = {
   },
 
   faceBookAuthSuccess: async (req, res) => {
-    res.status(200).json('passport success');
+    if (req.user) {
+      res.status(200).json({status: 'success',
+    user: req.user});
+    }
   }
 };
 

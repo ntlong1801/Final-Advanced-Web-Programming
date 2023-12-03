@@ -18,8 +18,12 @@ module.exports = app => {
         done(null, user);
     });
 
-    passport.deserializeUser(function (user, done) {
-      done(null, user);
+    passport.deserializeUser(async function (user, done) {
+      const infoUser = await userM.getUserByEmail(user.email);
+      if (infoUser) { 
+        const {password, ...infoUserWithoutPassword} = infoUser;
+        done(null, infoUserWithoutPassword)
+      }
     });
 
     // passport.use(new localStrategy({
@@ -44,28 +48,26 @@ module.exports = app => {
         callbackURL: "http://localhost:5000/auth/google/callback",
         passReqToCallback: true
     },
-    function ( accessToken, refreshToken, profile, done)  {
-      done(null, profile)
-      // const user = {
-      //   id: profile.id, // this is the ID google gave us when login with passport, it's different from the id we store in database => so we should use it as password :>
-      //   email: profile.emails[0].value,
-      //   fullName: profile.displayName,
-      // };
+    async function (request, accessToken, refreshToken, profile, done)  {
+      const user = {
+        id: profile.id, // this is the ID google gave us when login with passport, it's different from the id we store in database => so we should use it as password :>
+        email: profile.emails[0].value,
+        fullName: profile.displayName,
+      };
     
-      // // Check if the user exists in the database, if not, add them
-      // const existingUser = await db.oneOrNone('SELECT * FROM users WHERE email = $1', user.email);
-      // console.log(existingUser);
-      // if (existingUser) {
-      //   return done(null, existingUser);
-      // } else {
-      //   const salt =await bcrypt.genSalt(11);
-      //   const hashPassword = await bcrypt.hash('hello1', salt);
-      //   const newUser = await db.one(
-      //     'INSERT INTO users (id, email, password, full_name) VALUES ($1, $2, $3, $4) RETURNING *',
-      //     [user.id, user.email, hashPassword, user.fullName]
-      //   )
-      //   return done(null, newUser)
-      // }
+      // Check if the user exists in the database, if not, add them
+      const existingUser = await db.oneOrNone('SELECT * FROM users WHERE email = $1', user.email);
+      if (existingUser) {
+        return done(null, existingUser);
+      } else {
+        const salt =await bcrypt.genSalt(11);
+        const hashPassword = await bcrypt.hash('hello1', salt);
+        const newUser = await db.one(
+          'INSERT INTO users (id, email, password, full_name) VALUES ($1, $2, $3, $4) RETURNING *',
+          [user.id, user.email, hashPassword, user.fullName]
+        )
+        return done(null, newUser)
+      }
     }
     ));
 
@@ -75,9 +77,26 @@ module.exports = app => {
         callbackURL: process.env.CALL_BACK_URL,
         profileFields: ['email','photos', 'id', 'displayName']
       },
-      authUser = (accessToken, refreshToken, profile, done) => {
-        console.log(profile._json);
-        return done(null, profile._json)
+      async function (request, accessToken, refreshToken, profile, done) {
+        const user = {
+          id: profile.id, // this is the ID google gave us when login with passport, it's different from the id we store in database => so we should use it as password :>
+          email: profile.emails[0].value,
+          fullName: profile.displayName,
+        };
+      
+        // Check if the user exists in the database, if not, add them
+        const existingUser = await db.oneOrNone('SELECT * FROM users WHERE email = $1', user.email);
+        if (existingUser) {
+          return done(null, existingUser);
+        } else {
+          const salt =await bcrypt.genSalt(11);
+          const hashPassword = await bcrypt.hash('hello1', salt);
+          const newUser = await db.one(
+            'INSERT INTO users (id, email, password, full_name) VALUES ($1, $2, $3, $4) RETURNING *',
+            [user.id, user.email, hashPassword, user.fullName]
+          )
+          return done(null, newUser)
+        }
     }
       ));
 

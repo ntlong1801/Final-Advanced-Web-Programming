@@ -6,7 +6,7 @@ const cors = require("cors");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const swaggerOptions = require("./config/swaggerConfig");
-const passport = require('./config/passport');
+const passport = require('passport');
 const session = require('express-session');
 const authenticate = require('./app/models/auth.m')
 
