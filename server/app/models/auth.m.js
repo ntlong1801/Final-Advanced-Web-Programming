@@ -50,7 +50,7 @@ module.exports = app => {
     },
     async function (request, accessToken, refreshToken, profile, done)  {
       const user = {
-        id: profile.id, // this is the ID google gave us when login with passport, it's different from the id we store in database => so we should use it as password :>
+        id: profile.id,
         email: profile.emails[0].value,
         fullName: profile.displayName,
       };
@@ -79,7 +79,7 @@ module.exports = app => {
       },
       async function (request, accessToken, refreshToken, profile, done) {
         const user = {
-          id: profile.id, // this is the ID google gave us when login with passport, it's different from the id we store in database => so we should use it as password :>
+          id: profile.id,
           email: profile.emails[0].value,
           fullName: profile.displayName,
         };
