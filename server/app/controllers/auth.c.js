@@ -4,9 +4,10 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const jwt = require("jsonwebtoken");
 
-const URLSever = process.env.URLSEVER;
+// const URLSever = process.env.URLSEVER;
+const URLClient = process.env.URL_CLIENT;
 
-const passport = require('../../config/passport');
+const passport = require("../../config/passport");
 require("dotenv").config();
 
 let refreshTokens = [];
@@ -69,7 +70,10 @@ const authController = {
     const checkEmail = await userModel.getUserByEmail(req.body.email);
     const { email, password, fullName } = req.body;
     if (checkEmail != null) {
-      return res.status(404).json("Email already exists!");
+      return res.json({
+        status: "failed",
+        message: "Email already exists!"
+      });
     }
 
     // email does not exist yet
@@ -81,6 +85,10 @@ const authController = {
       }
     );
 
+
+
+    console.log("signup: ", token)
+
     const mailConfigurations = {
       from: process.env.EMAIL_ADDRESS || "webnangcao.final@gmail.com",
       to: email,
@@ -88,7 +96,7 @@ const authController = {
       text: `Hi! There, You have recently visited 
      our website and entered your email.
      Please follow the given link to verify your email
-     ${URLSever}/auth/verify-email/${token}
+     ${URLClient}/verify-token-email/sigup-email/${token}
      Thanks`,
     };
 
@@ -102,12 +110,12 @@ const authController = {
 
     transporter.sendMail(mailConfigurations, function (error) {
       if (error) {
-        return res.status(400).send({
+        return res.json({
           status: "failed",
           message: "Server is error now",
         });
       } else {
-        return res.status(200).send({
+        return res.json({
           status: "success",
           message: "Check verify code in your email.",
         });
@@ -118,6 +126,8 @@ const authController = {
   // [GET] /verify-email/token
   verifySignupTokenFromMail: async (req, res) => {
     const { token } = req.params;
+
+    // console.log("verify sigup email: ", token)
 
     jwt.verify(token, process.env.JWT_SECRETKEY_MAIL, async (err, decoded) => {
       if (!err) {
@@ -136,16 +146,20 @@ const authController = {
         // save user to database
         try {
           await userModel.addUser(user);
-          return res.status(200).json(others);
+          // console.log("success", others, )
+          return res.json({
+            status: "success",
+            message: "Register successfully!"
+          });
         } catch (error) {
-          return res.status(401).send({
+          return res.json({
             status: "failed",
             message: "Error register, please check information again.",
           });
         }
       }
       // token is incorrect
-      return res.status(401).send({
+      return res.send({
         status: "failed",
         message: "Token is not valid or expired",
       });
@@ -156,17 +170,16 @@ const authController = {
   loginUser: async (req, res) => {
     try {
       // get user from database
-      const user = await userModel.getUserByEmail(req.body.email);
+      const { email, password } = req.body;
+      const user = await userModel.getUserByEmail(email);
       if (user == null) {
-        return res.status(404).json("Account doesn't exist!");
+        return res.json({status: "failed", message:"Account or password is incorect"});
       }
 
-      const validPassword = await bcrypt.compare(
-        req.body.password,
-        user.password
-      );
+      const validPassword = await bcrypt.compare(password, user.password);
+
       if (!validPassword) {
-        res.status(404).json("Wrong password!");
+        res.json({status: "failed", message:"Account or password is incorect"});
       } else {
         const accessToken = authController.generateAccessToken(user);
         const refreshToken = authController.generateRefreshToken(user);
@@ -181,10 +194,16 @@ const authController = {
         });
 
         const { password, ...others } = user;
-        res.status(200).json({ ...others, accessToken });
+
+        res.json({
+          user: others,
+          accessToken,
+          status: "success",
+          message: "login successfully!",
+        });
       }
     } catch (error) {
-      res.status(500).json(error);
+      res.json({ error, status: "failed", message: "login failure." });
     }
   },
 
