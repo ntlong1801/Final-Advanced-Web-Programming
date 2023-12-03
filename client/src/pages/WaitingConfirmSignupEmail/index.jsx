@@ -7,7 +7,7 @@ import { Toast } from 'primereact/toast';
 import { useRef, useState, useEffect } from 'react';
 import Loading from 'components/Loading';
 
-export default function SignUpPage() {
+export default function WaitingConfirmSignupEmail() {
   const [isLoading, setIsLoading] = useState(false);
   const toast = useRef(null);
 
@@ -22,7 +22,7 @@ export default function SignUpPage() {
   useEffect(() => {
     setIsLoading(true);
     const fetchData = async () => {
-      const token = window.location.href.slice(-165);
+      const token = window.location.href.split('/sigup-email')[1];
       const response = await instance.get(`/user/verify-forgot-password-email/${token}`);
       setIsLoading(false);
       if (response.data.status === 'failed') {

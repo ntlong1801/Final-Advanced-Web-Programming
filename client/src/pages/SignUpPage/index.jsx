@@ -19,7 +19,6 @@ export default function SignUpPage() {
   const {
     handleSubmit,
     control,
-    reset,
     formState: {
       errors
     }
@@ -34,14 +33,14 @@ export default function SignUpPage() {
   };
 
   const onSubmit = async (data) => {
+    showError(data);
     setIsLoading(true);
-    const response = await instance.post('/auth/signup', data);
+    const response = await instance.post('/auth/register-email', data);
     setIsLoading(false);
-    if (response.data?.msg) {
-      showError(response.data?.msg);
+    if (response.data.status === 'failed') {
+      showError(response.data.message);
     } else {
-      reset({}, { keepValues: false });
-      showSuccess('Sign up successful');
+      showSuccess(response.data.message);
     }
   };
   return (

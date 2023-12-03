@@ -10,7 +10,7 @@ import { Toast } from 'primereact/toast';
 import { useRef, useState } from 'react';
 import Loading from 'components/Loading';
 
-export default function SignUpPage() {
+export default function ForgotPassword() {
   const [isLoading, setIsLoading] = useState(false);
   const toast = useRef(null);
 

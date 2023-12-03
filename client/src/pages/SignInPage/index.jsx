@@ -72,6 +72,9 @@ export default function SignInPage() {
         <div className="mt-2">
           Don&apos;t have an account yet? <Link to="/signup"> Sign up now</Link>
         </div>
+        <div className="mt-2">
+          <Link to="/forgot-password-email"> Forgot password?</Link>
+        </div>
         {isLoading && <Loading />}
       </div>
     </div>
