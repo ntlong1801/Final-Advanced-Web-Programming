@@ -1,5 +1,6 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+var FacebookStrategy = require('passport-facebook');
 require('dotenv').config();
 
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -23,9 +24,10 @@ passport.deserializeUser((email, done) => {
 passport.use(new GoogleStrategy({
   clientID: GOOGLE_CLIENT_ID,
   clientSecret: GOOGLE_CLIENT_SECRET,
-  callbackURL: GOOGLE_CALLBACK_URL
+  callbackURL: GOOGLE_CALLBACK_URL,
+  passReqToCallback: true
 },
-(accessToken, refreshToken, profile, done) => {
+function verify(accessToken, refreshToken, profile, done)  {
     console.log(profile);
   const user = {
     id: profile.id, // this is the ID google gave us when login with passport, it's different from the id we store in database => so we should use it as password :>
@@ -46,6 +48,21 @@ passport.use(new GoogleStrategy({
       }
     })
     .catch(err => done(err, null));
+}
+// authUser = (request, accessToken, refreshToken, profile, done) => {
+//   return done(null, profile.displayName)
+// }
+));
+
+
+passport.use(new FacebookStrategy({
+  clientID: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+  callbackURL: process.env.CALL_BACK_URL,
+},
+function verify(accessToken, refreshToken, profile, cb) {
+return (cb, 'a')
 }));
+
 
 module.exports = passport;

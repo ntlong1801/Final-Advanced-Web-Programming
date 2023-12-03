@@ -238,19 +238,22 @@ const authController = {
     res.status(200).json("Logged out successfully!");
   },
 
-  googleAuth: async(req,res) =>{
-    console.log('start passport');
-    passport.authenticate('google', { scope: ['profile', 'email'] });
-    console.log('end passport');
-    res.status(200).json("passport success!");
+  googleAuth: async (req, res) =>{
+    if (req.user) {
+      res.status(200).json('passport success!')
+    }
   },
 
-  googleAuthCallback: async(req,res) =>{
+  googleAuthCallback: async (req,res) =>{
     passport.authenticate('google', { failureRedirect: 'http://localhost:3000/' }),
   (req, res) => {
     res.redirect('/oauth2/redirect/google');
     res.status(200).json("passport success!");
   }
+  },
+
+  faceBookAuthSuccess: async (req, res) => {
+    res.status(200).json('passport success');
   }
 };
 

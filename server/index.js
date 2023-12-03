@@ -1,7 +1,6 @@
 const express = require("express");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const session = require("express-session");
 const router = require("./routes");
 const cors = require("cors");
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -9,6 +8,8 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerOptions = require("./config/swaggerConfig");
 const passport = require('./config/passport');
 const session = require('express-session');
+const authenticate = require('./app/models/auth.m')
+
 require("dotenv").config();
 
 
@@ -26,6 +27,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(cors());
+
+authenticate(app);
 
 router(app);
 

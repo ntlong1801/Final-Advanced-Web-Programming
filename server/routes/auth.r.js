@@ -1,30 +1,9 @@
 const authController = require("../app/controllers/auth.c");
+const passport = require('passport');
 const middlewareController = require("../middleware/middleware.js");
-var passport = require('passport');
-var FacebookStrategy = require('passport-facebook');
 require('dotenv').config();
 
-passport.use(new FacebookStrategy({
-    clientID: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: process.env.CALL_BACK_URL,
-  },
-  function verify(accessToken, refreshToken, profile, cb) {
-  return (cb, 'a')
-  }));
 
-  passport.serializeUser(function(user, cb) {
-    process.nextTick(function() {
-        console.log(user);
-      cb(null, { id: user.id, username: user.username, name: user.name });
-    });
-  });
-  
-  passport.deserializeUser(function(user, cb) {
-    process.nextTick(function() {
-      return cb(null, user);
-    });
-  });
 
 const router = require("express").Router();
 
@@ -121,10 +100,15 @@ router.post("/login", authController.loginUser);
  *   responses:
 
  */
-router.get('/facebook', passport.authenticate('facebook'));
+router.get('/facebook', passport.authenticate('facebook', { scope:
+    [ 'email', 'public_profile' ] }));
 
-router.get('/facebook/callback',   passport.authenticate('facebook', { failureRedirect: '/' }),
-authController.loginWithFaceBook)
+router.get('/facebook/callback', passport.authenticate( 'facebook', {
+    successRedirect: '/auth/facebook/success',
+    failureRedirect: '/auth/facebook/failure'
+}));
+router.get('/facebook/success', authController.faceBookAuthSuccess)
+
 
 /**
  * @swagger
@@ -190,7 +174,8 @@ router.get("/verify-email/:token", authController.verifySignupTokenFromMail);
  *     '302':
  *       description: Redirects to the Google authentication page.
  */
-router.get('/google',authController.googleAuth);
+router.get('/google', passport.authenticate('google', { scope:
+    [ 'email', 'profile' ] }));
 
 // Google callback route
 /**
@@ -203,6 +188,13 @@ router.get('/google',authController.googleAuth);
  *     '302':
  *       description: Redirects to the home page after successful authentication.
  */
-router.get('/google/callback',authController.googleAuthCallback);
+// router.get('/google/callback',authController.googleAuthCallback);
+
+router.get('/google/callback',
+    passport.authenticate( 'google', {
+        successRedirect: '/auth/google/success',
+        failureRedirect: '/user/login'
+}));
+router.get('/google/success', authController.googleAuth)
 
 module.exports = router;
