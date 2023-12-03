@@ -6,7 +6,6 @@ const cors = require("cors");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const swaggerOptions = require("./config/swaggerConfig");
-const passport = require('passport');
 const session = require('express-session');
 const authenticate = require('./app/models/auth.m')
 
@@ -23,8 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
 app.use(session({ secret: process.env.SESSION_SECRET_KEY, resave: true, saveUninitialized: true }));
-app.use(passport.initialize());
-app.use(passport.session());
+
 
 app.use(cors());
 
