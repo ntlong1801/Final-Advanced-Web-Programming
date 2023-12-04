@@ -77,6 +77,7 @@ module.exports = app => {
         profileFields: ['email','photos', 'id', 'displayName']
       },
       async function (request, accessToken, refreshToken, profile, done) {
+        console.log('profile', profile);
         const user = {
           id: profile.id,
           email: profile.emails[0].value,
