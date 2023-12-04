@@ -1,7 +1,6 @@
 import './style.scss';
 
 import TextInput from 'components/FormControl/TextInput';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { useForm } from 'react-hook-form';
 import { Button } from 'primereact/button';
 import { Link } from 'react-router-dom';
@@ -61,7 +60,7 @@ export default function ForgotPassword() {
             errorMessage={errors.email?.message || ''}
           />
           <div className="text-center mt-4">
-            <Button label="Renew" type="submit" style={{ minWidth: '100px', width: '160px' }} />
+            <Button label="Renew" type="submit" />
           </div>
         </form>
 

@@ -15,6 +15,7 @@ export default function WaitingConfirmForgotEmail() {
   const navigate = useNavigate();
   const { errors } = useFormState({ control });
   const [isLoading, setIsLoading] = useState(false);
+  const [errorSamePassword, setErrorSamePassword] = useState(false);
   const toast = useRef(null);
 
   const showSuccess = (msg) => {
@@ -41,25 +42,30 @@ export default function WaitingConfirmForgotEmail() {
   // }, []);
 
   const onSubmit = async (data) => {
-    setIsLoading(true);
-    try {
-      const token = window.location.href.split('/forgot-password/')[1];
-      const response = await instance.post(`user/renew-password-by-forgot-email/${token}`, {
-        ...data
-      });
+    if (data?.newPassword !== data?.renewPassword) {
+      setErrorSamePassword(true);
+    } else {
+      setErrorSamePassword(false);
+      setIsLoading(true);
+      try {
+        const token = window.location.href.split('/forgot-password/')[1];
+        const response = await instance.post(`user/renew-password-by-forgot-email/${token}`, {
+          ...data
+        });
 
-      if (response.data?.msg) {
-        showError(response.data?.msg);
-      } else {
-        showSuccess('Change password successful, you will redirect to sign in now!');
-        setTimeout(() => { navigate('/signin'); }, 2000);
+        if (response.data?.msg) {
+          showError(response.data?.msg);
+        } else {
+          showSuccess('Change password successful, you will redirect to sign in now!');
+          setTimeout(() => { navigate('/signin'); }, 2000);
+        }
+      } catch (error) {
+        if (error.response?.data?.message === 'Unauthorized') {
+          navigate('/signin');
+        }
       }
-    } catch (error) {
-      if (error.response?.data?.message === 'Unauthorized') {
-        navigate('/signin');
-      }
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   return (
@@ -89,6 +95,7 @@ export default function WaitingConfirmForgotEmail() {
             label="Re-New password"
             defaultValue=""
           />
+          {errorSamePassword && <span className="text-red-500">Re-new password must be the same as new password</span>}
           <div className="text-center mt-4">
             <Button
               label="Change"
