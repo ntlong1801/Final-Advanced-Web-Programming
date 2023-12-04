@@ -23,7 +23,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(session({ secret: process.env.SESSION_SECRET_KEY, resave: true, saveUninitialized: true }));
 
-app.use(cors({ origin: 'https://final-advanced-web-programming.vercel.app' }));
+app.use(cors({ origin: 'https://final-advanced-web-programming-rmna.vercel.app/' }));
 
 authenticate(app);
 
