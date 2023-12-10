@@ -1,0 +1,25 @@
+{
+    "home": "Trang chủ",
+    "settings": {
+        "name": "Cài đặt",
+        "profile": "Hồ sơ",
+        "changePassword": "Đổi mật khẩu",
+        "logout": "Đăng xuất"
+    },
+    "signIn": {
+        "name": "Đăng nhập",
+        "account": "Chưa có tài khoản?",
+        "signUpNow": "Đăng ký ngay",
+        "google": "Đăng nhập với google",
+        "facebook": "Đăng nhập với facebook",
+        "forgotPassword": "Quên mật khẩu",
+        "or": "Hoặc"
+    },
+    "signUp": {
+        "name": "Đăng ký",
+        "account": "Đã có tài khoản?",
+        "signInNow": "Đăng nhập tại đây",
+        "fullName": "Họ và tên"
+    },
+    "password": "Mật khẩu"
+}
