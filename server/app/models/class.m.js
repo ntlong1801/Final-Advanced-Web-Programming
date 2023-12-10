@@ -30,6 +30,11 @@ module.exports = {
         const rs = await db.one("INSERT INTO class_user (id_class, id_user, role) VALUES ($1, $2, $3) RETURNING *;", [id_class, id_user, role]);
         return rs;
     },
+    
+    getClassesByUserId: async(id_user) => {
+        const rs = await db.any("SELECT c.* FROM classes c JOIN class_user cu ON c.id = cu.id_class WHERE cu.id_user = $1;", [id_user]);
+        return rs;
+    },
 
     getAllUserFromClass: async (id_class) => { 
         const rs = await db.any("SELECT * FROM class_user WHERE id_class = $1;", [id_class]);

@@ -109,7 +109,18 @@ const classController = {
                 err: err
             })
         }
-    }
+    },
+
+    // [GET] /classesByUserId
+    getClassesByUserId: async (req, res) => {
+        try {
+            const classList = await classModel.getClassesByUserId(req.query.id);
+
+            res.json(classList);
+        } catch (err) {
+            res.json(err);
+        }
+    },
 }
 
 module.exports = classController;
