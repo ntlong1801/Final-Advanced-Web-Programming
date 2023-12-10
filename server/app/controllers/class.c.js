@@ -1,4 +1,5 @@
 const classModel = require('../models/class.m');
+const userModel = require('../models/user.m');
 
 const classController = {
     // [POST] /addClass
@@ -82,6 +83,33 @@ const classController = {
             });
         }
     },
+
+    // [GET] /getAllUserFromClass
+    getAllUserFromClass: async (req, res) => {
+        try {
+            const teachers = [];
+            const students = [];
+            const rawUsers = await classModel.getAllUserFromClass(req.query.id);
+            for (const rawUser of rawUsers) {
+                const user = await userModel.getUserByID(rawUser.id_user);
+                if (rawUser.role === 'teacher') {
+                    teachers.push(user);
+                }
+                if (rawUser.role === 'student') {
+                    students.push(user);
+                }
+            }    
+            res.json({
+                teachers,
+                students
+            });
+        } catch(err) {
+            res.json({
+                status: "failed",
+                err: err
+            })
+        }
+    }
 }
 
 module.exports = classController;

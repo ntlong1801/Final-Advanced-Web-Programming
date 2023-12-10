@@ -11,6 +11,7 @@ import WaitingConfirmForgotEmail from 'pages/WaitingConfirmForgotEmail';
 import WaitingConfirmSignupEmail from 'pages/WaitingConfirmSignupEmail';
 import GoogleAuthCallback from 'pages/GoogleAuthCallBack';
 import FacebookAuthCallBack from 'pages/FacebookAuthCallBack';
+import DetailCoursePage from 'pages/DetailCoursePage';
 import C404 from 'pages/404Page';
 
 export default createBrowserRouter([
@@ -57,6 +58,19 @@ export default createBrowserRouter([
   {
     path: '/verify-token-email/sigup-email/:token',
     element: <WaitingConfirmSignupEmail />
+  },
+  {
+    path: '/c',
+    children: [
+      {
+        index: true,
+        element: <DashBoardPage />,
+      },
+      {
+        path: ':classId',
+        element: <DetailCoursePage />,
+      },
+    ]
   },
   {
     path: '*',

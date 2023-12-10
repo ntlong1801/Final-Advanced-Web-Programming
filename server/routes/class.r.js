@@ -143,4 +143,30 @@ router.post("/updateClassInfo", middlewareController.verifyToken, classControlle
  */
 router.post("/addUserToClass", middlewareController.verifyToken, classController.addUserToClass);
 
+/**
+ * @swagger
+ * /class/all-user?id={id}:
+ *  get:
+ *   summary: get all user of a class
+ *   tags: [/class]
+ *   parameters:
+ *     - name: id
+ *       in: path
+ *       description: Class's ID
+ *       required: true
+ *       type: string
+ *   security:
+ *     - tokenAuth: []
+ *   responses:
+ *     '200':
+ *       description: All user of class
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Class'
+ *     '500':
+ *       description: Internal server error
+ */
+router.get("/all-user", middlewareController.verifyToken, classController.getAllUserFromClass);
+
 module.exports = router;
