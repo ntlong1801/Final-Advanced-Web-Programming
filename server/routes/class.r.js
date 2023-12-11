@@ -197,4 +197,7 @@ router.get("/all-user", middlewareController.verifyToken, classController.getAll
  */
 router.get("/classesByUserId", middlewareController.verifyToken, classController.getClassesByUserId);
 
+// join class by link
+router.get("/join", classController.inviteUserByLink);
+
 module.exports = router;

@@ -39,6 +39,10 @@ module.exports = {
     getAllUserFromClass: async (id_class) => { 
         const rs = await db.any("SELECT * FROM class_user WHERE id_class = $1;", [id_class]);
         return rs;
-    }
+    },
 
+    getClassByLink: async(link) => {
+        const rs = await db.any("SELECT * FROM classes WHERE invitation = $1;", [link]);
+        return rs;
+    },
 }
