@@ -12,6 +12,7 @@ import WaitingConfirmSignupEmail from 'pages/WaitingConfirmSignupEmail';
 import GoogleAuthCallback from 'pages/GoogleAuthCallBack';
 import FacebookAuthCallBack from 'pages/FacebookAuthCallBack';
 import DetailCoursePage from 'pages/DetailCoursePage';
+import InvitationPage from 'pages/InvitationPage';
 import C404 from 'pages/404Page';
 
 export default createBrowserRouter([
@@ -70,6 +71,15 @@ export default createBrowserRouter([
         path: ':classId',
         element: <DetailCoursePage />,
       },
+    ]
+  },
+  {
+    path: '/invite',
+    children: [
+      {
+        path: ':code',
+        element: <InvitationPage />
+      }
     ]
   },
   {

@@ -60,6 +60,7 @@ export default function DashBoardPage() {
 
           {classes?.map((item) => (
             <Card
+              id={item?.id}
               title={item?.name}
               subTitle={item.description}
               className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"

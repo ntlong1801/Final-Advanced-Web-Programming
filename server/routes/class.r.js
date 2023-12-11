@@ -199,6 +199,8 @@ router.get("/classesByUserId", middlewareController.verifyToken, classController
 
 // join class by link
 router.get("/join", middlewareController.verifyToken, classController.inviteUserByLink);
+
+router.get('/isTeacher', middlewareController.verifyToken, classController.checkTeacherOfClassById);
 // Handle class participation by email
 router.get("/join/:token", classController.inviteUserByEmail);
 

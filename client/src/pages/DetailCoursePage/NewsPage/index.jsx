@@ -3,9 +3,11 @@ import { useRef, useEffect, useState } from 'react';
 import instance from 'config';
 
 export default function NewsPage() {
+  const user = JSON.parse(localStorage.getItem('user_profile'));
   const { classId } = useParams();
   const toast = useRef(null);
   const [infoClass, setInfoClass] = useState([]);
+  const [isTeacher, setIsTeacher] = useState(false);
   //   const showSuccess = (msg) => {
   //     toast.current.show({ severity: 'success', summary: 'Success', detail: msg, life: 3000 });
   //   };
@@ -17,6 +19,8 @@ export default function NewsPage() {
     try {
       const rs = await instance.get(`/class/class?id=${classId}`);
       setInfoClass(rs?.data);
+      const checkTeacher = await instance.get(`/class/isTeacher?user_id=${user?.id}&class_id=${classId}`);
+      if (checkTeacher?.data?.status === 'true') { setIsTeacher(true); }
     } catch (err) {
       showError('Loi');
     }
@@ -31,6 +35,7 @@ export default function NewsPage() {
       <div className="flex flex-column justify-content-end background-primary-color border-round p-2" style={{ width: '62.5rem', minHeight: '30vh' }}>
         <p className="text-white mb-0" style={{ fontSize: '2rem' }}>{infoClass?.name}</p>
         <p className="text-white">{infoClass?.description}</p>
+        {isTeacher && <p className="text-white cursor-pointer">{infoClass?.invitation}</p>}
       </div>
       <div className="grid">
         <div className="col-3 mt-4">

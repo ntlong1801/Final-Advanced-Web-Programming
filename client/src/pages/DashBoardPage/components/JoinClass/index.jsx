@@ -6,19 +6,20 @@ import { Toast } from 'primereact/toast';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import instance from 'config';
+// import instance from 'config';
 
 const JoinClass = forwardRef((props, ref) => {
   // #region Data
   const { t } = useTranslation();
   const toast = useRef(null);
 
+  // eslint-disable-next-line no-unused-vars
   const [joinClassControl, setJoinClassControl] = useState();
   const [visible, setVisible] = useState(false);
 
   const {
     control,
-    getValues,
+    // getValues,
     trigger,
     reset,
     formState: { errors, dirtyFields },
@@ -35,14 +36,14 @@ const JoinClass = forwardRef((props, ref) => {
     });
   };
 
-  const showSuccess = (message) => {
-    toast.current.show({
-      severity: 'success',
-      summary: 'Thành công',
-      detail: message,
-      life: 4000,
-    });
-  };
+  // const showSuccess = (message) => {
+  //   toast.current.show({
+  //     severity: 'success',
+  //     summary: 'Thành công',
+  //     detail: message,
+  //     life: 4000,
+  //   });
+  // };
 
   useImperativeHandle(
     ref,
@@ -62,25 +63,6 @@ const JoinClass = forwardRef((props, ref) => {
     if (!isValidTrigger) {
       showError(t('errorMessage.validationErrorMessage'));
       return;
-    }
-
-    const data = getValues();
-    const { userId, setRefetch } = joinClassControl;
-    const dataSender = { ...data, userId };
-    const joinClass = await instance.post('/class/addClass', dataSender);
-    if (joinClass?.data?.id) {
-      const userClass = { id_class: joinClass?.data?.id,
-        id_user: userId,
-        role: 'teacher' };
-      const addOwnerToClass = await instance.post('/class/addUserToClass', userClass);
-      if (addOwnerToClass?.data?.id_class) {
-        showSuccess('Tạo lớp học thành công');
-        setRefetch(true);
-      } else {
-        showError('Có lỗi xảy ra, vui lòng thử lại!');
-      }
-    } else {
-      showError('Có lỗi xảy ra, vui lòng thử lại!');
     }
 
     setVisible(false);

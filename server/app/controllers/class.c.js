@@ -160,6 +160,15 @@ const classController = {
           message: "Your email is invalid.",
         });
       }
+
+      // check user in class
+      const existingUser = await classModel.getUserOfClassById(classInfo[0].id, userDb?.id);
+      if (existingUser.length > 0) { 
+        return res.json({
+          status: 'failed',
+          message: 'You already in the class',
+        })
+      }
       // join user to class
       await classModel.addUserToClass(classInfo[0].id, userDb.id, role);
       return res.json({
@@ -172,6 +181,19 @@ const classController = {
         err: err,
       });
     }
+  },
+
+  checkTeacherOfClassById: async (req, res) => {
+    const { user_id, class_id } = req.query;
+    const rs = await classModel.checkTeacherOfClassById(class_id, user_id);
+    if (rs.length > 0) {
+      return res.json({
+        status: "true"
+      })
+    }
+    return res.json({
+      status: "false"
+     })
   },
 
   inviteUserByEmail: async (req, res) => {

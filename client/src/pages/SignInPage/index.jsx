@@ -4,7 +4,7 @@ import TextInput from 'components/FormControl/TextInput';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { useForm } from 'react-hook-form';
 import { Button } from 'primereact/button';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import instance from 'config';
 import { useState } from 'react';
 import Loading from 'components/Loading';
@@ -12,6 +12,8 @@ import LanguageSelect from 'components/LanguageSelect';
 import { useTranslation } from 'react-i18next';
 
 export default function SignInPage() {
+  const location = useLocation();
+  const link = location.state;
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
@@ -33,7 +35,9 @@ export default function SignInPage() {
     } else {
       localStorage.setItem('access_token', response.data.accessToken);
       localStorage.setItem('user_profile', JSON.stringify(response.data.user));
-      navigate('/dashboard');
+      if (link) {
+        window.location.href = link;
+      } else navigate('/dashboard');
     }
   };
 

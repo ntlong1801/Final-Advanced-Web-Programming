@@ -1,9 +1,10 @@
 const db = require("../../config/connect_db");
-const {v4 : uuidv4} = require('uuid');
+const {v4 : uuidv4 } = require('uuid');
+require('dotenv').config();
 
 module.exports = {
     addClass: async (class_info) => {
-        const invitation = "";
+        const invitation = `${process.env.URL_CLIENT}/invite/${uuidv4()}`;
         // *****
         // Create invitation here!
         // *****
@@ -50,4 +51,14 @@ module.exports = {
         const rs = await db.any("SELECT * FROM class_user WHERE id_class = $2 AND id_user = $1;", [teacherId, classId]);
         return rs;
     },
+
+    getUserOfClassById: async (class_id, user_id) => {
+        const rs = await db.any("SELECT * FROM class_user WHERE id_class = $1 AND id_user = $2;", [class_id, user_id]);
+        return rs;
+    },
+
+    checkTeacherOfClassById: async (class_id, user_id) => { 
+        const rs = await db.any("SELECT * FROM class_user WHERE id_class = $1 AND id_user = $2 AND role = $3;", [class_id, user_id, 'teacher']);
+        return rs;
+    }
 }
