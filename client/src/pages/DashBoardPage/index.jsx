@@ -16,6 +16,8 @@ export default function DashBoardPage() {
   const [classes, setClasses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefetch, setIsRefetch] = useState(false);
+  const [isRegisterClass, setISRegisterClass] = useState(false);
+  const [isHasClass, setIsHasClass] = useState(false);
   const [scrollTop, setIsScrollTop] = useState(false);
   const contentRef = useRef(null);
 
@@ -27,6 +29,16 @@ export default function DashBoardPage() {
     setIsLoading(false);
     if (rs?.data?.length > 0) {
       setClasses(rs.data);
+      // eslint-disable-next-line no-restricted-syntax
+      for (const item of rs.data) {
+        if (item.role === 'teacher') {
+          setIsHasClass(true);
+        }
+
+        if (item.role === 'student') {
+          setISRegisterClass(true);
+        }
+      }
     }
   };
 
@@ -60,7 +72,6 @@ export default function DashBoardPage() {
       ) : (
         <div
           ref={contentRef}
-          className="card flex flex-wrap justify-content-center p-4"
           style={{
             maxHeight: '90vh',
             overflowY: 'auto',
@@ -69,21 +80,45 @@ export default function DashBoardPage() {
             backgroundColor: 'white',
           }}
         >
+          {isHasClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>Lớp học của bạn</div> }
+          <div className="card flex flex-wrap justify-content-center">
 
-          {classes?.map((item) => (
-            <Card
-              id={item?.id}
-              title={item?.name}
-              subTitle={item.description}
-              className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
-              onClick={() => {
-                navigate(`/c/${item?.id}`);
-              }}
-            >
-              <img className="m-0 w-full border-round" src="https://www.gstatic.com/classroom/themes/img_graduation.jpg" alt="" />
-            </Card>
-          )
-          )}
+            {classes?.map((item) => (item?.role === 'teacher' && (
+              <Card
+                id={item?.id}
+                title={item?.name}
+                subTitle={item.description || '.'}
+                className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
+                onClick={() => {
+                  navigate(`/c/${item?.id}`);
+                }}
+              >
+                <img className="m-0 w-full border-round" src="https://www.gstatic.com/classroom/themes/img_graduation.jpg" alt="" />
+              </Card>
+            )
+            )
+            )}
+          </div>
+          {isHasClass && isRegisterClass && <hr className="mt-4" />}
+          {isRegisterClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>Lớp học đã đăng ký</div>}
+          <div className="card flex flex-wrap justify-content-center">
+            {classes?.map((item) => (item?.role === 'student' && (
+              <Card
+                id={item?.id}
+                title={item?.name}
+                subTitle={item.description || '.'}
+                className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
+                onClick={() => {
+                  navigate(`/c/${item?.id}`);
+                }}
+              >
+                <img className="m-0 w-full border-round" src="https://www.gstatic.com/classroom/themes/img_graduation.jpg" alt="" />
+              </Card>
+            )
+            )
+            )}
+          </div>
+
           <Button className={scrollTop ? 'hidden' : 'button-scroll-top'} icon="pi pi-arrow-up" severity="info" aria-label="User" onClick={handleScrollTop} rounded />
 
         </div>

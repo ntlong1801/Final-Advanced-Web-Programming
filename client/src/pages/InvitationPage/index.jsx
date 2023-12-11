@@ -33,14 +33,19 @@ export default function InvitationPage() {
     if (user) {
       sendLink();
     } else {
-      navigate('/signIn', { state: link
-      });
+      navigate('/signIn', { state: link });
     }
   });
   return (
     <div>
       <Header />
       <Toast ref={toast} />
+      <div className="text-center mb-5">
+
+        <div className="text-900 text-3xl font-medium my-3">
+          Bạn sẽ quay lại trang chủ trong vài giây tới...
+        </div>
+      </div>
     </div>
   );
 }
