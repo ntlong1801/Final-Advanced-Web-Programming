@@ -7,13 +7,21 @@ import { useRef } from 'react';
 import instance from 'config';
 import { useTranslation } from 'react-i18next';
 import LanguageSelect from 'components/LanguageSelect';
+import CreateClass from 'pages/DashBoardPage/components/CreateClass';
+import { PropTypes } from 'prop-types';
 
-export default function Header() {
+export default function Header({
+  isDashBoard,
+  setRefetch
+}) {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const user = JSON.parse(localStorage.getItem('user_profile'));
+
   const profileRef = useRef(null);
   const settingRef = useRef(null);
-  const user = JSON.parse(localStorage.getItem('user_profile'));
+  const classRef = useRef(null);
+  const createClassRef = useRef(null);
 
   const showSettingModal = (event) => {
     settingRef.current.toggle(event);
@@ -21,6 +29,16 @@ export default function Header() {
   const showProfileModal = (event) => {
     profileRef.current.toggle(event);
   };
+  const showClassModal = (event) => {
+    classRef.current.toggle(event);
+  };
+  const showCreateClassModal = () => {
+    createClassRef.current.open({
+      userId: user?.id,
+      setRefetch
+    });
+  };
+
   const handleLogout = async () => {
     await instance.post('/auth/logout');
     localStorage.removeItem('access_token');
@@ -72,8 +90,39 @@ export default function Header() {
           </>
         ) : (
           <>
+            {isDashBoard && (
+              <Button icon="pi pi-plus" severity="help" aria-label="User" rounded onClick={showClassModal}>
+                <OverlayPanel
+                  ref={classRef}
+                  appendTo={typeof window !== 'undefined' ? document.body : null}
+                  showCloseIcon={false}
+                  id="overlay_panel_class"
+                >
+                  <ul className="profile-menu list-none p-0 m-0">
+
+                    <div onClick={handleLogout}>
+                      <li className="hover:surface-200 p-2 span-button">
+                        <span>
+                          Tham gia lớp học
+                        </span>
+                      </li>
+                    </div>
+
+                    <hr />
+                    <div onClick={showCreateClassModal}>
+                      <li className="hover:surface-200 p-2 span-button">
+                        <span>
+                          Tạo lớp học
+                        </span>
+                      </li>
+                    </div>
+
+                  </ul>
+                </OverlayPanel>
+              </Button>
+            )}
+
             <Button icon="pi pi-user" severity="help" aria-label="User" rounded onClick={showProfileModal}>
-              {/* <i className="pi pi-user mr-2" style={{ fontSize: '2rem' }} /> */}
               <OverlayPanel
                 ref={profileRef}
                 appendTo={typeof window !== 'undefined' ? document.body : null}
@@ -128,7 +177,17 @@ export default function Header() {
             </OverlayPanel>
           </>
         )}
+        <CreateClass ref={createClassRef} />
       </div>
     </div>
   );
 }
+
+Header.propTypes = {
+  isDashBoard: PropTypes.bool,
+  setRefetch: PropTypes.func
+};
+Header.defaultProps = {
+  isDashBoard: false,
+  setRefetch: () => null
+};

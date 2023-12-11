@@ -7,7 +7,7 @@ module.exports = {
         // *****
         // Create invitation here!
         // *****
-        const rs = await db.one("INSERT INTO classes (id, name, description, invitation) VALUES ($1, $2, $3, $4) RETURNING *;", [uuidv4(), class_info.name, class_info.description, invitation]);
+        const rs = await db.one("INSERT INTO classes (id, owner_id, name, description, invitation) VALUES ($1, $2, $3, $4, $5) RETURNING *;", [uuidv4(), class_info.owner_id, class_info.name, class_info.description, invitation]);
         return rs;
     },
     

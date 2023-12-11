@@ -6,6 +6,7 @@ const classController = {
     addClass: async (req, res) => {
         try {
             const classInfo = {
+                owner_id: req.body.userId,
                 name: req.body.name,
                 description: req.body.description
             }
@@ -114,7 +115,9 @@ const classController = {
     // [GET] /classesByUserId
     getClassesByUserId: async (req, res) => {
         try {
+            console.log(req.query);
             const classList = await classModel.getClassesByUserId(req.query.id);
+            console.log(classList);
 
             res.json(classList);
         } catch (err) {
