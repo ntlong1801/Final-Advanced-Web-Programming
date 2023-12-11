@@ -1,4 +1,6 @@
 const jwt = require("jsonwebtoken");
+const classModel = require("../app/models/class.m")
+const userModel = require("../app/models/user.m")
 
 const middlewareController = {
   // verify token
@@ -16,6 +18,28 @@ const middlewareController = {
     } else {
       return res.status(401).json("You're not authenticated!");
     }
+  },
+
+  isTeacherOfClass: async (req, res, next) => {
+    const emailSend = req.body.emailSend;
+    const id_class = req.body.classId;
+
+    try {
+      // find id teacher by email
+      const userDb = await userModel.getUserByEmail(emailSend);
+
+      const roleInClass = await classModel.checkTeacherByTeacherClassId(userDb.id, id_class);
+
+      if(roleInClass[0].role == "teacher" || roleInClass[0].role == 'teacher') {
+        next()
+      } else {
+        return res.status(403).json("You are not teacher of this class.");
+      }
+      
+    } catch (error) {
+      return res.status(403).json("Invite error.");
+    }
+
   },
 };
 

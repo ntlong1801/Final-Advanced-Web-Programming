@@ -1,0 +1,25 @@
+{
+    "home": "Home",
+    "settings": {
+        "name": "Settings",
+        "profile": "Profile",
+        "changePassword": "Change password",
+        "logout": "Logout"
+    },
+    "signIn": {
+        "name": "Sign in",
+        "account": "Don't have an account yet?",
+        "signUpNow": "Sign up now",
+        "google": "Sign in with Google",
+        "facebook": "Sign in with Facebook",
+        "forgotPassword": "Forgot password?",
+        "or": "Or"
+    },
+    "signUp": {
+        "name": "Sign Up",
+        "account": "Already have an acocunt?",
+        "signInNow": "Sign in here",
+        "fullName": "Full Name"
+    },
+    "password": "Password"
+}

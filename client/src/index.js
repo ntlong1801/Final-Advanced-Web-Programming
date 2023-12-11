@@ -2,11 +2,12 @@ import './index.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-// eslint-disable-next-line import/no-extraneous-dependencies
+
 import { RouterProvider } from 'react-router-dom';
 
 import reportWebVitals from './reportWebVitals';
 
+import './i18n';
 import router from './router';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
