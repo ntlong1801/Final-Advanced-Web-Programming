@@ -5,6 +5,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 
+// const URLSever = process.env.URLSEVER;
+const URLClient = process.env.URL_CLIENT;
+
 const classController = {
   // [POST] /addClass
   addClass: async (req, res) => {
@@ -134,6 +137,7 @@ const classController = {
   inviteUserByLink: async (req, res) => {
     const email = req.query.email;
     const linkJoinClass = req.query.link;
+    const role = "student";
 
     try {
       const classInfo = await classModel.getClassByLink(linkJoinClass);
@@ -156,7 +160,7 @@ const classController = {
         });
       }
       // join user to class
-      await classModel.addUserToClass(classInfo[0].id, userDb.id, userDb.role);
+      await classModel.addUserToClass(classInfo[0].id, userDb.id, role);
       return res.json({
         status: "success",
         message: "Join class successfully!",
@@ -170,14 +174,50 @@ const classController = {
   },
 
   inviteUserByEmail: async (req, res) => {
-    
+    const { token } = req.params;
+
+    // console.log("verify sigup email: ", token)
+
+    jwt.verify(token, process.env.JWT_SECRETKEY_MAIL, async (err, decoded) => {
+      if (!err) {
+
+        const id_class = decoded.id_class;
+        const emailUser = decoded.emailReciver;
+        const roleUser = decoded.roleUser;
+
+        // find id user
+        const userDb = await userModel.getUserByEmail(emailUser);
+
+        // save user to database
+        try {
+          await classModel.addUserToClass(id_class, userDb.id, roleUser);
+          // console.log("success", others, )
+          return res.json({
+            status: "success",
+            message: "Active successfully!"
+          });
+        } catch (error) {
+          return res.json({
+            status: "failed",
+            message: "Error active, please try agian!",
+          });
+        }
+      }
+      // token is incorrect
+      return res.send({
+        status: "failed",
+        message: "Token is not valid or expired",
+      });
+    });
 
   },
   
   sendEmailInvitation: async (req, res) => {
-    const emailReciver = req.body.email;
+    const emailReciver = req.body.emailReciver;
     const emailSend = req.body.emailSend;
-    const checkEmail = await userModel.getUserByEmail(emailReciver);
+    const id_class = req.body.classId;
+    const roleUser = req.body.roleUser;
+    const checkEmail = await userModel.getUserByEmail(emailSend);
 
     if (checkEmail === null) {
       return res.json({
@@ -187,8 +227,8 @@ const classController = {
     }
 
     // email does not exist yet
-    const token = jwt.sign({ email }, process.env.JWT_SECRETKEY_MAIL, {
-      expiresIn: "10m",
+    const token = jwt.sign({ emailReciver, emailSend, id_class, roleUser }, process.env.JWT_SECRETKEY_MAIL, {
+      expiresIn: "7d",
     });
 
     const mailConfigurations = {

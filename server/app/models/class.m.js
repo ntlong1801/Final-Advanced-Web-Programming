@@ -45,4 +45,9 @@ module.exports = {
         const rs = await db.any("SELECT * FROM classes WHERE invitation = $1;", [link]);
         return rs;
     },
+
+    checkTeacherByTeacherClassId: async(teacherId, classId) => {
+        const rs = await db.any("SELECT * FROM class_user WHERE id_class = $2 AND id_user = $1;", [teacherId, classId]);
+        return rs;
+    },
 }

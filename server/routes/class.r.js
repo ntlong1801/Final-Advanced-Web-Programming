@@ -198,6 +198,12 @@ router.get("/all-user", middlewareController.verifyToken, classController.getAll
 router.get("/classesByUserId", middlewareController.verifyToken, classController.getClassesByUserId);
 
 // join class by link
-router.get("/join", classController.inviteUserByLink);
+router.get("/join", middlewareController.verifyToken, classController.inviteUserByLink);
+// Handle class participation by email
+router.get("/join/:token", classController.inviteUserByEmail);
+
+// send invitation mail to user 
+// router.post("/inviteByMail", middlewareController.isTeacherOfClass, middlewareController.verifyToken, classController.sendEmailInvitation);
+router.post("/inviteByMail", middlewareController.isTeacherOfClass, classController.sendEmailInvitation);
 
 module.exports = router;
