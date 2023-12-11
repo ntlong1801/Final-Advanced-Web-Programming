@@ -100,7 +100,9 @@ router.post("/updateProfile", middlewareController.verifyToken, userController.u
  *       description: Internal server error
  */
 router.post("/changePassword", middlewareController.verifyToken, userController.changePassword);
+
 router.post("/forgot-password-email", userController.forgotPasswordEmail);
+
 router.get("/verify-forgot-password-email/:token", userController.verifyForgotPasswordTokenFromMail);
 
 router.post('/renew-password-by-forgot-email/:token', userController.renewPasswordByForgotEmail);

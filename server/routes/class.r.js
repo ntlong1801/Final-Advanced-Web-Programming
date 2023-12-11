@@ -205,7 +205,7 @@ router.get('/isTeacher', middlewareController.verifyToken, classController.check
 router.get("/join/:token", classController.inviteUserByEmail);
 
 // send invitation mail to user 
-// router.post("/inviteByMail", middlewareController.isTeacherOfClass, middlewareController.verifyToken, classController.sendEmailInvitation);
-router.post("/inviteByMail", middlewareController.isTeacherOfClass, classController.sendEmailInvitation);
+router.post("/inviteByMail", middlewareController.isTeacherOfClass, middlewareController.verifyToken, classController.sendEmailInvitation);
+// router.post("/inviteByMail", middlewareController.isTeacherOfClass, classController.sendEmailInvitation);
 
 module.exports = router;
