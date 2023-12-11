@@ -7,7 +7,7 @@ module.exports = {
         // *****
         // Create invitation here!
         // *****
-        const rs = await db.one("INSERT INTO classes (id, name, description, invitation) VALUES ($1, $2, $3, $4) RETURNING *;", [uuidv4(), class_info.name, class_info.description, invitation]);
+        const rs = await db.one("INSERT INTO classes (id, name, description, invitation) VALUES ($1, $2, $3, $4) RETURNING *;", [uuidv4(), class_info.name, class_info.description, uuidv4()]);
         return rs;
     },
     
@@ -39,6 +39,10 @@ module.exports = {
     getAllUserFromClass: async (id_class) => { 
         const rs = await db.any("SELECT * FROM class_user WHERE id_class = $1;", [id_class]);
         return rs;
-    }
+    },
 
+    getClassByLink: async(link) => {
+        const rs = await db.any("SELECT * FROM classes WHERE invitation = $1;", [link]);
+        return rs;
+    },
 }
