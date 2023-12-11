@@ -9,13 +9,14 @@ const nodemailer = require("nodemailer");
 const URLClient = process.env.URL_CLIENT;
 
 const classController = {
-  // [POST] /addClass
-  addClass: async (req, res) => {
-    try {
-      const classInfo = {
-        name: req.body.name,
-        description: req.body.description,
-      };
+    // [POST] /addClass
+    addClass: async (req, res) => {
+        try {
+            const classInfo = {
+                owner_id: req.body.userId,
+                name: req.body.name,
+                description: req.body.description
+            }
 
       const addedClassInfo = await classModel.addClass(classInfo);
 

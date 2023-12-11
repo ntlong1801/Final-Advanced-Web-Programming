@@ -17,7 +17,6 @@ export default function NewsPage() {
     try {
       const rs = await instance.get(`/class/class?id=${classId}`);
       setInfoClass(rs?.data);
-      console.log(infoClass);
     } catch (err) {
       showError('Loi');
     }
@@ -27,6 +26,7 @@ export default function NewsPage() {
   }, []);
 
   return (
+
     <div className="flex flex-column w-full">
       <div className="flex flex-column justify-content-end background-primary-color border-round p-2" style={{ width: '62.5rem', minHeight: '30vh' }}>
         <p className="text-white mb-0" style={{ fontSize: '2rem' }}>{infoClass?.name}</p>
@@ -45,5 +45,6 @@ export default function NewsPage() {
         </div>
       </div>
     </div>
+
   );
 }

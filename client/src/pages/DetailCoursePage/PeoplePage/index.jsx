@@ -29,7 +29,7 @@ export default function PeoplePage() {
     fetchData();
   }, []);
   return (
-    <div className="flex flex-column w-full m-4">
+    <div className="flex flex-column w-full">
       <div className="border-round p-2" style={{ width: '62.5rem' }}>
         <div className="flex align-items-center justify-content-between">
           <div className="align-items-center text-primary-color" style={{ fontSize: '2rem' }}>Giáo viên</div>

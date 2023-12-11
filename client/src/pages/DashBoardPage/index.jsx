@@ -1,123 +1,80 @@
 import Header from 'layout/header';
-import Sidebar from 'layout/sidebar';
 import './style.scss';
-import { useEffect, useState } from 'react';
+
+import { Card } from 'primereact/card';
 import instance from 'config';
 
-export default function DashBoardPage() {
-  const [attendedClasses, setAttendedClasses] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [newClassName, setNewClassName] = useState('');
-  const [newClassDescription, setNewClassDescription] = useState('');
+import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router';
+import { Button } from 'primereact/button';
+import Loading from 'components/Loading';
 
+export default function DashBoardPage() {
   const user = JSON.parse(localStorage.getItem('user_profile'));
 
+  const navigate = useNavigate();
+  const [classes, setClasses] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isRefetch, setIsRefetch] = useState(false);
+  const [scrollTop, setIsScrollTop] = useState(false);
+  const contentRef = useRef(null);
+
+  // const [showCreateClassModal, setShowCreateClassModal] = useState(false);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    const rs = await instance.get(`/class/classesByUserId?id=${user?.id}`);
+    setIsLoading(false);
+    if (rs?.data?.length > 0) {
+      setClasses(rs.data);
+    }
+  };
+
+  const handleScrollTop = () => {
+    contentRef.current.scrollTop = 0;
+  };
+
   useEffect(() => {
-    instance.get(`/class/classesByUserId?id=${user.id}`).then((response) => {
-      setAttendedClasses(response.data);
-      setIsLoading(false);
-    }).catch(() => {
-    });
-  }, []);
-
-  const handleOpenForm = () => {
-    setShowForm(true);
-  };
-
-  const handleCloseForm = () => {
-    setShowForm(false);
-  };
-
-  const handleCreateClass = () => {
-    instance.post('/class/addClass', {
-      name: newClassName,
-      description: newClassDescription,
-    })
-      .then((response1) => {
-        instance.post('/class/addUserToClass', {
-          id_class: response1.data.id,
-          id_user: user.id,
-          role: 'teacher',
-        }).then(() => { }).catch(() => { });
-        instance.get(`/class/classesByUserId?id=${user.id}`).then((response2) => {
-          setAttendedClasses(response2.data);
-        }).catch(() => {
-        });
-        handleCloseForm();
-      })
-      .catch(() => {
-      });
-  };
+    setIsScrollTop(false);
+    fetchData();
+    setIsRefetch(false);
+  }, [isRefetch]);
 
   return (
-    <div className="background" style={{ display: 'flex', flexDirection: 'column' }}>
-      <Header>
-        <div>This is DashBoard Page</div>
-      </Header>
+    <div>
+      <Header isDashBoard setRefetch={setIsRefetch} />
       {isLoading ? (
-        <p>Loading...</p>
+        <Loading />
       ) : (
-        <>
-          <div className="blur-overlay" />
-          <div className="content">
-            <h1>Your Classes</h1>
-            <table className="striped-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Class Name</th>
-                  <th>Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {attendedClasses.map((classItem, index) => (
-                  <tr className={index % 2 === 0 ? 'even' : 'odd'}>
-                    <td>{index + 1}</td>
-                    <td>{classItem.name}</td>
-                    <td>{classItem.description}</td>
-                  </tr>
-                ))}
-                {showForm && (
-                  <tr>
-                    <td>{attendedClasses.length + 1}</td>
-                    <td>
-                      <input
-                        type="text"
-                        aria-label="Save"
-                        value={newClassName}
-                        onChange={(e) => setNewClassName(e.target.value)}
-                      />
-                    </td>
-                    <td>
-                      <input
-                        type="text"
-                        aria-label="Save"
-                        value={newClassDescription}
-                        onChange={(e) => setNewClassDescription(e.target.value)}
-                      />
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-            {!showForm && (
-              <button type="button" onClick={handleOpenForm}>Create New Class</button>
-            )}
-            {showForm && (
-              <>
-                <button type="button" onClick={handleCreateClass}>Create</button>
-                <button type="button" onClick={handleCloseForm}>Cancel</button>
-              </>
-            )}
-          </div>
-        </>
+        <div
+          ref={contentRef}
+          className="card flex flex-wrap justify-content-center p-4"
+          style={{
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            borderRadius: '12px',
+            border: '1px solid var(--surface-border)',
+            backgroundColor: 'white',
+          }}
+        >
+
+          {classes?.map((item) => (
+            <Card
+              title={item?.name}
+              subTitle={item.description}
+              className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
+              onClick={() => {
+                navigate(`/c/${item?.id}`);
+              }}
+            >
+              <img className="m-0 w-full border-round" src="https://www.gstatic.com/classroom/themes/img_graduation.jpg" alt="" />
+            </Card>
+          )
+          )}
+          <Button className={scrollTop ? 'hidden' : 'button-scroll-top'} icon="pi pi-arrow-up" severity="info" aria-label="User" onClick={handleScrollTop} rounded />
+
+        </div>
       )}
-      <img
-        className="fullscreen-image"
-        src=".\dashBoard2.png"
-        alt="Dashboardimage"
-      />
     </div>
   );
 }
