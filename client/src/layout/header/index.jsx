@@ -8,6 +8,7 @@ import instance from 'config';
 import { useTranslation } from 'react-i18next';
 import LanguageSelect from 'components/LanguageSelect';
 import CreateClass from 'pages/DashBoardPage/components/CreateClass';
+import JoinClass from 'pages/DashBoardPage/components/JoinClass';
 import { PropTypes } from 'prop-types';
 
 export default function Header({
@@ -22,6 +23,7 @@ export default function Header({
   const settingRef = useRef(null);
   const classRef = useRef(null);
   const createClassRef = useRef(null);
+  const joinClassRef = useRef(null);
 
   const showSettingModal = (event) => {
     settingRef.current.toggle(event);
@@ -34,6 +36,13 @@ export default function Header({
   };
   const showCreateClassModal = () => {
     createClassRef.current.open({
+      userId: user?.id,
+      setRefetch
+    });
+  };
+
+  const showJoinClassModal = () => {
+    joinClassRef.current.open({
       userId: user?.id,
       setRefetch
     });
@@ -100,7 +109,7 @@ export default function Header({
                 >
                   <ul className="profile-menu list-none p-0 m-0">
 
-                    <div onClick={handleLogout}>
+                    <div onClick={showJoinClassModal}>
                       <li className="hover:surface-200 p-2 span-button">
                         <span>
                           Tham gia lớp học
@@ -178,6 +187,7 @@ export default function Header({
           </>
         )}
         <CreateClass ref={createClassRef} />
+        <JoinClass ref={joinClassRef} />
       </div>
     </div>
   );

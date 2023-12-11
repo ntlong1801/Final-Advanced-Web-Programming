@@ -64,3 +64,17 @@ h1 {
 .striped-table tbody tr.odd {
   background-color: #777;
 }
+
+.button-scroll-top {
+  display: block;
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  z-index: 99;
+  font-size: 18px;
+  border: none;
+  outline: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}

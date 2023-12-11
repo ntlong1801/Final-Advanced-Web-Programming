@@ -4,10 +4,10 @@ import './style.scss';
 import { Card } from 'primereact/card';
 import instance from 'config';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
-
-// import instance from 'config';
+import { Button } from 'primereact/button';
+import Loading from 'components/Loading';
 
 export default function DashBoardPage() {
   const user = JSON.parse(localStorage.getItem('user_profile'));
@@ -16,6 +16,8 @@ export default function DashBoardPage() {
   const [classes, setClasses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefetch, setIsRefetch] = useState(false);
+  const [scrollTop, setIsScrollTop] = useState(false);
+  const contentRef = useRef(null);
 
   // const [showCreateClassModal, setShowCreateClassModal] = useState(false);
 
@@ -28,7 +30,12 @@ export default function DashBoardPage() {
     }
   };
 
+  const handleScrollTop = () => {
+    contentRef.current.scrollTop = 0;
+  };
+
   useEffect(() => {
+    setIsScrollTop(false);
     fetchData();
     setIsRefetch(false);
   }, [isRefetch]);
@@ -37,9 +44,19 @@ export default function DashBoardPage() {
     <div>
       <Header isDashBoard setRefetch={setIsRefetch} />
       {isLoading ? (
-        <p>Loading...</p>
+        <Loading />
       ) : (
-        <div className="card flex flex-wrap justify-content-center p-4">
+        <div
+          ref={contentRef}
+          className="card flex flex-wrap justify-content-center p-4"
+          style={{
+            maxHeight: '90vh',
+            overflowY: 'auto',
+            borderRadius: '12px',
+            border: '1px solid var(--surface-border)',
+            backgroundColor: 'white',
+          }}
+        >
 
           {classes?.map((item) => (
             <Card
@@ -54,8 +71,9 @@ export default function DashBoardPage() {
             </Card>
           )
           )}
-        </div>
+          <Button className={scrollTop ? 'hidden' : 'button-scroll-top'} icon="pi pi-arrow-up" severity="info" aria-label="User" onClick={handleScrollTop} rounded />
 
+        </div>
       )}
     </div>
   );
