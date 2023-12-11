@@ -134,7 +134,7 @@ const classController = {
     }
   },
 
-  // [get]/join_class/join?email=email&link=link
+  // [get]/class/join?email=email&link=link
   inviteUserByLink: async (req, res) => {
     const email = req.query.email;
     const linkJoinClass = req.query.link;
@@ -237,7 +237,7 @@ const classController = {
       to: emailReciver,
       subject: "Email Verification - Localhost Website",
       text: `From ${emailSend} invited you. Click on this link to enter this classroom
-     ${URLClient}/class/join/${token}.
+     ${URLClient}/dashboard?token=${token}.
      Thanks`,
     };
 

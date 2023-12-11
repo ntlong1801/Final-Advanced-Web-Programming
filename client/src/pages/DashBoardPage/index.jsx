@@ -30,12 +30,24 @@ export default function DashBoardPage() {
     }
   };
 
+  const fetchInvitation = async () => {
+    setIsLoading(true);
+    const tokenFromMail = window.location.href.split('?token=')[1] || '';
+    if (!tokenFromMail) {
+      setIsLoading(false);
+    } else {
+      await instance.get(`/class/join/${tokenFromMail}`);
+      setIsLoading(false);
+    }
+  };
+
   const handleScrollTop = () => {
     contentRef.current.scrollTop = 0;
   };
 
   useEffect(() => {
     setIsScrollTop(false);
+    fetchInvitation();
     fetchData();
     setIsRefetch(false);
   }, [isRefetch]);
