@@ -13,6 +13,7 @@ import GoogleAuthCallback from 'pages/GoogleAuthCallBack';
 import FacebookAuthCallBack from 'pages/FacebookAuthCallBack';
 import DetailCoursePage from 'pages/DetailCoursePage';
 import InvitationPage from 'pages/InvitationPage';
+import InvitationEmailPage from 'pages/InvitationEmailPage';
 import C404 from 'pages/404Page';
 
 export default createBrowserRouter([
@@ -81,6 +82,10 @@ export default createBrowserRouter([
         element: <InvitationPage />
       }
     ]
+  },
+  {
+    path: '/inviteByEmail',
+    element: <InvitationEmailPage />
   },
   {
     path: '*',

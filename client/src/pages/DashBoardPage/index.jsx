@@ -19,39 +19,33 @@ export default function DashBoardPage() {
   const [isHasClass, setIsHasClass] = useState(false);
 
   const fetchData = async () => {
-    setIsLoading(true);
-    const rs = await instance.get(`/class/classesByUserId?id=${user?.id}`);
-    setIsLoading(false);
-    if (rs?.data?.length > 0) {
-      setClasses(rs.data);
-      // eslint-disable-next-line no-restricted-syntax
-      for (const item of rs.data) {
-        if (item.role === 'teacher') {
-          setIsHasClass(true);
-        }
+    if (user) {
+      setIsLoading(true);
+      const rs = await instance.get(`/class/classesByUserId?id=${user?.id}`);
+      setIsLoading(false);
+      if (rs?.data?.length > 0) {
+        setClasses(rs.data);
+        // eslint-disable-next-line no-restricted-syntax
+        for (const item of rs.data) {
+          if (item.role === 'teacher') {
+            setIsHasClass(true);
+          }
 
-        if (item.role === 'student') {
-          setISRegisterClass(true);
+          if (item.role === 'student') {
+            setISRegisterClass(true);
+          }
         }
       }
     }
   };
 
-  const fetchInvitation = async () => {
-    setIsLoading(true);
-    const tokenFromMail = window.location.href.split('?token=')[1] || '';
-    if (!tokenFromMail) {
-      setIsLoading(false);
-    } else {
-      await instance.get(`/class/join/${tokenFromMail}`);
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchInvitation();
-    fetchData();
-    setIsRefetch(false);
+    if (user) {
+      fetchData();
+      setIsRefetch(false);
+    } else {
+      navigate('/signIn');
+    }
   }, [isRefetch]);
 
   return (
@@ -61,7 +55,7 @@ export default function DashBoardPage() {
           <Loading />
         ) : (
           <div>
-            {isHasClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>Lớp học của bạn</div> }
+            {isHasClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>Lớp học giảng dạy</div> }
             <div className="card flex flex-wrap">
 
               {classes?.map((item) => (item?.role === 'teacher' && (
@@ -82,13 +76,13 @@ export default function DashBoardPage() {
             </div>
             {isHasClass && isRegisterClass && <hr className="mt-4" />}
             {isRegisterClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>Lớp học đã đăng ký</div>}
-            <div className="card flex flex-wrap justify-content-center">
+            <div className="card flex flex-wrap">
               {classes?.map((item) => (item?.role === 'student' && (
                 <Card
                   id={item?.id}
                   title={item?.name}
                   subTitle={item.description || '.'}
-                  className="md:w-16rem m-wml-4 cursor-pointer ml-4 mt-4"
+                  className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
                   onClick={() => {
                     navigate(`/c/${item?.id}`);
                   }}
