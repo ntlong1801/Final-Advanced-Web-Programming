@@ -33,7 +33,7 @@ export default function InvitationPage() {
     if (user) {
       sendLink();
     } else {
-      navigate('/signIn', { state: link });
+      navigate('/signin', { state: link });
     }
   });
   return (

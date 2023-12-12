@@ -44,7 +44,7 @@ export default function DashBoardPage() {
       fetchData();
       setIsRefetch(false);
     } else {
-      navigate('/signIn');
+      navigate('/signin');
     }
   }, [isRefetch]);
 

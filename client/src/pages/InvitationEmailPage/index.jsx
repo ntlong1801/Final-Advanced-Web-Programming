@@ -48,7 +48,7 @@ export default function InvitationEmailPage() {
         handleLogout();
         showWarning('Bạn vui lòng đăng nhập vào đúng tài khoản nhận email');
         setTimeout(() => {
-          navigate('/signIn', { state: link });
+          navigate('/signin', { state: link });
         }, 3000);
       }
     }
@@ -57,7 +57,7 @@ export default function InvitationEmailPage() {
     if (user) {
       sendLink();
     } else {
-      navigate('/signIn', { state: link });
+      navigate('/signin', { state: link });
     }
   }, []);
   return (
