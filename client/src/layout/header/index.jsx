@@ -59,7 +59,7 @@ export default function Header({
     return '/dashboard';
   };
   return (
-    <div className="flex justify-content-between p-2 bg-header sticky top-0" style={{ height: '10vh' }}>
+    <div className="flex justify-content-between p-2 bg-header sticky top-0 left-0" style={{ height: '10vh' }}>
       <div className="flex align-items-center p-2 ml-2">
         <Link to={handleGoHome()}>
           <i className="pi pi-home text-white" style={{ fontSize: '2rem' }}>{t('home')}</i>

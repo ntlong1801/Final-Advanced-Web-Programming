@@ -1,45 +1,71 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { PanelMenu } from 'primereact/panelmenu';
+import instance from 'config';
+import { PropTypes } from 'prop-types';
 
-export default function Sidebar() {
-  const subItem = [{
-    label: 'Left',
-    icon: 'pi pi-fw pi-align-left'
-  },
-  {
-    label: 'Right',
-    icon: 'pi pi-fw pi-align-right'
-  },
-  {
-    label: 'Center',
-    icon: 'pi pi-fw pi-align-center'
-  },
-  {
-    label: 'Justify',
-    icon: 'pi pi-fw pi-align-justify'
-  }];
+export default function Sidebar({ isRefetch }) {
+  const user = JSON.parse(localStorage.getItem('user_profile'));
+  const [classes, setClasses] = useState([]);
+
+  const fetchData = async () => {
+    const rs = await instance.get(`/class/classesByUserId?id=${user?.id}`);
+    if (rs?.data?.length > 0) {
+      setClasses(rs.data);
+    }
+  };
+
+  const teachingList = [];
+  const enrollList = [];
+  classes.forEach((item) => {
+    if (item.role === 'teacher') {
+      const subItem = {
+        label: item.name,
+        icon: 'pi pi-fw pi-book',
+        url: `/c/${item.id}`
+      };
+      teachingList.push(subItem);
+    }
+    if (item.role === 'student') {
+      const subItem = {
+        label: item.name,
+        icon: 'pi pi-fw pi-book',
+        url: `/c/${item.id}`
+      };
+      enrollList.push(subItem);
+    }
+  });
+
   const items = [
     {
       label: 'Giảng dạy',
       icon: 'pi pi-fw pi-users',
       items: [
-        {
-          label: 'Export',
-          icon: 'pi pi-fw pi-external-link',
-          url: '/me'
-        }
+        ...teachingList
       ]
     },
     {
       label: 'Đã đăng ký',
       icon: 'pi pi-fw pi-folder',
       items: [
-        ...subItem
+        ...enrollList
       ]
-    },
+
+    }
   ];
 
+  useEffect(() => {
+    fetchData();
+  }, [isRefetch]);
+
   return (
-    <PanelMenu model={items} className="w-full md:w-16rem fixed top-10 left-0" />
+    <PanelMenu model={items} className="w-full overflow-y-scroll mr-4" style={{ height: '90vh' }} />
   );
 }
+
+Sidebar.propTypes = {
+  isRefetch: PropTypes.bool
+};
+
+Sidebar.defaultProps = {
+  isRefetch: false
+};

@@ -1,12 +1,11 @@
-import Header from 'layout/header';
 import './style.scss';
 
+import Layout from 'layout/layout';
 import { Card } from 'primereact/card';
 import instance from 'config';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { Button } from 'primereact/button';
 import Loading from 'components/Loading';
 
 export default function DashBoardPage() {
@@ -18,10 +17,6 @@ export default function DashBoardPage() {
   const [isRefetch, setIsRefetch] = useState(false);
   const [isRegisterClass, setISRegisterClass] = useState(false);
   const [isHasClass, setIsHasClass] = useState(false);
-  const [scrollTop, setIsScrollTop] = useState(false);
-  const contentRef = useRef(null);
-
-  // const [showCreateClassModal, setShowCreateClassModal] = useState(false);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -53,12 +48,7 @@ export default function DashBoardPage() {
     }
   };
 
-  const handleScrollTop = () => {
-    contentRef.current.scrollTop = 0;
-  };
-
   useEffect(() => {
-    setIsScrollTop(false);
     fetchInvitation();
     fetchData();
     setIsRefetch(false);
@@ -66,63 +56,53 @@ export default function DashBoardPage() {
 
   return (
     <div>
-      <Header isDashBoard setRefetch={setIsRefetch} />
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <div
-          ref={contentRef}
-          style={{
-            maxHeight: '90vh',
-            overflowY: 'auto',
-            borderRadius: '12px',
-            border: '1px solid var(--surface-border)',
-            backgroundColor: 'white',
-          }}
-        >
-          {isHasClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>Lớp học của bạn</div> }
-          <div className="card flex flex-wrap justify-content-center">
+      <Layout isDashBoard setRefetch={setIsRefetch} isRefetch={isRefetch}>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <div>
+            {isHasClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>Lớp học của bạn</div> }
+            <div className="card flex flex-wrap">
 
-            {classes?.map((item) => (item?.role === 'teacher' && (
-              <Card
-                id={item?.id}
-                title={item?.name}
-                subTitle={item.description || '.'}
-                className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
-                onClick={() => {
-                  navigate(`/c/${item?.id}`);
-                }}
-              >
-                <img className="m-0 w-full border-round" src="https://www.gstatic.com/classroom/themes/img_graduation.jpg" alt="" />
-              </Card>
-            )
-            )
-            )}
+              {classes?.map((item) => (item?.role === 'teacher' && (
+                <Card
+                  id={item?.id}
+                  title={item?.name}
+                  subTitle={item.description || '.'}
+                  className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
+                  onClick={() => {
+                    navigate(`/c/${item?.id}`);
+                  }}
+                >
+                  <img className="m-0 w-full border-round" src="https://www.gstatic.com/classroom/themes/img_graduation.jpg" alt="" />
+                </Card>
+              )
+              )
+              )}
+            </div>
+            {isHasClass && isRegisterClass && <hr className="mt-4" />}
+            {isRegisterClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>Lớp học đã đăng ký</div>}
+            <div className="card flex flex-wrap justify-content-center">
+              {classes?.map((item) => (item?.role === 'student' && (
+                <Card
+                  id={item?.id}
+                  title={item?.name}
+                  subTitle={item.description || '.'}
+                  className="md:w-16rem m-wml-4 cursor-pointer ml-4 mt-4"
+                  onClick={() => {
+                    navigate(`/c/${item?.id}`);
+                  }}
+                >
+                  <img className="m-0 w-full border-round" src="https://www.gstatic.com/classroom/themes/img_graduation.jpg" alt="" />
+                </Card>
+              )
+              )
+              )}
+            </div>
+
           </div>
-          {isHasClass && isRegisterClass && <hr className="mt-4" />}
-          {isRegisterClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>Lớp học đã đăng ký</div>}
-          <div className="card flex flex-wrap justify-content-center">
-            {classes?.map((item) => (item?.role === 'student' && (
-              <Card
-                id={item?.id}
-                title={item?.name}
-                subTitle={item.description || '.'}
-                className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
-                onClick={() => {
-                  navigate(`/c/${item?.id}`);
-                }}
-              >
-                <img className="m-0 w-full border-round" src="https://www.gstatic.com/classroom/themes/img_graduation.jpg" alt="" />
-              </Card>
-            )
-            )
-            )}
-          </div>
-
-          <Button className={scrollTop ? 'hidden' : 'button-scroll-top'} icon="pi pi-arrow-up" severity="info" aria-label="User" onClick={handleScrollTop} rounded />
-
-        </div>
-      )}
+        )}
+      </Layout>
     </div>
   );
 }
