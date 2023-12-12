@@ -1,6 +1,6 @@
 import './style.scss';
 
-import Header from 'layout/header';
+import Layout from 'layout/layout';
 import { TabPanel, TabView } from 'primereact/tabview';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
@@ -15,22 +15,10 @@ export default function DetailCoursePage() {
 
   return (
     <div>
-      <Header />
-      <div
-        className="flex justify-content-center"
-        style={{
-          maxHeight: '90vh',
-          overflowY: 'auto',
-          borderRadius: '12px',
-          border: '1px solid var(--surface-border)',
-          backgroundColor: 'white',
-        }}
-      >
-
+      <Layout>
         <TabView
           activeIndex={parseInt(tab, 10)}
           onTabChange={(e) => navigate(`.?tab=${e.index}`)}
-
         >
           <TabPanel header="Bảng tin" leftIcon="pi pi-fw pi-bars">
             <NewsPage />
@@ -43,7 +31,8 @@ export default function DetailCoursePage() {
             <PeoplePage />
           </TabPanel>
         </TabView>
-      </div>
+
+      </Layout>
 
     </div>
 

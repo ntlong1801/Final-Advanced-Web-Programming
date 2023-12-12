@@ -198,6 +198,7 @@ const classController = {
 
   inviteUserByEmail: async (req, res) => {
     const { token } = req.params;
+    const { userId } = req.query;
 
     // console.log("verify sigup email: ", token)
 
@@ -210,25 +211,48 @@ const classController = {
 
         // find id user
         const userDb = await userModel.getUserByEmail(emailUser);
+        if (!userDb) {
+          return res.json({ status: 'fail',
+          code: '403',
+        message: 'You have not register this app'}) }
 
+        if (userId !== userDb.id) { return res.json({
+          status: 'fail',
+          code: '404',
+          message: 'You must sign in with the truth email'
+        })}
+
+        // check user in class
+        const existingUser = await classModel.getUserOfClassById(id_class, userDb.id);
+      if (existingUser.length > 0) { 
+        return res.json({
+          status: 'failed',
+          code: 'existed',
+          message: 'You already in the class',
+        })
+      }
+        
         // save user to database
         try {
           await classModel.addUserToClass(id_class, userDb.id, roleUser);
-          // console.log("success", others, )
           return res.json({
             status: "success",
+            code: '200',
             message: "Active successfully!"
           });
         } catch (error) {
           return res.json({
             status: "failed",
+            code: '400',
             message: "Error active, please try agian!",
+            err
           });
         }
       }
       // token is incorrect
       return res.send({
         status: "failed",
+        code: '400',
         message: "Token is not valid or expired",
       });
     });
@@ -258,8 +282,8 @@ const classController = {
       from: process.env.EMAIL_ADDRESS || "webnangcao.final@gmail.com",
       to: emailReciver,
       subject: "Email Verification - Localhost Website",
-      text: `From ${emailSend} invited you. Click on this link to enter this classroom
-     ${URLClient}/dashboard?token=${token}.
+      text: `From ${emailSend} invited you to class. Click on this link to enter this classroom
+     ${URLClient}/inviteByEmail?token=${token}.
      Thanks`,
     };
 
