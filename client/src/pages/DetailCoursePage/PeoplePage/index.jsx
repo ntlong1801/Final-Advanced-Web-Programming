@@ -1,8 +1,10 @@
 import { Button } from 'primereact/button';
-import instance from 'config';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useMemo } from 'react';
 import { Toast } from 'primereact/toast';
 import { useParams } from 'react-router';
+import { getAllUserOfClass, isTeacherOfClass } from 'apis/class.api';
+import { useQuery } from 'react-query';
+import Loading from 'components/Loading';
 import InviteStudent from '../components/InviteStudent';
 import InviteTeacher from '../components/InviteTeacher';
 
@@ -12,31 +14,29 @@ export default function PeoplePage() {
   const toast = useRef(null);
   const inviteStudent = useRef(null);
   const inviteTeacher = useRef(null);
-  const [students, setStudents] = useState([]);
-  const [teachers, setTeachers] = useState([]);
 
-  const [isTeacher, setIsTeacher] = useState(false);
   //   const showSuccess = (msg) => {
   //     toast.current.show({ severity: 'success', summary: 'Success', detail: msg, life: 3000 });
   //   };
 
-  const showError = (msg) => {
-    toast.current.show({ severity: 'error', summary: 'Fail', detail: msg, life: 3000 });
-  };
-  const fetchData = async () => {
-    try {
-      const rs = await instance.get(`/class/all-user?id=${classId}`);
-      setStudents(rs?.data?.students);
-      setTeachers(rs?.data?.teachers);
-      const checkTeacher = await instance.get(`/class/isTeacher?user_id=${user?.id}&class_id=${classId}`);
-      if (checkTeacher?.data?.status === 'true') { setIsTeacher(true); }
-    } catch (err) {
-      showError('Có lỗi xảy ra');
-    }
-  };
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // const showError = (msg) => {
+  //   toast.current.show({ severity: 'error', summary: 'Fail', detail: msg, life: 3000 });
+  // };
+
+  const { data: _data, isLoading } = useQuery({
+    queryKey: ['peopleOfClass', classId],
+    queryFn: () => getAllUserOfClass(classId)
+  });
+  const students = useMemo(() => _data?.data?.students ?? [], [_data]);
+  const teachers = useMemo(() => _data?.data?.teachers ?? [], [_data]);
+
+  const { data: checkTeacher,
+    isLoading: isCheckLoading } = useQuery({
+    queryKey: [classId],
+    queryFn: () => isTeacherOfClass(user?.id, classId)
+  });
+  const isTeacher = useMemo(() => checkTeacher?.data?.status !== 'false', [checkTeacher]);
+
   const hanldleClickInviteTeacherButton = () => {
     inviteTeacher.current.open({
       email: user?.email,
@@ -49,7 +49,13 @@ export default function PeoplePage() {
       classId
     });
   };
+  if (isCheckLoading || isLoading) {
+    return (
+      <Loading />
+    );
+  }
   return (
+
     <div className="flex flex-column w-full align-items-center">
       <div className="border-round p-2" style={{ width: '75%', minWidth: '20rem' }}>
         <div className="flex align-items-center justify-content-between">

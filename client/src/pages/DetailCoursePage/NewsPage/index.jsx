@@ -1,16 +1,16 @@
 import { useParams } from 'react-router';
-import { useRef, useEffect, useState } from 'react';
-import instance from 'config';
+import { useRef, useState, useMemo } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
+import { isTeacherOfClass, getClassByID } from 'apis/class.api';
+import { useQuery } from 'react-query';
+import Loading from 'components/Loading';
 
 export default function NewsPage() {
   const user = JSON.parse(localStorage.getItem('user_profile'));
   const { classId } = useParams();
   const toast = useRef(null);
   const [confirmCopyDialog, setConfirmCopyDialog] = useState(false);
-  const [infoClass, setInfoClass] = useState([]);
-  const [isTeacher, setIsTeacher] = useState(false);
   //   const showSuccess = (msg) => {
   //     toast.current.show({ severity: 'success', summary: 'Success', detail: msg, life: 3000 });
   //   };
@@ -26,20 +26,25 @@ export default function NewsPage() {
       showError('Không thể copy');
     }
   };
-  const fetchData = async () => {
-    try {
-      const rs = await instance.get(`/class/class?id=${classId}`);
-      setInfoClass(rs?.data);
-      const checkTeacher = await instance.get(`/class/isTeacher?user_id=${user?.id}&class_id=${classId}`);
-      if (checkTeacher?.data?.status === 'true') { setIsTeacher(true); } else { setIsTeacher(false); }
-    } catch (err) {
-      showError('Loi');
-    }
-  };
 
-  useEffect(() => {
-    fetchData();
-  }, [classId]);
+  const { data: _data,
+    isLoading } = useQuery({
+    queryKey: ['class', classId],
+    queryFn: () => getClassByID(classId)
+  });
+  const infoClass = useMemo(() => _data?.data ?? [], [_data]);
+  const { data: checkTeacher,
+    isLoading: isCheckLoading } = useQuery({
+    queryKey: [classId],
+    queryFn: () => isTeacherOfClass(user?.id, classId)
+  });
+  const isTeacher = useMemo(() => checkTeacher?.data?.status !== 'false', [checkTeacher]);
+
+  if (isCheckLoading || isLoading) {
+    return (
+      <Loading />
+    );
+  }
 
   return (
 

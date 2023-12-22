@@ -7,5 +7,11 @@ export const updateProfile = (body = {}) =>
 export const changePassword = (body = {}) =>
   instance.post(USER.CHANGE_PASSWORD, body);
 
+export const forgotPassword = (body = {}) =>
+  instance.post(USER.FORGOT_PASSWORD, body);
+
+export const changePasswordByForgot = ({ token, body }) =>
+  instance.post(USER.RENEW_PASSWORD(token), body);
+
 export const getProfile = (id) =>
   instance.get(USER.GET_INFO(id));

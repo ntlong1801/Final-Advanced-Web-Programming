@@ -1,13 +1,14 @@
 import './style.scss';
 
 import { Link } from 'react-router-dom';
-import instance from 'config';
 import { Toast } from 'primereact/toast';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import Loading from 'components/Loading';
+import { useQuery } from 'react-query';
+import { confirmEmail } from 'apis/auth.api';
 
 export default function WaitingConfirmSignupEmail() {
-  const [isLoading, setIsLoading] = useState(false);
+  const token = window.location.href.split('/sigup-email')[1];
   const toast = useRef(null);
 
   const showSuccess = (msg) => {
@@ -18,23 +19,21 @@ export default function WaitingConfirmSignupEmail() {
     toast.current.show({ severity: 'error', summary: 'Fail', detail: msg, life: 3000 });
   };
 
-  // eslint-disable-next-line no-unused-vars
-  const fetchData = async () => {
-    setIsLoading(true);
-
-    const token = window.location.href.split('/sigup-email')[1];
-    const response = await instance.get(`auth/verify-email${token}`);
-    if (response.data.status === 'failed') {
-      showError(response.data.message);
-    } else {
-      showSuccess(response.data.message);
-    }
-    setIsLoading(false);
-  };
+  const { data: _data, isLoading } = useQuery({
+    queryKey: [token],
+    queryFn: () => confirmEmail(token)
+  });
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (!isLoading) {
+      if (_data?.data?.status === 'failed') {
+        showError(_data?.data?.message);
+      }
+      if (_data?.data?.status === 'success') {
+        showSuccess(_data?.data?.message);
+      }
+    }
+  }, [_data]);
 
   return (
     <div className="flex align-items-center justify-content-center background">

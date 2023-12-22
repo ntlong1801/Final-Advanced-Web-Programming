@@ -21,5 +21,32 @@
         "signInNow": "Đăng nhập tại đây",
         "fullName": "Họ và tên"
     },
-    "password": "Mật khẩu"
+    "password": "Mật khẩu",
+    "sidebar": {
+        "teaching": "Giảng dạy",
+        "enrolled": "Đã đăng ký"
+    },
+    "user": {
+        "fullName": "Họ và tên",
+        "address": "Địa chỉ",
+        "phoneNumber": "Số điện thoại",
+        "changePassword": "Thay đổi mật khẩu",
+        "update": "Cập nhật"
+    },
+    "changePassword": {
+        "name": "Thay đổi mật khẩu",
+        "oldPassword": "Mật khẩu cũ",
+        "newPassword": "Mật khẩu mới",
+        "renewPassword": "Nhập lại mật khẩu mới",
+        "errorSamePassword": "Xác nhận mật khẩu phải giống mật khẩu mới"
+    },
+    "404": {
+        "notFound": "Không tìm thấy",
+        "sourceNotAvailable": "Nguồn không có sẵn",
+        "comeback": "Quay trở lại trang chủ"
+    },
+    "dashBoard": {
+        "teachingClass": "Lớp học giảng dạy",
+        "enrolledClass": "Lớp học đã đăng ký"
+    }
 }

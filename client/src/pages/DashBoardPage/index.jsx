@@ -3,7 +3,7 @@ import './style.scss';
 import Layout from 'layout/layout';
 import { Card } from 'primereact/card';
 import instance from 'config';
-
+import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import Loading from 'components/Loading';
@@ -11,6 +11,7 @@ import Loading from 'components/Loading';
 export default function DashBoardPage() {
   const user = JSON.parse(localStorage.getItem('user_profile'));
 
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [classes, setClasses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -59,7 +60,7 @@ export default function DashBoardPage() {
           <Loading />
         ) : (
           <div>
-            {isHasClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>Lớp học giảng dạy</div> }
+            {isHasClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>{t('dashBoard.teachingClass')}</div> }
             <div className="card flex flex-wrap">
 
               {classes?.map((item) => (item?.role === 'teacher' && (
@@ -78,7 +79,7 @@ export default function DashBoardPage() {
               )}
             </div>
             {isHasClass && isRegisterClass && <hr className="mt-4" />}
-            {isRegisterClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>Lớp học đã đăng ký</div>}
+            {isRegisterClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>{t('dashBoard.enrolledClass')}</div>}
             <div className="card flex flex-wrap">
               {classes?.map((item) => (item?.role === 'student' && (
                 <Card

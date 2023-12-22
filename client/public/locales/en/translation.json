@@ -21,5 +21,32 @@
         "signInNow": "Sign in here",
         "fullName": "Full Name"
     },
-    "password": "Password"
+    "password": "Password",
+    "sidebar": {
+        "teaching": "Teaching",
+        "enrolled": "Enrolled"
+    },
+    "user": {
+        "fullName": "Full name",
+        "address": "Address",
+        "phoneNumber": "Phone number",
+        "changePassword": "Change password",
+        "update": "Update"
+    },
+    "changePassword": {
+        "name": "Change password",
+        "oldPassword": "Old password",
+        "newPassword": "New password",
+        "renewPassword": "Re-new password",
+        "errorSamePassword": "Re-new password must be the same as new password"
+    },
+    "404": {
+        "notFound": "Not found",
+        "sourceNotAvailable": "Source not available",
+        "comeback": "Come back to home"
+    },
+    "dashBoard": {
+        "teachingClass": "Teaching class",
+        "enrolledClass": "Enrolled class"
+    }
 }

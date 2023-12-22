@@ -10,8 +10,10 @@ import { useNavigate } from 'react-router';
 import Loading from 'components/Loading';
 import { useMutation } from 'react-query';
 import { changePassword } from 'apis/user.api';
+import { useTranslation } from 'react-i18next';
 
 export default function UserPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user_profile')));
   const [errorSamePassword, setErrorSamePassword] = useState(false);
@@ -87,7 +89,7 @@ export default function UserPage() {
               autoFocus
               control={control}
               errors={errors}
-              label="Old password"
+              label={t('changePassword.oldPassword')}
               defaultValue=""
             />
             <TextInput
@@ -95,7 +97,7 @@ export default function UserPage() {
               name="newPassword"
               control={control}
               errors={errors}
-              label="New password"
+              label={t('changePassword.newPassword')}
               defaultValue=""
             />
             <TextInput
@@ -103,13 +105,13 @@ export default function UserPage() {
               name="renewPassword"
               control={control}
               errors={errors}
-              label="Re-New password"
+              label={t('changePassword.renewPassword')}
               defaultValue=""
             />
-            {errorSamePassword && <span className="text-red-500">Re-new password must be the same as new password</span>}
+            {errorSamePassword && <span className="text-red-500">{t('changePassword.errorSamePassword')}</span>}
             <div className="text-center mt-4">
               <Button
-                label="Change"
+                label={t('changePassword.name')}
                 type="submit"
               />
             </div>

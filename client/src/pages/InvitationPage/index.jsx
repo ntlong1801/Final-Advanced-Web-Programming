@@ -1,8 +1,10 @@
-import instance from 'config';
 import Header from 'layout/header';
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { Toast } from 'primereact/toast';
+import { useQuery } from 'react-query';
+import { joinClassByLink } from 'apis/class.api';
+import Loading from 'components/Loading';
 
 export default function InvitationPage() {
   const navigate = useNavigate();
@@ -18,24 +20,25 @@ export default function InvitationPage() {
     toast.current.show({ severity: 'error', summary: 'Fail', detail: msg, life: 3000 });
   };
 
-  const sendLink = async () => {
-    const rs = await instance.get(`/class/join?email=${user?.email}&link=${link}`);
-    if (rs?.data?.status === 'failed') {
-      showError(rs?.data?.message);
-      setTimeout(() => navigate('/dashboard'), 3000);
-    }
-    if (rs?.data?.status === 'success') {
-      showSuccess(rs?.data?.message);
-      setTimeout(() => navigate('/dashboard'), 3000);
-    }
-  };
+  const { data: _data, isLoading } = useQuery({
+    queryKey: [link],
+    queryFn: () => joinClassByLink(user?.email, link)
+  });
+
+  if (_data?.data?.status === 'failed') {
+    showError(_data?.data?.message);
+    setTimeout(() => navigate('/dashboard'), 3000);
+  }
+  if (_data?.data?.status === 'success') {
+    showSuccess(_data?.data?.message);
+    setTimeout(() => navigate('/dashboard'), 3000);
+  }
+
   useEffect(() => {
-    if (user) {
-      sendLink();
-    } else {
+    if (!user) {
       navigate('/signin', { state: link });
     }
-  });
+  }, []);
   return (
     <div>
       <Header />
@@ -46,6 +49,7 @@ export default function InvitationPage() {
           Bạn sẽ quay lại trang chủ trong vài giây tới...
         </div>
       </div>
+      {isLoading && <Loading />}
     </div>
   );
 }

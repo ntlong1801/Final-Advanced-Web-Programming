@@ -3,11 +3,12 @@ import { PropTypes } from 'prop-types';
 import { Avatar } from 'primereact/avatar';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from 'react-query';
-
+import { useTranslation } from 'react-i18next';
 import { getAllClassOfUser } from 'apis/class.api';
 
 export default function Sidebar({ isRefetch }) {
   const user = JSON.parse(localStorage.getItem('user_profile'));
+  const { t } = useTranslation();
   const { classId } = useParams();
   const [isTeachingActive, setIsTeachingActive] = useState(true);
   const [isEnrollActive, setIsEnrollActive] = useState(true);
@@ -36,7 +37,7 @@ export default function Sidebar({ isRefetch }) {
         <span className="p-2 cursor-pointer" style={{ fontSize: '1.5rem' }} onClick={() => setIsTeachingActive(!isTeachingActive)}>
           <i className={!isTeachingActive ? 'pi pi-angle-right' : 'pi pi-angle-down'} />
           <i className="pi pi-fw pi-users mr-2" />
-          Giảng dạy
+          {t('sidebar.teaching')}
         </span>
         {isTeachingActive && (
           <ul className="overflow-hidden p-0 m-0" style={{ listStyleType: 'none' }}>
@@ -59,7 +60,7 @@ export default function Sidebar({ isRefetch }) {
         <span className="p-2 cursor-pointer" style={{ fontSize: '1.5rem' }} onClick={() => setIsEnrollActive(!isEnrollActive)}>
           <i className={!isEnrollActive ? 'pi pi-angle-right' : 'pi pi-angle-down'} />
           <i className="pi pi-fw pi-folder mr-2" />
-          Đã đăng ký
+          {t('sidebar.enrolled')}
         </span>
         {isEnrollActive && (
           <ul className="overflow-hidden p-0 m-0" style={{ listStyleType: 'none' }}>
