@@ -5,16 +5,16 @@ import { Button } from 'primereact/button';
 import { useState, useRef, useEffect } from 'react';
 import { checkChangeProfile } from 'pages/validation';
 import { yupResolver } from '@hookform/resolvers/yup';
-import instance from 'config';
 import { Toast } from 'primereact/toast';
 import { useNavigate } from 'react-router';
 import Loading from 'components/Loading';
+import { useMutation } from 'react-query';
+import { changePassword } from 'apis/user.api';
 
 export default function UserPage() {
   const navigate = useNavigate();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user_profile')));
   const [errorSamePassword, setErrorSamePassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const toast = useRef(null);
 
   const {
@@ -33,36 +33,36 @@ export default function UserPage() {
   const showError = (msg) => {
     toast.current.show({ severity: 'error', summary: 'Fail', detail: msg, life: 3000 });
   };
+
+  const { mutate, isLoading } = useMutation(changePassword);
   const onSubmit = async (data) => {
     if (data?.newpassword !== data?.renewpassword) {
       setErrorSamePassword(true);
     } else {
-      setIsLoading(true);
       setErrorSamePassword(false);
-      try {
-        const response = await instance.post('user/changePassword', {
-          email: user?.email,
-          ...data
-        });
-
-        if (response.data?.msg) {
-          showError(response.data?.msg);
-        } else {
-          reset({}, { keepValues: false });
-          showSuccess('Change password successful');
-        }
-      } catch (error) {
-        if (error.response?.data?.message === 'Unauthorized') {
-          navigate('/signin');
-        }
-      }
-      setIsLoading(false);
+      mutate({
+        email: user?.email,
+        ...data
+      }, {
+        onSuccess: (response) => {
+          if (response.data?.msg) {
+            showError(response.data?.msg);
+          } else {
+            reset({}, { keepValues: false });
+            showSuccess('Change password successful');
+          }
+        },
+        onError: (error) => {
+          if (error.response?.data?.message === 'Unauthorized') {
+            navigate('/signin');
+          }
+        } }
+      );
     }
   };
 
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem('user_profile')));
-    setIsLoading(false);
     if (!user) {
       navigate('/signin');
     }

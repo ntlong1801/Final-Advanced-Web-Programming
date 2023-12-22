@@ -31,14 +31,15 @@ export default function NewsPage() {
       const rs = await instance.get(`/class/class?id=${classId}`);
       setInfoClass(rs?.data);
       const checkTeacher = await instance.get(`/class/isTeacher?user_id=${user?.id}&class_id=${classId}`);
-      if (checkTeacher?.data?.status === 'true') { setIsTeacher(true); }
+      if (checkTeacher?.data?.status === 'true') { setIsTeacher(true); } else { setIsTeacher(false); }
     } catch (err) {
       showError('Loi');
     }
   };
+
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [classId]);
 
   return (
 

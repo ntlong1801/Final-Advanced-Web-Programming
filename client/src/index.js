@@ -4,7 +4,10 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 
 import { RouterProvider } from 'react-router-dom';
-
+import {
+  QueryClientProvider,
+} from 'react-query';
+import client from 'utils/react-query';
 import reportWebVitals from './reportWebVitals';
 
 import './i18n';
@@ -13,7 +16,9 @@ import router from './router';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   // <React.StrictMode>
-  <RouterProvider router={router} />
+  <QueryClientProvider client={client}>
+    <RouterProvider router={router} />
+  </QueryClientProvider>
   // {/* </React.StrictMode> */}
 );
 

@@ -39,6 +39,10 @@ export default function DashBoardPage() {
     }
   };
 
+  const header = (
+    <img alt="Card" src="https://www.gstatic.com/classroom/themes/img_graduation.jpg" />
+  );
+
   useEffect(() => {
     if (user) {
       fetchData();
@@ -61,15 +65,14 @@ export default function DashBoardPage() {
               {classes?.map((item) => (item?.role === 'teacher' && (
                 <Card
                   id={item?.id}
+                  header={header}
                   title={item?.name}
                   subTitle={item.description || '.'}
                   className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
                   onClick={() => {
                     navigate(`/c/${item?.id}`);
                   }}
-                >
-                  <img className="m-0 w-full border-round" src="https://www.gstatic.com/classroom/themes/img_graduation.jpg" alt="" />
-                </Card>
+                />
               )
               )
               )}
@@ -80,15 +83,14 @@ export default function DashBoardPage() {
               {classes?.map((item) => (item?.role === 'student' && (
                 <Card
                   id={item?.id}
+                  header={header}
                   title={item?.name}
                   subTitle={item.description || '.'}
                   className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
                   onClick={() => {
                     navigate(`/c/${item?.id}`);
                   }}
-                >
-                  <img className="m-0 w-full border-round" src="https://www.gstatic.com/classroom/themes/img_graduation.jpg" alt="" />
-                </Card>
+                />
               )
               )
               )}
