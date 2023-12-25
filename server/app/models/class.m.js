@@ -5,9 +5,6 @@ require('dotenv').config();
 module.exports = {
     addClass: async (class_info) => {
         const invitation = `${process.env.URL_CLIENT}/invite/${uuidv4()}`;
-        // *****
-        // Create invitation here!
-        // *****
         const rs = await db.one("INSERT INTO classes (id, owner_id, name, description, invitation) VALUES ($1, $2, $3, $4, $5) RETURNING *;", [uuidv4(), class_info.owner_id, class_info.name, class_info.description, invitation]);
         return rs;
     },
