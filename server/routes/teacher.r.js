@@ -21,7 +21,7 @@ const router = require('express').Router();
  *     - tokenAuth: []
  *   responses:
  *     '200':
- *       description: Add class successfully
+ *       description: Get file  successfully
  *       content:
  *         application/json:
  *           schema:
@@ -31,7 +31,7 @@ const router = require('express').Router();
  *                 type: string
  *                 format: binary
  *     '500':
- *       description: Internal server error
+ *       description: Internal server error. Something went wrong on the server.
  */
 router.get("/getTemplateStudentList", middlewareController.verifyToken, teacherController.getTemplateStudentList);
 
@@ -63,14 +63,56 @@ router.get("/getTemplateStudentList", middlewareController.verifyToken, teacherC
  *     - tokenAuth: []
  *   responses:
  *     '200':
- *       description: Add class successfully
+ *       description: Update student list successfully
  *       content:
  *         application/json:
  *           schema:
  *             $ref: '#/components/schemas/ClassWithUser'
  *     '500':
- *       description: Internal server error
+ *       description: Internal server error. Something went wrong on the server.
  */
 router.post("/postStudentList", middlewareController.verifyToken, teacherController.postStudentList);
 
+/**
+ * @swagger
+ * /teacher/getClassGradeBoard?id_class={id_class}:
+ *  get:
+ *   summary: Show Students (pre-upload full student list) x Grades board
+ *   tags: [/teacher]
+ *   parameters:
+ *     - name: id_class
+ *       in: path
+ *       description: Class's ID
+ *       required: true
+ *       type: string
+ *   security:
+ *     - tokenAuth: []
+ *   responses:
+ *     '200':
+ *       description: Successful response. Returns the grade board.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               properties:
+ *                 student_id:
+ *                   type: string
+ *                 id_user:
+ *                   type: string
+ *                 full_name:
+ *                   type: string
+ *                 compositionNameArr:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 gradeArray:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *             
+ *     '500':
+ *       description: Internal server error. Something went wrong on the server.
+ */
+router.get("/getClassGradeBoard", middlewareController.verifyToken, teacherController.getClassGradeBoard);
 module.exports = router;

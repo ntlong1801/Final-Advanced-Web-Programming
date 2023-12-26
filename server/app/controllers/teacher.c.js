@@ -23,10 +23,23 @@ module.exports = {
             var csvData = student_id.map(function (id_student, index) {
                 return { 'student_id': id_student, 'full_name': full_name[index] };
             });
-            console.log('csvData:' + csvData);
             const updateList = await teacherModel.postStudentList(csvData, id_class);
 
             res.json({ updateList: updateList });
+        } catch (error) {
+            res.json({
+                status: "failed",
+                err: err,
+            })
+        }
+    },
+
+    getClassGradeBoard: async (req, res) => {
+        try {
+            const id_class = req.query.id_class;
+            const gradeBoardData = await teacherModel.getClassGradeBoard(id_class);
+
+            res.send(gradeBoardData);
         } catch (error) {
             res.json({
                 status: "failed",
