@@ -106,13 +106,145 @@ router.post("/postStudentList", middlewareController.verifyToken, teacherControl
  *                   type: array
  *                   items:
  *                     type: string
+ *                 gradeScaleArr:
+ *                   type: array
+ *                   items:
+ *                     type: string
  *                 gradeArray:
  *                   type: array
  *                   items:
  *                     type: string
- *             
  *     '500':
  *       description: Internal server error. Something went wrong on the server.
  */
 router.get("/getClassGradeBoard", middlewareController.verifyToken, teacherController.getClassGradeBoard);
+
+/**
+ * @swagger
+ * /teacher/postSingleGradeAssignment:
+ *  post:
+ *   summary: Input grade for a student at a specific assignment
+ *   tags: [/teacher]
+ *   requestBody:
+ *     required: true
+ *     content:
+ *       application/json:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             class_id:
+ *               type: string
+ *             student_id:
+ *               type: string
+ *             composition_id:
+ *               type: string
+ *             grade:
+ *               type: number
+ *               format: float
+ *   security:
+ *     - tokenAuth: []
+ *   responses:
+ *     '200':
+ *       description: Successful response. Return updated assignment grade of student
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               class_id:
+ *                 type: string
+ *               student_id:
+ *                 type: string
+ *               composition_id:
+ *                 type: string
+ *               grade:
+ *                 type: number
+ *                 format: float
+ *     '500':
+ *       description: Internal server error. Something went wrong on the server.
+ */
+router.post("/postSingleGradeAssignment", middlewareController.verifyToken, teacherController.postSingleGradeAssignment);
+
+/**
+ * @swagger
+ * /teacher/getGradingTemplate?id_class={id_class}:
+ *  get:
+ *   summary: Download default csv/Excel (xlsx) template for grades for an assignment (StudentId, Grade)
+ *   tags: [/teacher]
+ *   parameters:
+ *     - name: id_class
+ *       in: path
+ *       description: Class's ID
+ *       required: true
+ *       type: string
+ *   security:
+ *     - tokenAuth: []
+ *   responses:
+ *     '200':
+ *       description: Successful response. Returns the grading template csv file.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               file:
+ *                 type: string
+ *                 format: binary
+ *     '500':
+ *       description: Internal server error. Something went wrong on the server.
+ */
+router.get("/getGradingTemplate", middlewareController.verifyToken, teacherController.getGradingTemplate);
+
+/**
+ * @swagger
+ * /teacher/postAllGradesAssignment:
+ *  post:
+ *   summary: Teacher uploads a csv/xlsx file for grades of all students for a specific assignment
+ *   tags: [/teacher]
+ *   requestBody:
+ *     required: true
+ *     content:
+ *       application/json:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             class_id:
+ *               type: string
+ *             student_id_arr:
+ *               type: array
+ *               items:
+ *                 type: string
+ *             composition_id:
+ *               type: string
+ *             grade_arr:
+ *               type: array
+ *               items:
+ *                 type: number
+ *                 format: float
+ *   security:
+ *     - tokenAuth: []
+ *   responses:
+ *     '200':
+ *       description: Successful response. Return all updated assignment grades of student
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               properties:
+ *                 class_id:
+ *                   type: string
+ *                 student_id:
+ *                   type: string
+ *                 composition_id:
+ *                   type: string
+ *                 grade:
+ *                   type: number
+ *                   format: float
+ *     '500':
+ *       description: Internal server error. Something went wrong on the server.
+ */
+router.post("/postAllGradesAssignment", middlewareController.verifyToken, teacherController.postAllGradesAssignment);
+
+
 module.exports = router;
