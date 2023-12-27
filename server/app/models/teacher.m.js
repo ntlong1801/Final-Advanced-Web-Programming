@@ -135,6 +135,22 @@ module.exports = {
             console.error("Error posting grades of all students for a specific assignment:", error);
             throw error;
         }
+    },
+
+    postFinalizedComposition: async (composition_id)  => {
+        try {
+            const finalizedComposition = await db.one(`
+            UPDATE classes_composition
+            SET public_grade = true
+            WHERE id = $1
+            RETURNING *;
+            `, [composition_id]);
+
+            return finalizedComposition;
+        } catch (error) {
+            console.error("Error mark a grade composition as finalized:", error);
+            throw error;
+        }
     }
 
 }

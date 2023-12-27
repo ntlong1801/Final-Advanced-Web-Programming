@@ -246,5 +246,37 @@ router.get("/getGradingTemplate", middlewareController.verifyToken, teacherContr
  */
 router.post("/postAllGradesAssignment", middlewareController.verifyToken, teacherController.postAllGradesAssignment);
 
+/**
+ * @swagger
+ * /teacher/postFinalizedComposition:
+ *  post:
+ *   summary: Mark a grade composition as finalized
+ *   tags: [/teacher]
+ *   requestBody:
+ *     required: true
+ *     content:
+ *       application/json:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             composition_id:
+ *               type: string
+ *   security:
+ *     - tokenAuth: []
+ *   responses:
+ *     '200':
+ *       description: Successful response.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 description: successful message
+ *     '500':
+ *       description: Internal server error. Something went wrong on the server.
+ */
+router.post("/postFinalizedComposition", middlewareController.verifyToken, teacherController.postFinalizedComposition);
 
 module.exports = router;

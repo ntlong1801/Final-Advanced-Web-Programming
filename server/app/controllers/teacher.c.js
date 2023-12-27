@@ -99,5 +99,21 @@ module.exports = {
                 err: err,
             });
         }
+    },
+
+    postFinalizedComposition: async (req, res) => {
+        try {
+            const composition_id = req.body.composition_id;
+            const finalizedComposition = await teacherModel.postFinalizedComposition(composition_id);
+
+            res.status(200).json({
+                status: "succeed"
+            });
+        } catch (err) {
+            res.json({
+                status: "failed",
+                err: err,
+            });
+        }
     }
 }
