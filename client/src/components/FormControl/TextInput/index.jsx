@@ -1,17 +1,11 @@
 import './style.scss';
 
 import { useRef, useState } from 'react';
-
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { Controller, get } from 'react-hook-form';
-
 import { InputText } from 'primereact/inputtext';
 import { classNames } from 'primereact/utils';
-
-// eslint-disable-next-line import/no-extraneous-dependencies
 import PropTypes from 'prop-types';
 import { OverlayPanel } from 'primereact/overlaypanel';
-
 import { NON_PRINTABLE_REGEX } from 'components/constant';
 
 export default function TextInput({

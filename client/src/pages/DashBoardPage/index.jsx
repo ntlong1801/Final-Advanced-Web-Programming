@@ -7,6 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import Loading from 'components/Loading';
+import DownloadExcelFile from 'components/DownloadExcelFile';
 
 export default function DashBoardPage() {
   const user = JSON.parse(localStorage.getItem('user_profile'));
@@ -96,6 +97,7 @@ export default function DashBoardPage() {
               )
               )}
             </div>
+            <DownloadExcelFile />
 
           </div>
         )}

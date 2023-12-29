@@ -32,9 +32,9 @@ export default function Sidebar({ isRefetch }) {
   });
 
   return (
-    <div className="w-full overflow-y-scroll pt-3" style={{ height: '90vh' }}>
+    <div className="w-full overflow-y-scroll" style={{ height: '90vh' }}>
       <div style={{ width: '14rem' }}>
-        <span className="p-2 cursor-pointer" style={{ fontSize: '1.5rem' }} onClick={() => setIsTeachingActive(!isTeachingActive)}>
+        <span className="p-2 cursor-pointer block hover:surface-200" style={{ fontSize: '1.5rem' }} onClick={() => setIsTeachingActive(!isTeachingActive)}>
           <i className={!isTeachingActive ? 'pi pi-angle-right' : 'pi pi-angle-down'} />
           <i className="pi pi-fw pi-users mr-2" />
           {t('sidebar.teaching')}
@@ -57,7 +57,7 @@ export default function Sidebar({ isRefetch }) {
         ) }
       </div>
       <div style={{ width: '14rem' }}>
-        <span className="p-2 cursor-pointer" style={{ fontSize: '1.5rem' }} onClick={() => setIsEnrollActive(!isEnrollActive)}>
+        <span className="p-2 cursor-pointer block hover:surface-200" style={{ fontSize: '1.5rem' }} onClick={() => setIsEnrollActive(!isEnrollActive)}>
           <i className={!isEnrollActive ? 'pi pi-angle-right' : 'pi pi-angle-down'} />
           <i className="pi pi-fw pi-folder mr-2" />
           {t('sidebar.enrolled')}
