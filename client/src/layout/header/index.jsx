@@ -4,12 +4,13 @@ import { Button } from 'primereact/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { OverlayPanel } from 'primereact/overlaypanel';
 import { useRef } from 'react';
-import instance from 'config';
 import { useTranslation } from 'react-i18next';
 import LanguageSelect from 'components/LanguageSelect';
 import CreateClass from 'pages/DashBoardPage/components/CreateClass';
 import JoinClass from 'pages/DashBoardPage/components/JoinClass';
 import { PropTypes } from 'prop-types';
+import { logout } from 'apis/auth.api';
+import { useMutation } from 'react-query';
 
 export default function Header({
   isDashBoard,
@@ -48,18 +49,23 @@ export default function Header({
     });
   };
 
+  const { mutate } = useMutation(logout);
+
   const handleLogout = async () => {
-    await instance.post('/auth/logout');
-    localStorage.removeItem('access_token');
-    localStorage.removeItem('user_profile');
-    navigate('/signin');
+    mutate({}, {
+      onSuccess: () => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('user_profile');
+        navigate('/signin');
+      }
+    });
   };
   const handleGoHome = () => {
     if (!user) return '/';
     return '/dashboard';
   };
   return (
-    <div className="flex justify-content-between p-2 bg-header sticky top-0" style={{ height: '10vh' }}>
+    <div className="flex justify-content-between p-2 bg-header sticky top-0 left-0" style={{ height: '10vh' }}>
       <div className="flex align-items-center p-2 ml-2">
         <Link to={handleGoHome()}>
           <i className="pi pi-home text-white" style={{ fontSize: '2rem' }}>{t('home')}</i>

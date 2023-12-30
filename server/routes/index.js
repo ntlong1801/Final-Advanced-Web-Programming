@@ -1,6 +1,7 @@
 const authRouter = require("./auth.r");
 const userRouter = require("./user.r");
 const classRouter = require('./class.r');
+const teacherRouter = require('./teacher.r');
 
 function router(app) {
   /**
@@ -72,6 +73,7 @@ function router(app) {
   app.use("/auth", authRouter);
   app.use("/user", userRouter);
   app.use("/class", classRouter);
+  app.use("/teacher", teacherRouter);
 }
 
 module.exports = router;

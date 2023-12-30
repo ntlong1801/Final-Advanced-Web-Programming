@@ -1,45 +1,93 @@
-import React from 'react';
-import { PanelMenu } from 'primereact/panelmenu';
+import React, { useState, useMemo } from 'react';
+import { PropTypes } from 'prop-types';
+import { Avatar } from 'primereact/avatar';
+import { Link, useParams } from 'react-router-dom';
+import { useQuery } from 'react-query';
+import { useTranslation } from 'react-i18next';
+import { getAllClassOfUser } from 'apis/class.api';
 
-export default function Sidebar() {
-  const subItem = [{
-    label: 'Left',
-    icon: 'pi pi-fw pi-align-left'
-  },
-  {
-    label: 'Right',
-    icon: 'pi pi-fw pi-align-right'
-  },
-  {
-    label: 'Center',
-    icon: 'pi pi-fw pi-align-center'
-  },
-  {
-    label: 'Justify',
-    icon: 'pi pi-fw pi-align-justify'
-  }];
-  const items = [
-    {
-      label: 'Giảng dạy',
-      icon: 'pi pi-fw pi-users',
-      items: [
-        {
-          label: 'Export',
-          icon: 'pi pi-fw pi-external-link',
-          url: '/me'
-        }
-      ]
-    },
-    {
-      label: 'Đã đăng ký',
-      icon: 'pi pi-fw pi-folder',
-      items: [
-        ...subItem
-      ]
-    },
-  ];
+export default function Sidebar({ isRefetch }) {
+  const user = JSON.parse(localStorage.getItem('user_profile'));
+  const { t } = useTranslation();
+  const { classId } = useParams();
+  const [isTeachingActive, setIsTeachingActive] = useState(true);
+  const [isEnrollActive, setIsEnrollActive] = useState(true);
+
+  const { data: _data } = useQuery({
+    queryKey: ['classes', isRefetch],
+    queryFn: () => getAllClassOfUser(user?.id)
+  });
+
+  const classes = useMemo(() => _data?.data ?? [], [_data]);
+
+  const teachingList = [];
+  const enrollList = [];
+  classes.forEach((item) => {
+    if (item.role === 'teacher') {
+      teachingList.push(item);
+    }
+    if (item.role === 'student') {
+      enrollList.push(item);
+    }
+  });
 
   return (
-    <PanelMenu model={items} className="w-full md:w-16rem fixed top-10 left-0" />
+    <div className="w-full overflow-y-scroll" style={{ height: '90vh' }}>
+      <div style={{ width: '14rem' }}>
+        <span className="p-2 cursor-pointer block hover:surface-200" style={{ fontSize: '1.5rem' }} onClick={() => setIsTeachingActive(!isTeachingActive)}>
+          <i className={!isTeachingActive ? 'pi pi-angle-right' : 'pi pi-angle-down'} />
+          <i className="pi pi-fw pi-users mr-2" />
+          {t('sidebar.teaching')}
+        </span>
+        {isTeachingActive && (
+          <ul className="overflow-hidden p-0 m-0" style={{ listStyleType: 'none' }}>
+            {teachingList?.map((teaching) => (
+              <Link to={`/c/${teaching.id}`}>
+                <li
+                  key={teaching.id}
+                  className={classId === teaching.id ? 'overflow-hidden text-overflow-ellipsis white-space-nowrap cursor-pointer py-2 px-3 surface-200' :
+                    'overflow-hidden text-overflow-ellipsis white-space-nowrap cursor-pointer py-2 px-3 hover:surface-200'}
+                >
+                  <Avatar className="mr-2" label={teaching.name[0]} size="medium" style={{ backgroundColor: '#2196F3', color: '#ffffff' }} shape="circle" />
+                  {teaching.name}
+                </li>
+              </Link>
+            ))}
+          </ul>
+        ) }
+      </div>
+      <div style={{ width: '14rem' }}>
+        <span className="p-2 cursor-pointer block hover:surface-200" style={{ fontSize: '1.5rem' }} onClick={() => setIsEnrollActive(!isEnrollActive)}>
+          <i className={!isEnrollActive ? 'pi pi-angle-right' : 'pi pi-angle-down'} />
+          <i className="pi pi-fw pi-folder mr-2" />
+          {t('sidebar.enrolled')}
+        </span>
+        {isEnrollActive && (
+          <ul className="overflow-hidden p-0 m-0" style={{ listStyleType: 'none' }}>
+            {enrollList?.map((enroll) => (
+              <Link to={`/c/${enroll.id}`}>
+                <li
+                  key={enroll.id}
+                  className={classId === enroll.id ? 'overflow-hidden text-overflow-ellipsis white-space-nowrap cursor-pointer py-2 px-3 surface-200' :
+                    'overflow-hidden text-overflow-ellipsis white-space-nowrap cursor-pointer py-2 px-3 hover:surface-200'}
+                >
+                  <Avatar className="mr-2" label={enroll.name[0]} size="medium" style={{ backgroundColor: '#2196F3', color: '#ffffff' }} shape="circle" />
+                  {enroll.name}
+                </li>
+              </Link>
+            ))}
+          </ul>
+        ) }
+      </div>
+    </div>
+
   );
 }
+
+Sidebar.propTypes = {
+  isRefetch: PropTypes.bool
+};
+
+Sidebar.defaultProps = {
+  isRefetch: false
+};

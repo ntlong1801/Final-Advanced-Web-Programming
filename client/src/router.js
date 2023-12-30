@@ -12,6 +12,10 @@ import WaitingConfirmSignupEmail from 'pages/WaitingConfirmSignupEmail';
 import GoogleAuthCallback from 'pages/GoogleAuthCallBack';
 import FacebookAuthCallBack from 'pages/FacebookAuthCallBack';
 import DetailCoursePage from 'pages/DetailCoursePage';
+import InvitationPage from 'pages/InvitationPage';
+import InvitationEmailPage from 'pages/InvitationEmailPage';
+import ManageUserPage from 'pages/ManageUserPage';
+import ManageClassesPage from 'pages/ManageClassesPage';
 import C404 from 'pages/404Page';
 
 export default createBrowserRouter([
@@ -71,6 +75,32 @@ export default createBrowserRouter([
         element: <DetailCoursePage />,
       },
     ]
+  },
+  {
+    path: '/invite',
+    children: [
+      {
+        path: ':code',
+        element: <InvitationPage />
+      }
+    ]
+  },
+  {
+    path: '/inviteByEmail',
+    element: <InvitationEmailPage />
+  },
+  {
+    path: '/admin',
+    children: [
+      {
+        path: 'manageUser',
+        element: <ManageUserPage />
+      },
+      {
+        path: 'manageClasses',
+        element: <ManageClassesPage />
+      }
+    ],
   },
   {
     path: '*',

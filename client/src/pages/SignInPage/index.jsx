@@ -1,20 +1,21 @@
 import './style.scss';
 
 import TextInput from 'components/FormControl/TextInput';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { useForm } from 'react-hook-form';
 import { Button } from 'primereact/button';
-import { Link, useNavigate } from 'react-router-dom';
-import instance from 'config';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Loading from 'components/Loading';
 import LanguageSelect from 'components/LanguageSelect';
 import { useTranslation } from 'react-i18next';
+import { login } from 'apis/auth.api';
+import { useMutation } from 'react-query';
 
 export default function SignInPage() {
+  const location = useLocation();
+  const link = location.state;
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const {
     handleSubmit,
@@ -24,22 +25,27 @@ export default function SignInPage() {
     }
   } = useForm({ mode: 'onChange' });
 
+  const { mutate, isLoading } = useMutation(login);
+
   const onSubmit = async (data) => {
-    setIsLoading(true);
-    const response = await instance.post('auth/login', data);
-    setIsLoading(false);
-    if (response.data.status === 'failed') {
-      setErrorMessage(response.data.message);
-    } else {
-      localStorage.setItem('access_token', response.data.accessToken);
-      localStorage.setItem('user_profile', JSON.stringify(response.data.user));
-      navigate('/dashboard');
-    }
+    mutate(data, {
+      onSuccess: (response) => {
+        if (response.data.status === 'failed') {
+          setErrorMessage(response.data.message);
+        } else {
+          localStorage.setItem('access_token', response.data.accessToken);
+          localStorage.setItem('user_profile', JSON.stringify(response.data.user));
+          if (link) {
+            window.location.href = link;
+          } else navigate('/dashboard');
+        }
+      }
+    });
   };
 
   return (
     <>
-      <div className="p-4 fixed right-0">
+      <div className="p-4 fixed right-0 z-3">
         <LanguageSelect />
       </div>
       <div className="flex align-items-center justify-content-center background">

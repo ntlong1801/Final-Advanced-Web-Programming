@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const classM = require("../models/class.m");
 
 // const URLSever = process.env.URLSEVER;
 const URLClient = process.env.URL_CLIENT;
@@ -160,6 +161,15 @@ const classController = {
           message: "Your email is invalid.",
         });
       }
+
+      // check user in class
+      const existingUser = await classModel.getUserOfClassById(classInfo[0].id, userDb?.id);
+      if (existingUser.length > 0) { 
+        return res.json({
+          status: 'failed',
+          message: 'You already in the class',
+        })
+      }
       // join user to class
       await classModel.addUserToClass(classInfo[0].id, userDb.id, role);
       return res.json({
@@ -174,8 +184,22 @@ const classController = {
     }
   },
 
+  checkTeacherOfClassById: async (req, res) => {
+    const { user_id, class_id } = req.query;
+    const rs = await classModel.checkTeacherOfClassById(class_id, user_id);
+    if (rs.length > 0) {
+      return res.json({
+        status: "true"
+      })
+    }
+    return res.json({
+      status: "false"
+     })
+  },
+
   inviteUserByEmail: async (req, res) => {
     const { token } = req.params;
+    const { userId } = req.query;
 
     // console.log("verify sigup email: ", token)
 
@@ -188,25 +212,48 @@ const classController = {
 
         // find id user
         const userDb = await userModel.getUserByEmail(emailUser);
+        if (!userDb) {
+          return res.json({ status: 'fail',
+          code: '403',
+        message: 'You have not register this app'}) }
 
+        if (userId !== userDb.id) { return res.json({
+          status: 'fail',
+          code: '404',
+          message: 'You must sign in with the truth email'
+        })}
+
+        // check user in class
+        const existingUser = await classModel.getUserOfClassById(id_class, userDb.id);
+      if (existingUser.length > 0) { 
+        return res.json({
+          status: 'failed',
+          code: 'existed',
+          message: 'You already in the class',
+        })
+      }
+        
         // save user to database
         try {
           await classModel.addUserToClass(id_class, userDb.id, roleUser);
-          // console.log("success", others, )
           return res.json({
             status: "success",
+            code: '200',
             message: "Active successfully!"
           });
         } catch (error) {
           return res.json({
             status: "failed",
+            code: '400',
             message: "Error active, please try agian!",
+            err
           });
         }
       }
       // token is incorrect
       return res.send({
         status: "failed",
+        code: '400',
         message: "Token is not valid or expired",
       });
     });
@@ -236,8 +283,8 @@ const classController = {
       from: process.env.EMAIL_ADDRESS || "webnangcao.final@gmail.com",
       to: emailReciver,
       subject: "Email Verification - Localhost Website",
-      text: `From ${emailSend} invited you. Click on this link to enter this classroom
-     ${URLClient}/dashboard?token=${token}.
+      text: `From ${emailSend} invited you to class. Click on this link to enter this classroom
+     ${URLClient}/inviteByEmail?token=${token}.
      Thanks`,
     };
 
@@ -267,7 +314,6 @@ const classController = {
       message: "Check verify code in your email.",
     });
   },
-
 };
 
 module.exports = classController;

@@ -5,16 +5,18 @@ import { Button } from 'primereact/button';
 import { useState, useRef, useEffect } from 'react';
 import { checkChangeProfile } from 'pages/validation';
 import { yupResolver } from '@hookform/resolvers/yup';
-import instance from 'config';
 import { Link } from 'react-router-dom';
 import { Toast } from 'primereact/toast';
 import { useNavigate } from 'react-router';
 import Loading from 'components/Loading';
+import { useTranslation } from 'react-i18next';
+import { useMutation } from 'react-query';
+import { updateProfile } from 'apis/user.api';
 
 export default function UserPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('user_profile')));
-  const [isLoading, setIsLoading] = useState(false);
   const toast = useRef(null);
 
   const {
@@ -29,22 +31,24 @@ export default function UserPage() {
     toast.current.show({ severity: 'success', summary: 'Success', detail: msg, life: 3000 });
   };
 
+  const { mutate, isLoading } = useMutation(updateProfile);
+
   const onSubmit = async (data) => {
-    setIsLoading(true);
-    try {
-      const response = await instance.post('user/updateProfile', {
-        id: user?.id,
-        ...data
-      });
-      localStorage.setItem('user_profile', JSON.stringify(response.data));
-      setUser(response.data);
-      showSuccess('Change Profile Success');
-    } catch (error) {
-      if (error.response?.data?.message === 'Unauthorized') {
-        navigate('/signin');
+    mutate({
+      id: user?.id,
+      ...data
+    }, {
+      onSuccess: (response) => {
+        localStorage.setItem('user_profile', JSON.stringify(response.data));
+        setUser(response.data);
+        showSuccess('Change Profile Success');
+      },
+      onError: (error) => {
+        if (error.response?.data?.message === 'Unauthorized') {
+          navigate('/signin');
+        }
       }
-    }
-    setIsLoading(false);
+    });
   };
 
   useEffect(() => {
@@ -72,7 +76,7 @@ export default function UserPage() {
               autoFocus
               control={control}
               errors={errors}
-              label="Full name"
+              label={t('user.fullName')}
               defaultValue={user?.full_name}
             />
             <TextInput
@@ -80,7 +84,7 @@ export default function UserPage() {
               name="address"
               control={control}
               errors={errors}
-              label="Address"
+              label={t('user.address')}
               defaultValue={user?.address}
               errorMessage={errors?.email?.message || ''}
             />
@@ -89,19 +93,19 @@ export default function UserPage() {
               name="phoneNumber"
               control={control}
               errors={errors}
-              label="Phone number"
+              label={t('user.phoneNumber')}
               defaultValue={user?.phone_number}
               errorMessage={errors?.email?.message || ''}
             />
             <div className="flex justify-content-end">
               <Link to="/changepassword">
-                Change password
+                {t('user.changePassword')}
               </Link>
             </div>
 
             <div className="text-center mt-4">
               <Button
-                label="Change"
+                label={t('user.update')}
                 type="submit"
               />
             </div>

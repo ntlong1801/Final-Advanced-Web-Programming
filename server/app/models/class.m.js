@@ -1,12 +1,10 @@
 const db = require("../../config/connect_db");
-const {v4 : uuidv4} = require('uuid');
+const {v4 : uuidv4 } = require('uuid');
+require('dotenv').config();
 
 module.exports = {
     addClass: async (class_info) => {
-        const invitation = "";
-        // *****
-        // Create invitation here!
-        // *****
+        const invitation = `${process.env.URL_CLIENT}/invite/${uuidv4()}`;
         const rs = await db.one("INSERT INTO classes (id, owner_id, name, description, invitation) VALUES ($1, $2, $3, $4, $5) RETURNING *;", [uuidv4(), class_info.owner_id, class_info.name, class_info.description, invitation]);
         return rs;
     },
@@ -32,7 +30,7 @@ module.exports = {
     },
     
     getClassesByUserId: async(id_user) => {
-        const rs = await db.any("SELECT c.* FROM classes c JOIN class_user cu ON c.id = cu.id_class WHERE cu.id_user = $1;", [id_user]);
+        const rs = await db.any("SELECT * FROM classes c JOIN class_user cu ON c.id = cu.id_class WHERE cu.id_user = $1;", [id_user]);
         return rs;
     },
 
@@ -50,4 +48,14 @@ module.exports = {
         const rs = await db.any("SELECT * FROM class_user WHERE id_class = $2 AND id_user = $1;", [teacherId, classId]);
         return rs;
     },
+
+    getUserOfClassById: async (class_id, user_id) => {
+        const rs = await db.any("SELECT * FROM class_user WHERE id_class = $1 AND id_user = $2;", [class_id, user_id]);
+        return rs;
+    },
+
+    checkTeacherOfClassById: async (class_id, user_id) => { 
+        const rs = await db.any("SELECT * FROM class_user WHERE id_class = $1 AND id_user = $2 AND role = $3;", [class_id, user_id, 'teacher']);
+        return rs;
+    }
 }
