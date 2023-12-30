@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const classM = require("../models/class.m");
 
 // const URLSever = process.env.URLSEVER;
 const URLClient = process.env.URL_CLIENT;
@@ -313,7 +314,6 @@ const classController = {
       message: "Check verify code in your email.",
     });
   },
-
 };
 
 module.exports = classController;

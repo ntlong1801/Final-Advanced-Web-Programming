@@ -1,6 +1,9 @@
 import instance from 'config';
 import { USER } from './_constant';
 
+export const getAllUsers = () =>
+  instance.get(USER.GET_ALL_USER);
+
 export const updateProfile = (body = {}) =>
   instance.post(USER.UPDATE_INFO, body);
 

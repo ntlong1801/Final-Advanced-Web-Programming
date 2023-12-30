@@ -27,6 +27,7 @@ export const CLASS = {
 };
 
 export const USER = {
+  GET_ALL_USER: 'user/allUsers',
   GET_INFO: (id) => `user/profile?id=${id}`,
   UPDATE_INFO: 'user/updatePRofile',
   CHANGE_PASSWORD: 'user/changePassword',

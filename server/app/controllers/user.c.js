@@ -3,6 +3,7 @@ const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
+const userM = require("../models/user.m");
 
 const URLClient = process.env.URL_CLIENT;
 
@@ -257,6 +258,15 @@ const userController = {
         message: "Token is invalid or expired",
       });
     });
+  },
+
+  // [GET] /user/allUsers
+  getAllUsers: async (req, res) => {
+    const rs = await userM.getUsers();
+    return res.json({
+      users: rs,
+      status: "success",
+    })
   }
 };
 
