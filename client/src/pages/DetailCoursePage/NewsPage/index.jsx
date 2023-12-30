@@ -2,6 +2,8 @@ import { useParams } from 'react-router';
 import { useRef, useEffect, useState } from 'react';
 import instance from 'config';
 
+import GradeStucture from '../GradeStructure';
+
 export default function NewsPage() {
   const { classId } = useParams();
   const toast = useRef(null);
@@ -41,7 +43,9 @@ export default function NewsPage() {
             <i className="pi pi-fw pi-user mr-2" />
             Thông báo nội dung nào đó cho lớp học của bạn
           </div>
-
+        </div>
+        <div className="col-9 mt-4">
+          <GradeStucture />
         </div>
       </div>
     </div>
