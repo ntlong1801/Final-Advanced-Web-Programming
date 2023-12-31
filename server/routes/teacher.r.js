@@ -279,4 +279,9 @@ router.post("/postAllGradesAssignment", middlewareController.verifyToken, teache
  */
 router.post("/postFinalizedComposition", middlewareController.verifyToken, teacherController.postFinalizedComposition);
 
-module.exports = router;
+router.get("/gradeStructure", teacherController.getGradeDataOfClass);
+
+router.post("/editGradeStructure", middlewareController.isTeacherOfClass, teacherController.handleGradeStructure);
+// router.post("/editGradeStructure",  teacherController.handleGradeStructure);
+
+module.exports = router; 

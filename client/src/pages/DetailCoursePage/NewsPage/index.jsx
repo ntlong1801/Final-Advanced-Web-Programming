@@ -6,6 +6,8 @@ import { isTeacherOfClass, getClassByID } from 'apis/class.api';
 import { useQuery } from 'react-query';
 import Loading from 'components/Loading';
 
+import GradeStucture from '../GradeStructure';
+
 export default function NewsPage() {
   const user = JSON.parse(localStorage.getItem('user_profile'));
   const { classId } = useParams();
@@ -71,7 +73,9 @@ export default function NewsPage() {
             <i className="pi pi-fw pi-user mr-2" />
             Thông báo nội dung nào đó cho lớp học của bạn
           </div>
-
+        </div>
+        <div className="col-9 mt-4">
+          <GradeStucture />
         </div>
       </div>
       <Dialog header="Copy" visible={confirmCopyDialog} style={{ width: '30vw' }} onHide={() => setConfirmCopyDialog(false)}>
