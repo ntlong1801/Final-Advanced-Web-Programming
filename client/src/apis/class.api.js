@@ -13,6 +13,9 @@ export const addUserToClass = (body = {}) =>
 export const inviteByEmail = (body = {}) =>
   instance.post(CLASS.INVITE_BY_EMAIL, body);
 
+export const editGradeStructure = (body = {}) =>
+  instance.post(CLASS.EDIT_GRADE_STRUCTURE, body);
+
 export const getAllClass = () =>
   instance.get(CLASS.GET_ALL_CLASS);
 
@@ -37,3 +40,6 @@ export const joinClassByLink = (email, link) =>
 
 export const joinClassByEmail = (tokenFromMail, userId) =>
   instance.get(CLASS.JOIN_CLASS_BY_EMAIL(tokenFromMail), { params: { userId } });
+
+export const getGradeStructure = (class_id) =>
+  instance.get(CLASS.GET_GRADE_STRUCTURE(class_id));

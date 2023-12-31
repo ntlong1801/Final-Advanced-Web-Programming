@@ -37,6 +37,7 @@ const middlewareController = {
       }
       
     } catch (error) {
+      console.log(error)
       return res.status(403).json("Invite error.");
     }
 

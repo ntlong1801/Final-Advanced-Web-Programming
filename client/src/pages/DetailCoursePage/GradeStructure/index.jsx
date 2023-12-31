@@ -1,22 +1,32 @@
-// GradeStructure.jsx
+import { useMutation } from 'react-query';
+import { getGradeStructure, editGradeStructure } from 'apis/class.api';
 
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router';
 import './style.scss';
 
+const user = JSON.parse(localStorage.getItem('user_profile'));
+
 function GradeStructure() {
+  const { classId } = useParams();
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isTeacherToEdit, setIsTeacherToEdit] = useState(false);
-  const [listGrade, setListGrade] = useState([
-    { name: 'Diem danh', grade: '10' },
-    { name: 'Thi giữa kì', grade: '40' },
-    { name: 'Thi cuối kì', grade: '50' },
-  ]);
+  const [listGrade, setListGrade] = useState([]);
+
+  const { mutate } = useMutation(getGradeStructure);
+  const { mutate: mutateHandleSave } = useMutation(editGradeStructure);
 
   useEffect(() => {
     setIsTeacherToEdit(true);
   });
 
   const showForm = () => {
+    mutate(classId, {
+      onSuccess: (response) => {
+        const data = response.data.result;
+        setListGrade(data);
+      },
+    });
     setIsFormVisible(true);
   };
 
@@ -25,13 +35,10 @@ function GradeStructure() {
   };
 
   const handleDeleteGrade = (indexToDelete) => {
-    // Tạo một bản sao của mảng
     const newList = [...listGrade];
 
-    // Xóa phần tử tại indexToDelete
     newList.splice(indexToDelete, 1);
 
-    // Cập nhật state
     setListGrade(newList);
   };
 
@@ -44,10 +51,18 @@ function GradeStructure() {
   };
 
   const handleAddNewGrade = () => {
-    setListGrade((prevList) => [
-      ...prevList,
-      { name: '', grade: '' }, // Thêm một đối tượng mới với giá trị mặc định
-    ]);
+    setListGrade((prevList) => [...prevList, { name: '', grade_scale: '', class_id: classId }]);
+  };
+
+  const handleSave = () => {
+    const dataSender = {
+      emailSend: user.email,
+      classId,
+      listGrade
+    };
+
+    mutateHandleSave(dataSender);
+    setIsFormVisible(false);
   };
   return (
     <div className="grade-structure">
@@ -77,8 +92,8 @@ function GradeStructure() {
                     id="percentage"
                     name="percentage"
                     maxLength="5"
-                    value={grade.grade}
-                    onChange={(e) => handleChangeValue(index, 'grade', e.target.value)}
+                    value={grade.grade_scale}
+                    onChange={(e) => handleChangeValue(index, 'grade_scale', e.target.value)}
                   />
                   {isTeacherToEdit && (
                     <button
@@ -103,7 +118,7 @@ function GradeStructure() {
                 Close
               </button>
               {isTeacherToEdit && (
-                <button type="button" className="submit-button">
+                <button type="button" className="submit-button" onClick={handleSave}>
                   Save
                 </button>
               )}

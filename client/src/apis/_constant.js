@@ -23,7 +23,10 @@ export const CLASS = {
   GET_ALL_CLASS_OF_USER: (id) => `class/classesByUserId?id=${id}`,
   IS_TEACHER: 'class/isTeacher',
   JOIN_CLASS_BY_LINK: 'class/join',
-  JOIN_CLASS_BY_EMAIL: (tokenFromMail) => `class/join/${tokenFromMail}`
+  JOIN_CLASS_BY_EMAIL: (tokenFromMail) => `class/join/${tokenFromMail}`,
+
+  GET_GRADE_STRUCTURE: (classId) => `teacher/gradeStructure?class_id=${classId}`,
+  EDIT_GRADE_STRUCTURE: 'teacher/editGradeStructure'
 };
 
 export const USER = {

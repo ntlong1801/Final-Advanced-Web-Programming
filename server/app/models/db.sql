@@ -88,4 +88,3 @@ CREATE TABLE teacher_notifications (
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT teacher_notifications_pkey PRIMARY KEY (notification_id)
 );
-
