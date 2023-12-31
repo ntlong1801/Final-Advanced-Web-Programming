@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import Loading from 'components/Loading';
-import DownloadExcelFile from 'components/DownloadExcelFile';
+import { ScrollTop } from 'primereact/scrolltop';
 
 export default function DashBoardPage() {
   const user = JSON.parse(localStorage.getItem('user_profile'));
@@ -79,7 +79,7 @@ export default function DashBoardPage() {
               )
               )}
             </div>
-            {isHasClass && isRegisterClass && <hr className="mt-4" />}
+            {isHasClass && isRegisterClass && <hr className="mt-4 ml-2" />}
             {isRegisterClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>{t('dashBoard.enrolledClass')}</div>}
             <div className="card flex flex-wrap">
               {classes?.map((item) => (item?.role === 'student' && (
@@ -97,7 +97,7 @@ export default function DashBoardPage() {
               )
               )}
             </div>
-            <DownloadExcelFile />
+            <ScrollTop />
 
           </div>
         )}

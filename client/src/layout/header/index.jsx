@@ -65,69 +65,112 @@ export default function Header({
     return '/dashboard';
   };
   return (
-    <div className="flex justify-content-between p-2 bg-header sticky top-0 left-0" style={{ height: '10vh' }}>
-      <div className="flex align-items-center p-2 ml-2">
-        <Link to={handleGoHome()}>
-          <i className="pi pi-home text-white" style={{ fontSize: '2rem' }}>{t('home')}</i>
-        </Link>
-      </div>
-      <div className="flex gap-2 align-items-center">
-        {!user ? (
-          <>
-            <Link to="/signin">
-              <Button
-                label={t('signIn.name')}
-                severity="primary"
-                type="button"
+    <div className="z-2 relative" style={{ height: '10vh' }}>
+      <div className="flex justify-content-between p-2 bg-header fixed top-0 left-0 w-full">
+        <div className="flex align-items-center p-2 ml-2">
+          <Link to={handleGoHome()}>
+            <i className="pi pi-home text-white" style={{ fontSize: '2rem' }}>{t('home')}</i>
+          </Link>
+        </div>
+        <div className="flex gap-2 align-items-center">
+          {!user ? (
+            <>
+              <Link to="/signin">
+                <Button
+                  label={t('signIn.name')}
+                  severity="primary"
+                  type="button"
 
-              />
-            </Link>
-            <Link to="/signup">
-              <Button
-                label={t('signUp.name')}
-                severity="help"
-                type="button"
-              />
-            </Link>
-            <button type="button" className="p-link layout-topbar-button mr-2" onClick={showSettingModal}>
-              <i className="pi pi-cog text-white" style={{ fontSize: '1.5rem' }} />
-              {/* <span>{t('settings.name')}</span> */}
-            </button>
-            <OverlayPanel
-              ref={settingRef}
-              appendTo={typeof window !== 'undefined' ? document.body : null}
-              showCloseIcon={false}
-              id="overlay_panel_setting"
-              style={{ width: '210px' }}
-            >
-              <LanguageSelect />
-            </OverlayPanel>
-          </>
-        ) : (
-          <>
-            {isDashBoard && (
-              <Button icon="pi pi-plus" severity="help" aria-label="User" rounded onClick={showClassModal}>
+                />
+              </Link>
+              <Link to="/signup">
+                <Button
+                  label={t('signUp.name')}
+                  severity="help"
+                  type="button"
+                />
+              </Link>
+              <button type="button" className="p-link layout-topbar-button mr-2" onClick={showSettingModal}>
+                <i className="pi pi-cog text-white" style={{ fontSize: '1.5rem' }} />
+                {/* <span>{t('settings.name')}</span> */}
+              </button>
+              <OverlayPanel
+                ref={settingRef}
+                appendTo={typeof window !== 'undefined' ? document.body : null}
+                showCloseIcon={false}
+                id="overlay_panel_setting"
+                style={{ width: '210px' }}
+              >
+                <LanguageSelect />
+              </OverlayPanel>
+            </>
+          ) : (
+            <>
+              {isDashBoard && (
+                <Button icon="pi pi-plus" severity="help" aria-label="User" rounded onClick={showClassModal}>
+                  <OverlayPanel
+                    ref={classRef}
+                    appendTo={typeof window !== 'undefined' ? document.body : null}
+                    showCloseIcon={false}
+                    id="overlay_panel_class"
+                  >
+                    <ul className="profile-menu list-none p-0 m-0">
+
+                      <div onClick={showJoinClassModal}>
+                        <li className="hover:surface-200 p-2 span-button">
+                          <span>
+                            Tham gia lớp học
+                          </span>
+                        </li>
+                      </div>
+
+                      <hr />
+                      <div onClick={showCreateClassModal}>
+                        <li className="hover:surface-200 p-2 span-button">
+                          <span>
+                            Tạo lớp học
+                          </span>
+                        </li>
+                      </div>
+
+                    </ul>
+                  </OverlayPanel>
+                </Button>
+              )}
+
+              <Button icon="pi pi-user" severity="help" aria-label="User" rounded onClick={showProfileModal}>
                 <OverlayPanel
-                  ref={classRef}
+                  ref={profileRef}
                   appendTo={typeof window !== 'undefined' ? document.body : null}
                   showCloseIcon={false}
-                  id="overlay_panel_class"
+                  id="overlay_panel_profile"
                 >
+                  <div className="flex align-items-center p-3">
+                    <i className="pi pi-user text-2xl" />
+                    <div className="ml-4">
+                      <h6 className="m-0">{user.email}</h6>
+                      <p>
+                        {user.full_name}
+                      </p>
+                    </div>
+                  </div>
+                  <hr className="my-2" />
                   <ul className="profile-menu list-none p-0 m-0">
 
-                    <div onClick={showJoinClassModal}>
-                      <li className="hover:surface-200 p-2 span-button">
-                        <span>
-                          Tham gia lớp học
-                        </span>
+                    <Link to="/me" className="text-color">
+                      <li className="hover:surface-200 p-2">
+                        <i className="pi pi-user mr-3" />
+                        {t('settings.profile')}
                       </li>
-                    </div>
+                    </Link>
 
                     <hr />
-                    <div onClick={showCreateClassModal}>
+                    <div onClick={handleLogout}>
                       <li className="hover:surface-200 p-2 span-button">
+
                         <span>
-                          Tạo lớp học
+                          <i className="pi pi-sign-out mr-3" />
+                          {t('settings.logout')}
                         </span>
                       </li>
                     </div>
@@ -135,65 +178,24 @@ export default function Header({
                   </ul>
                 </OverlayPanel>
               </Button>
-            )}
-
-            <Button icon="pi pi-user" severity="help" aria-label="User" rounded onClick={showProfileModal}>
+              <button type="button" className="p-link layout-topbar-button mr-2" onClick={showSettingModal}>
+                <i className="pi pi-cog text-white" style={{ fontSize: '1.5rem' }} />
+                {/* <span>{t('settings.name')}</span> */}
+              </button>
               <OverlayPanel
-                ref={profileRef}
+                ref={settingRef}
                 appendTo={typeof window !== 'undefined' ? document.body : null}
                 showCloseIcon={false}
-                id="overlay_panel_profile"
+                id="overlay_panel_setting"
+                style={{ width: '230px' }}
               >
-                <div className="flex align-items-center p-3">
-                  <i className="pi pi-user text-2xl" />
-                  <div className="ml-4">
-                    <h6 className="m-0">{user.email}</h6>
-                    <p>
-                      {user.full_name}
-                    </p>
-                  </div>
-                </div>
-                <hr className="my-2" />
-                <ul className="profile-menu list-none p-0 m-0">
-
-                  <Link to="/me" className="text-color">
-                    <li className="hover:surface-200 p-2">
-                      <i className="pi pi-user mr-3" />
-                      {t('settings.profile')}
-                    </li>
-                  </Link>
-
-                  <hr />
-                  <div onClick={handleLogout}>
-                    <li className="hover:surface-200 p-2 span-button">
-
-                      <span>
-                        <i className="pi pi-sign-out mr-3" />
-                        {t('settings.logout')}
-                      </span>
-                    </li>
-                  </div>
-
-                </ul>
+                <LanguageSelect />
               </OverlayPanel>
-            </Button>
-            <button type="button" className="p-link layout-topbar-button mr-2" onClick={showSettingModal}>
-              <i className="pi pi-cog text-white" style={{ fontSize: '1.5rem' }} />
-              {/* <span>{t('settings.name')}</span> */}
-            </button>
-            <OverlayPanel
-              ref={settingRef}
-              appendTo={typeof window !== 'undefined' ? document.body : null}
-              showCloseIcon={false}
-              id="overlay_panel_setting"
-              style={{ width: '210px' }}
-            >
-              <LanguageSelect />
-            </OverlayPanel>
-          </>
-        )}
-        <CreateClass ref={createClassRef} />
-        <JoinClass ref={joinClassRef} />
+            </>
+          )}
+          <CreateClass ref={createClassRef} />
+          <JoinClass ref={joinClassRef} />
+        </div>
       </div>
     </div>
   );

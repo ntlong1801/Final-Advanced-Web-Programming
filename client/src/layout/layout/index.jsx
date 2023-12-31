@@ -1,43 +1,27 @@
+import './style.scss';
+
 import Header from 'layout/header';
 import Sidebar from 'layout/sidebar';
 import { PropTypes } from 'prop-types';
-import { useEffect, useRef, useState } from 'react';
-import { Button } from 'primereact/button';
 
 // eslint-disable-next-line react/prop-types
 export default function Layout({ children, isDashBoard,
   setRefetch, isRefetch }) {
-  const contentRef = useRef(null);
-  const [scrollTop, setScrollTop] = useState(false);
-  const handleScrollTop = () => {
-    contentRef.current.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-    setScrollTop(false);
-  };
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollPosition = contentRef.current.scrollTop;
-
-      if (scrollPosition > 300) {
-        setScrollTop(true);
-      } else {
-        setScrollTop(false);
-      }
-    };
-
-    contentRef.current.addEventListener('scroll', handleScroll);
-  }, [contentRef]);
   return (
     <>
       <Header isDashBoard={isDashBoard} setRefetch={setRefetch} />
-      <div className="flex overflow-hidden">
-        <div className="flex-none">
-          <Sidebar isRefetch={isRefetch} />
+      <div className="flex justify-content-start">
+        <div className="flex-grow-0 flex-shrink-0">
+          <div style={{ minWidth: 220, width: 220 }}>
+            <div className="fixed z-1 justify-content-start" style={{ height: '90vh' }}>
+              <Sidebar isRefetch={isRefetch} />
+            </div>
+          </div>
         </div>
-        <div className="flex-grow-1 overflow-y-scroll" style={{ height: '90vh' }} ref={contentRef}>{children} </div>
-        <Button className={!scrollTop ? 'hidden' : 'button-scroll-top'} icon="pi pi-arrow-up" severity="info" aria-label="User" onClick={handleScrollTop} rounded />
+        <div className="flex-grow-1 flex-shrink-1 flex-basis-0" style={{ height: '90vh' }}>
+          <div className="p-2 ml-2">{children}
+          </div>
+        </div>
       </div>
     </>
   );

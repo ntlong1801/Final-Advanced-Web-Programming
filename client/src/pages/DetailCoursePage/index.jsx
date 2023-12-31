@@ -4,8 +4,10 @@ import Layout from 'layout/layout';
 import { TabPanel, TabView } from 'primereact/tabview';
 import { useNavigate } from 'react-router';
 import { useSearchParams } from 'react-router-dom';
+import { ScrollTop } from 'primereact/scrolltop';
 import NewsPage from './NewsPage';
 import PeoplePage from './PeoplePage';
+import GradePage from './GradePage';
 
 export default function DetailCoursePage() {
   const navigate = useNavigate();
@@ -30,8 +32,11 @@ export default function DetailCoursePage() {
           <TabPanel header="Mọi người" leftIcon="pi pi-fw pi-users">
             <PeoplePage />
           </TabPanel>
+          <TabPanel header="Điểm" leftIcon="pi pi-fw pi-calculator">
+            <GradePage />
+          </TabPanel>
         </TabView>
-
+        <ScrollTop />
       </Layout>
 
     </div>
