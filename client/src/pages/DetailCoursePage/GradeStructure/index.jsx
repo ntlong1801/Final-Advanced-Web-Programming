@@ -1,7 +1,7 @@
-import { useMutation } from 'react-query';
-import { getGradeStructure, editGradeStructure } from 'apis/class.api';
+import { useMutation, useQuery } from 'react-query';
+import { getGradeStructure, editGradeStructure, isTeacherOfClass, getClassByID } from 'apis/class.api';
 
-import React, { useEffect, useState } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router';
 import './style.scss';
 
@@ -16,9 +16,20 @@ function GradeStructure() {
   const { mutate } = useMutation(getGradeStructure);
   const { mutate: mutateHandleSave } = useMutation(editGradeStructure);
 
-  useEffect(() => {
-    setIsTeacherToEdit(true);
+  const { data: _data } = useQuery({
+    queryKey: ['class', classId],
+    queryFn: () => getClassByID(classId)
   });
+  useMemo(() => _data?.data ?? [], [_data]);
+  const { data: checkTeacher } = useQuery({
+    queryKey: [classId],
+    queryFn: () => isTeacherOfClass(user?.id, classId)
+  });
+  const isTeacher = useMemo(() => checkTeacher?.data?.status !== 'false', [checkTeacher]);
+
+  useEffect(() => {
+    setIsTeacherToEdit(isTeacher);
+  }, [isTeacher]); // Fix here
 
   const showForm = () => {
     mutate(classId, {
@@ -58,10 +69,14 @@ function GradeStructure() {
     const dataSender = {
       emailSend: user.email,
       classId,
-      listGrade
+      listGrade,
     };
 
-    mutateHandleSave(dataSender);
+    mutateHandleSave(dataSender, {
+      onSuccess: (response) => {
+        setIsTeacherToEdit(response.data.role);
+      },
+    });
     setIsFormVisible(false);
   };
   return (

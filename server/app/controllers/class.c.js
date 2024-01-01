@@ -187,6 +187,7 @@ const classController = {
   checkTeacherOfClassById: async (req, res) => {
     const { user_id, class_id } = req.query;
     const rs = await classModel.checkTeacherOfClassById(class_id, user_id);
+
     if (rs.length > 0) {
       return res.json({
         status: "true"
