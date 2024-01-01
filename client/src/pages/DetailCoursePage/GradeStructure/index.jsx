@@ -35,7 +35,7 @@ function GradeStructure() {
 
   useEffect(() => {
     setIsTeacherToEdit(isTeacher);
-  }, [isTeacher]); // Fix here
+  }, [isFormVisible]);
 
   const showForm = () => {
     mutate(classId, {
@@ -49,6 +49,7 @@ function GradeStructure() {
 
   const hideForm = () => {
     setIsFormVisible(false);
+    setIsTeacherToEdit(false);
   };
 
   const handleDeleteGrade = (indexToDelete) => {
@@ -85,8 +86,18 @@ function GradeStructure() {
     });
     setIsFormVisible(false);
   };
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) {
+      return; // Item dropped outside the droppable area
+    }
+    const updatedList = Array.from(listGrade);
+    const [movedItem] = updatedList.splice(result.source.index, 1);
+    updatedList.splice(result.destination.index, 0, movedItem);
+    setListGrade(updatedList);
+  };
   return (
-    <DragDropContext>
+    <DragDropContext onDragEnd={handleDragEnd}>
       <div className="grade-structure">
         <button type="button" onClick={showForm}>
           Grade Structure
