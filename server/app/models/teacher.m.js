@@ -3,9 +3,22 @@ const db = require("../../config/connect_db");
 require("dotenv").config();
 
 module.exports = {
-  getTemplateStudentList: () => {
-    const csvData = "StudentId,FullName\n1,\n";
-    return csvData;
+  getTemplateStudentList: async (class_id) => {
+    try {
+      const csvData = await db.any(
+        `
+        SELECT cu.student_id as StudentId, u.full_name as FullName
+        FROM class_user cu
+        JOIN users u ON cu.id_user = u.id
+        WHERE cu.id_class = $1 AND cu.role = 'student';
+        `, [class_id]
+      )
+      return csvData;
+    } catch (err) {
+      console.error('Error template student list', err);
+      throw err;
+e    }
+    
   },
 
   postStudentList: async (csvData, id_class) => {
@@ -59,28 +72,36 @@ module.exports = {
         [id_class]
       );
 
+      const gradeArr = await db.any(`
+      SELECT * 
+      FROM classes_composition 
+      WHERE class_id = $1`, [id_class]);
+
       const classGradesData = [];
       for (const student of listStudent) {
         const studentGrades = await db.any(
           `
-                SELECT cc.name , cc.grade_scale, cg.grade
-                FROM classes_grades cg
-                JOIN classes_composition cc ON cg.composition_id = cc.id
-                WHERE cg.class_id = $1 AND cg.student_id = $2`,
+                SELECT *
+                FROM classes_grades
+                WHERE class_id = $1 AND student_id = $2`,
           [id_class, student.student_id]
         );
 
-        const compositionNameArr = studentGrades.map((obj) => obj.name);
-        const gradeScaleArr = studentGrades.map((obj) => obj.grade_scale);
-        const gradeArray = studentGrades.map((obj) => obj.grade);
-
+        const gradeOfStudent = gradeArr.map((item) => {
+          const matchingGrade = studentGrades.find((studentGrade) => studentGrade.composition_id === item.id);
+        
+          if (matchingGrade) {
+            return { ...item, grade: matchingGrade.grade };
+          }
+        
+          return item;
+        });
+        
         classGradesData.push({
           student_id: student.student_id,
           id_user: student.id_user,
           full_name: student.full_name,
-          compositionNameArr: compositionNameArr,
-          gradeScaleArr: gradeScaleArr,
-          gradeArray: gradeArray,
+          gradeArray: gradeOfStudent,
         });
       }
       return classGradesData;

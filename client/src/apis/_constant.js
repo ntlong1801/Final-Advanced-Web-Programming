@@ -37,3 +37,14 @@ export const USER = {
   FORGOT_PASSWORD: 'user/forgot-password-email',
   RENEW_PASSWORD: (token) => `user/renew-password-by-forgot-email/${token}`
 };
+
+export const GRADE = {
+  GET_TEMPLATE_STUDENT_LIST: (id) => `teacher/getTemplateStudentList?classId=${id}`,
+  GET_CLASS_GRADE_BORAD: (id) => `teacher/getClassGradeBoard?id_class=${id}`,
+  GET_GRADE_TEMPLATE_FOR_ASSIGNMENT: (id) => `teacher/getGrandingTemplate?id_class=${id}`,
+
+  POST_STUDENT_LIST: 'teacher/postStudentList',
+  POST_SINGLE_GRADE_ASSIGNMENT: 'teacher/postSingleGradeAssignment',
+  POST_ALL_GRADE_ASSIGNMENT: 'teacher/postAllGradesAssignment',
+  POST_FINALIZED: 'teacher/postFinalizedComposition'
+};

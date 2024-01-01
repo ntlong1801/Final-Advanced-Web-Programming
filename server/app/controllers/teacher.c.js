@@ -2,15 +2,19 @@ const teacherModel = require("../models/teacher.m");
 const { v4: uuidv4 } = require("uuid");
 
 module.exports = {
-  getTemplateStudentList: (req, res) => {
+  getTemplateStudentList: async (req, res) => {
+    const { classId } = req.query;
     try {
-      const csvData = teacherModel.getTemplateStudentList();
-      res.setHeader("Content-Type", "text/csv");
-      res.setHeader(
-        "Content-Disposition",
-        "attachment; filename=student_template.csv"
-      );
-      res.send(csvData);
+      const csvData = await teacherModel.getTemplateStudentList(classId);
+            // res.setHeader("Content-Type", "text/csv");
+      // res.setHeader(
+      //   "Content-Disposition",
+      //   "attachment; filename=student_template.csv"
+      // );
+      res.json(({
+        status: 'success',
+        csvData
+      }))
     } catch (err) {
       res.json({
         status: "failed",
@@ -43,7 +47,11 @@ module.exports = {
       const id_class = req.query.id_class;
       const gradeBoardData = await teacherModel.getClassGradeBoard(id_class);
 
-      res.send(gradeBoardData);
+
+      res.json({
+        status: "success",
+        data: gradeBoardData
+      });
     } catch (err) {
       res.json({
         status: "failed",
@@ -55,11 +63,12 @@ module.exports = {
   postSingleGradeAssignment: async (req, res) => {
     try {
       const data = {
-        class_id: req.body.class_id,
-        student_id: req.body.student_id,
-        composition_id: req.body.composition_id,
+        class_id: req.body.classId,
+        student_id: req.body.studentId,
+        composition_id: req.body.compositionId,
         grade: req.body.grade,
       };
+      console.log(data);
       const updatedGrade = await teacherModel.postSingleGradeAssignment(
         data.class_id,
         data.student_id,
