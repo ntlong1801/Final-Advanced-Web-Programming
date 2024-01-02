@@ -39,12 +39,15 @@ export const USER = {
 };
 
 export const GRADE = {
-  GET_TEMPLATE_STUDENT_LIST: (id) => `teacher/getTemplateStudentList?classId=${id}`,
+  GET_TEMPLATE_STUDENT_LIST: (classId) => `teacher/getTemplateStudentList?classId=${classId}`,
   GET_CLASS_GRADE_BORAD: (id) => `teacher/getClassGradeBoard?id_class=${id}`,
-  GET_GRADE_TEMPLATE_FOR_ASSIGNMENT: (id) => `teacher/getGrandingTemplate?id_class=${id}`,
+  GET_GRADE_TEMPLATE_FOR_ASSIGNMENT: (classId, compositionId) =>
+    `teacher/getGradingTemplate?id_class=${classId}&compositionId=${compositionId}`,
+  GET_GRADE_BOARD: (id) => `teacher/getGradeBoard?classId=${id}`,
 
   POST_STUDENT_LIST: 'teacher/postStudentList',
   POST_SINGLE_GRADE_ASSIGNMENT: 'teacher/postSingleGradeAssignment',
   POST_ALL_GRADE_ASSIGNMENT: 'teacher/postAllGradesAssignment',
-  POST_FINALIZED: 'teacher/postFinalizedComposition'
+  POST_FINALIZED: 'teacher/postFinalizedComposition',
+  MAP_STUDENT_ID: 'teacher/mapStudentId',
 };

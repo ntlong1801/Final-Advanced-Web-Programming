@@ -7,23 +7,24 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import Loading from 'components/Loading';
 import { useMutation } from 'react-query';
-import { postSingleGradeAssignment } from 'apis/grade.api';
-import { InputNumber } from 'primereact/inputnumber';
+import { mapStudentId } from 'apis/grade.api';
 import PropTypes from 'prop-types';
+import TextInput from 'components/FormControl/TextInput';
 
-const InputGrade = forwardRef((props, ref) => {
+const MapStudentId = forwardRef((props, ref) => {
   // #region Data
   const { t } = useTranslation();
   const toast = useRef(null);
 
-  const [inputGradeControl, setInputGradeControl] = useState();
+  const [mapStudentIdControl, setMapStudentIdControl] = useState();
   const [visible, setVisible] = useState(false);
-  const [grade, setGrade] = useState();
+  const [oldStudentId, setOldStudentId] = useState('');
 
   const {
     control,
     trigger,
     reset,
+    getValues,
     // eslint-disable-next-line no-unused-vars
     formState: { errors, dirtyFields },
   } = useForm({ mode: 'onChange' });
@@ -48,15 +49,15 @@ const InputGrade = forwardRef((props, ref) => {
     });
   };
 
-  const { mutate, isLoading } = useMutation(postSingleGradeAssignment);
+  const { mutate, isLoading } = useMutation(mapStudentId);
 
   useImperativeHandle(
     ref,
     () => ({
-      open: (_inputGradeControl) => {
-        setInputGradeControl(_inputGradeControl);
-        const { idx, info } = _inputGradeControl;
-        setGrade(info.gradeArray[idx]?.grade || 0);
+      open: (_mapStudentIdControl) => {
+        setMapStudentIdControl(_mapStudentIdControl);
+        const { oldSID } = _mapStudentIdControl;
+        setOldStudentId(oldSID);
         reset();
         setVisible(true);
       },
@@ -65,19 +66,21 @@ const InputGrade = forwardRef((props, ref) => {
     []
   );
 
-  const handleInputGrade = async () => {
+  const handleMapStudentId = async () => {
     const isValidTrigger = await trigger();
     if (!isValidTrigger) {
       showError(t('errorMessage.validationErrorMessage'));
       return;
     }
 
-    const { idx, info, classId } = inputGradeControl;
+    const { classId, userId } = mapStudentIdControl;
+    const studentId = getValues('studentId');
+
     const dataSender = {
-      studentId: info.student_id,
-      compositionId: info.gradeArray[idx].id,
+      studentId,
       classId,
-      grade,
+      userId,
+      oldStudentId
     };
 
     mutate(dataSender, {
@@ -86,7 +89,7 @@ const InputGrade = forwardRef((props, ref) => {
           showError(response.data.message);
         } else {
           props.refetch();
-          showSuccess('Cập nhật điểm thành công');
+          showSuccess('Cập nhật mã số sinh viên thành công');
         }
       }
     });
@@ -99,7 +102,7 @@ const InputGrade = forwardRef((props, ref) => {
     <>
       {isLoading && <Loading />}
       <Dialog
-        header="Nhập điểm"
+        header="Nhập mã số sinh viên"
         visible={visible}
         onHide={() => {
           setVisible(false);
@@ -109,16 +112,11 @@ const InputGrade = forwardRef((props, ref) => {
       >
         <div className="grid p-fluid">
           <div className="col-12">
-            <InputNumber
-              inputId="grade"
-              value={grade}
-              onValueChange={(e) => setGrade(e.value)}
+            <TextInput
+              name="studentId"
               control={control}
               errors={errors}
-              defaultValue={grade}
-              maxFractionDigits={3}
-              min={0}
-              max={10}
+              defaultValue={oldStudentId}
             />
           </div>
         </div>
@@ -128,7 +126,7 @@ const InputGrade = forwardRef((props, ref) => {
             label="Cập nhật"
             type="submit"
             severity="info"
-            onClick={handleInputGrade}
+            onClick={handleMapStudentId}
             className="w-8rem"
             // disabled={!Object.keys(dirtyFields)?.length}
           />
@@ -139,8 +137,8 @@ const InputGrade = forwardRef((props, ref) => {
   );
 });
 
-export default InputGrade;
+export default MapStudentId;
 
-InputGrade.propTypes = {
+MapStudentId.propTypes = {
   refetch: PropTypes.func.isRequired,
 };

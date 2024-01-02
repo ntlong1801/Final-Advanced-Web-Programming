@@ -1,5 +1,8 @@
 const teacherModel = require("../models/teacher.m");
 const { v4: uuidv4 } = require("uuid");
+const formidable = require('formidable');
+const fs = require('fs');
+const xlsx = require('xlsx');
 
 module.exports = {
   getTemplateStudentList: async (req, res) => {
@@ -87,14 +90,13 @@ module.exports = {
 
   getGradingTemplate: async (req, res) => {
     try {
-      const id_class = req.query.id_class;
-      const csvData = await teacherModel.getGradingTemplate(id_class);
-      res.setHeader("Content-Type", "text/csv");
-      res.setHeader(
-        "Content-Disposition",
-        "attachment; filename=grading_template.csv"
-      );
-      res.send(csvData);
+      const {id_class, compositionId} = req.query;
+      console.log(compositionId);
+      const csvData = await teacherModel.getGradingTemplate(id_class, compositionId);
+      res.json({
+        status: 'success',
+        csvData
+      })
     } catch (err) {
       res.json({
         status: "failed",
@@ -104,13 +106,50 @@ module.exports = {
   },
 
   postAllGradesAssignment: async (req, res) => {
+    let form = new formidable.IncomingForm();
+    let data = []
+      form.parse(req, async (err, fields, files) => {
+    files.grades.forEach((file) => {
+      const filePath = file.filepath;
+
+      // fs.readFile(filePath, 'utf8', (err, data) => {
+      //   if (err) {
+      //     console.error('Error reading file:', err);
+      //     // Handle the error
+      //   } else {
+      //     // 'data' will contain the contents of the file
+      //     console.log('File contents:', data);
+  
+      //     // Continue with your logic here, e.g., parsing CSV data, processing, etc.
+      //   }
+      // }); 
+       // Read the XLSX file
+       const workbook = xlsx.readFile(filePath);
+  
+        
+    
+      const sheets = workbook.SheetNames 
+    
+      for(let i = 0; i < sheets.length; i++) 
+      { 
+        const temp = xlsx.utils.sheet_to_json( 
+              workbook.Sheets[workbook.SheetNames[i]]) 
+        temp.forEach((res) => { 
+            data.push(res) 
+        }) 
+      } 
+    
+    })
+    const student_id_arr = data?.map((item) => item.StudentId)
+    const grade_arr = data?.map((item) => item.Grade)
     try {
       const data = {
-        class_id: req.body.class_id,
-        student_id_arr: req.body.student_id_arr,
-        composition_id: req.body.composition_id,
-        grade_arr: req.body.grade_arr,
+        class_id: fields.classId.toLocaleString(),
+        student_id_arr,
+        composition_id: fields.compositionId.toLocaleString(),
+        grade_arr
       };
+      
       const updatedGradingList = await teacherModel.postAllGradesAssignment(
         data.class_id,
         data.student_id_arr,
@@ -125,17 +164,21 @@ module.exports = {
         err: err,
       });
     }
+  });
+   
+    
   },
 
   postFinalizedComposition: async (req, res) => {
+    const {compositionId, isPublic} = req.body;
     try {
-      const composition_id = req.body.composition_id;
       const finalizedComposition = await teacherModel.postFinalizedComposition(
-        composition_id
+        compositionId, isPublic
       );
 
       res.status(200).json({
         status: "succeed",
+        finalizedComposition
       });
     } catch (err) {
       res.json({
@@ -216,4 +259,54 @@ module.exports = {
       });
     }
   },
+
+  getGradeBoard: async (req, res) => {
+    const classId = req.query.classId;
+    try {
+    const csvData = await teacherModel.getGradeBoard(classId);
+    res.json({
+      status: 'success',
+      csvData
+    })
+    }
+    catch (err) { 
+      res.json({
+        status: 'failed',
+        err: err
+    })
+    }
+  },
+
+  mapStudenId: async (req, res) => { 
+    const {classId, userId, studentId, oldStudentId} = req.body;
+    try {
+      const rs = await teacherModel.mapStudentIdWithStudentAccount(classId, studentId, userId, oldStudentId);
+      res.json ({
+        status: 'success',
+        data: rs
+      })
+    } catch (err) {
+      res.json({
+        status: 'failed',
+        err: err
+      })
+    }
+  },
+
+  postFinalized: async (req, res) => { 
+    const composition_id = req.body.compositionId;
+    try {
+      const rs = await teacherModel.postFinalizedComposition(composition_id);
+      res.json ({
+        status: 'success',
+        data: rs
+      })
+    } catch (err) {
+      res.json({
+        status: 'failed',
+        err: err
+      })
+    }
+  }
+
 };

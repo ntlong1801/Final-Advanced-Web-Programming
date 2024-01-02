@@ -96,12 +96,15 @@ e    }
         
           return item;
         });
-        
+
+        totalGrade = gradeOfStudent.reduce((grade, cur) => grade + ((cur?.grade || 0) * cur.grade_scale/100), 0 ).toFixed(2);
+
         classGradesData.push({
           student_id: student.student_id,
           id_user: student.id_user,
           full_name: student.full_name,
           gradeArray: gradeOfStudent,
+          totalGrade: parseFloat(totalGrade)
         });
       }
       return classGradesData;
@@ -135,24 +138,43 @@ e    }
     }
   },
 
-  getGradingTemplate: async (id_class) => {
+  getGradingTemplate: async (id_class, composition_id) => {
     try {
       const listStudent = await db.any(
         `
-            SELECT student_id
-            FROM class_user
-            WHERE id_class = $1 AND role = 'student';`,
+            SELECT id_user, full_name, student_id
+            FROM class_user cu
+            JOIN users u ON cu.id_user = u.id
+            WHERE cu.id_class = $1 AND cu.role = 'student';`,
         [id_class]
       );
 
-      const studentIdArr = listStudent.map((item) => parseInt(item.student_id));
-      studentIdArr.sort((a, b) => a - b);
+      const gradeArr = await db.one(`
+      SELECT * 
+      FROM classes_composition 
+      WHERE class_id = $1 AND id = $2`, [id_class, composition_id]);
+      console.log(gradeArr);
 
-      let csvData = "StudentId,Grade\n";
-      for (const student of studentIdArr) {
-        csvData += `${student},\n`;
+      const classGradesData = [];
+      for (const student of listStudent) {
+        const studentGrades = await db.any(
+          `
+                SELECT *
+                FROM classes_grades
+                WHERE class_id = $1 AND student_id = $2`,
+          [id_class, student.student_id]
+        );
+
+
+        const matchingGrade = studentGrades.find((studentGrade) => studentGrade.composition_id === gradeArr.id);
+        
+        
+        classGradesData.push({
+          StudentId: student.student_id,
+          Grade: matchingGrade?.grade || null,
+        });
       }
-      return csvData;
+      return classGradesData;
     } catch (error) {
       console.error("Error getting grading template:", error);
       throw error;
@@ -191,16 +213,16 @@ e    }
     }
   },
 
-  postFinalizedComposition: async (composition_id) => {
+  postFinalizedComposition: async (composition_id, isPublic) => {
     try {
       const finalizedComposition = await db.one(
         `
             UPDATE classes_composition
-            SET public_grade = true
+            SET public_grade = $2
             WHERE id = $1
             RETURNING *;
             `,
-        [composition_id]
+        [composition_id, !isPublic]
       );
 
       return finalizedComposition;
@@ -252,6 +274,88 @@ e    }
       return null;
     }
   },
+
+  getGradeBoard: async (class_id) => {
+    try {
+      const listStudent = await db.any(
+        `
+            SELECT id_user, full_name, student_id
+            FROM class_user cu
+            JOIN users u ON cu.id_user = u.id
+            WHERE cu.id_class = $1 AND cu.role = 'student';`,
+        [class_id]
+      );
+
+      const gradeArr = await db.any(`
+      SELECT * 
+      FROM classes_composition 
+      WHERE class_id = $1`, [class_id]);
+
+      const classGradesData = [];
+      for (const student of listStudent) {
+        const studentGrades = await db.any(
+          `
+                SELECT *
+                FROM classes_grades
+                WHERE class_id = $1 AND student_id = $2`,
+          [class_id, student.student_id]
+        );
+
+
+        const gradeOfStudent = gradeArr.map((item) => {
+          const matchingGrade = studentGrades.find((studentGrade) => studentGrade.composition_id === item.id);
+        
+          if (matchingGrade) {
+            return { ...item, grade: matchingGrade.grade };
+          }
+        
+          return item;
+        });
+
+        totalGrade = gradeOfStudent.reduce((grade, cur) => grade + ((cur?.grade || 0) * cur.grade_scale/100), 0 );
+        
+        classGradesData.push({
+          StudentId: student.student_id,
+          FullName: student.full_name,
+          ...Object.fromEntries(gradeOfStudent.map((grade) => [grade.name.toLocaleString(), parseFloat(grade.grade || 0)])),
+          totalGrade
+        });
+      }
+      return classGradesData;
+    } catch (error) {
+      console.error("Error getting grading template:", error);
+      throw error;
+    }
+  },
+
+  mapStudentIdWithStudentAccount: async (class_id, student_id, user_id, old_student_id) => {
+    try {
+      const rs = db.one(
+        `
+        UPDATE class_user 
+        SET student_id = $1
+        WHERE id_class = $2 AND id_user = $3 RETURNING*;
+        `,
+        [student_id, class_id, user_id]
+      );
+      if (old_student_id) {
+        const rs1 = db.any( 
+          `
+          UPDATE classes_grades
+          SET student_id = $1
+          WHERE student_id = $2 RETURNING*;
+          `,
+          [student_id, old_student_id]
+      )
+      return rs1;
+      }
+      return rs;
+    }
+    catch (err) {
+      console.error("Error in mapStudentIdWithStudentAccount", err);
+      throw err;
+    }
+  }
 
 
 };

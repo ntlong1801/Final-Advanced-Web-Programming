@@ -284,4 +284,9 @@ router.get("/gradeStructure", teacherController.getGradeDataOfClass);
 router.post("/editGradeStructure", middlewareController.isTeacherOfClass, teacherController.handleGradeStructure);
 // router.post("/editGradeStructure",  teacherController.handleGradeStructure);
 
+router.get("/getGradeBoard", middlewareController.verifyToken, teacherController.getGradeBoard);
+
+router.post('/mapStudentId', middlewareController.verifyToken, teacherController.mapStudenId);
+
+
 module.exports = router; 
