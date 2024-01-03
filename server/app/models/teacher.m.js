@@ -16,9 +16,9 @@ module.exports = {
       return csvData;
     } catch (err) {
       console.error('Error template student list', err);
-      throw err;
-e    }
-    
+      return null;
+    }
+
   },
 
   postStudentList: async (csvData, id_class) => {
@@ -57,7 +57,7 @@ e    }
       return updateListStudent;
     } catch (error) {
       console.error("Error posting csv of student list:", error);
-      throw error;
+      return null;
     }
   },
 
@@ -89,11 +89,11 @@ e    }
 
         const gradeOfStudent = gradeArr.map((item) => {
           const matchingGrade = studentGrades.find((studentGrade) => studentGrade.composition_id === item.id);
-        
+
           if (matchingGrade) {
             return { ...item, grade: matchingGrade.grade };
           }
-        
+
           return item;
         });
 
@@ -110,7 +110,7 @@ e    }
       return classGradesData;
     } catch (error) {
       console.error("Error getting grade board:", error);
-      throw error;
+      return null;
     }
   },
 
@@ -134,7 +134,7 @@ e    }
       return updatedGrade;
     } catch (error) {
       console.error("Error updating grade:", error);
-      throw error;
+      return null;
     }
   },
 
@@ -177,7 +177,7 @@ e    }
       return classGradesData;
     } catch (error) {
       console.error("Error getting grading template:", error);
-      throw error;
+      return null;
     }
   },
 
@@ -209,7 +209,7 @@ e    }
         "Error posting grades of all students for a specific assignment:",
         error
       );
-      throw error;
+      return null;
     }
   },
 
@@ -228,7 +228,7 @@ e    }
       return finalizedComposition;
     } catch (error) {
       console.error("Error mark a grade composition as finalized:", error);
-      throw error;
+      return null;
     }
   },
 
@@ -255,8 +255,8 @@ e    }
 
   updateGradeCompositionForClass: async (new_composition) => {
     try {
-      const rs = await db.one("UPDATE classes_composition SET name = $2, grade_scale = $3 WHERE id = $1 RETURNING *;", 
-      [ new_composition.id, new_composition.name, new_composition.grade_scale]);
+      const rs = await db.one("UPDATE classes_composition SET name = $2, grade_scale = $3 WHERE id = $1 RETURNING *;",
+        [new_composition.id, new_composition.name, new_composition.grade_scale]);
       return rs;
     } catch (err) {
       console.log("Error in update grade structure for class: ", err);
@@ -266,8 +266,8 @@ e    }
 
   deleteGradeCompositionById: async (composition_id) => {
     try {
-      const rs = await db.one("DELETE FROM classes_composition WHERE id = $1 RETURNING *;", 
-      [ composition_id ]);
+      const rs = await db.one("DELETE FROM classes_composition WHERE id = $1 RETURNING *;",
+        [composition_id]);
       return rs;
     } catch (err) {
       console.log("Error in delete grade composition for class: ", err);
@@ -355,7 +355,100 @@ e    }
       console.error("Error in mapStudentIdWithStudentAccount", err);
       throw err;
     }
-  }
+  },
 
+  getListGradeReview: async (teacher_user_id) => {
+    try {
+      const listGradeReview = await db.any(`
+      SELECT gr.*, cc.name AS composition_name
+      FROM grades_reviews gr
+      JOIN classes_composition cc ON gr.composition_id = cc.id
+      JOIN class_user cu ON cc.class_id = cu.id_class
+      WHERE cu.id_user = $1 AND cu.role = 'teacher';
+      `, [teacher_user_id]);
+
+      return listGradeReview;
+    } catch (err) {
+      console.log("Error getting grade reviews list: ", err);
+      return null;
+    }
+  },
+
+  getDetailGradeReview: async (review_id) => {
+    try {
+      const detailReview = await db.one(`
+      SELECT
+        gr.*,
+        us.full_name AS student_name,
+        cc.class_id,
+        cc.name AS composition_name,
+        cc.grade_scale
+      FROM
+        grades_reviews gr
+      JOIN
+          classes_composition cc ON gr.composition_id = cc.id
+      JOIN
+          class_user cu ON cc.class_id = cu.id_class AND gr.student_id = cu.student_id
+      JOIN
+          users us ON cu.id_user = us.id
+      WHERE
+          gr.id = $1;
+
+      `, [review_id]);
+
+      return detailReview;
+    } catch (error) {
+      console.log("Error getting a grade review detail: ", err);
+      return null;
+    }
+  },
+
+  postFeedbackOnReview: async (review_id, feedback) => {
+    try {
+      const rs = await db.none(`
+      UPDATE grades_reviews
+      SET feedback = $2
+      WHERE id = $1;
+      `, [review_id, feedback]);
+
+      return {
+        status: "success"
+      }
+    } catch (error) {
+      console.log('Error updating feedback on grade review: ', error);
+      return null;
+    }
+  },
+
+  postFinalizedGradeReview: async (review_id, accepted, data) => {
+    try {
+      const closeReview = await db.none(`
+      UPDATE grades_reviews
+      SET review_success = true
+      WHERE id = $1;
+      `, [review_id]);
+
+      if (accepted) {
+        const reviewDetail = await db.one(`
+        SELECT * 
+        FROM grades_reviews
+        WHERE id = $1;
+        `, [review_id]);
+        
+        const studentGrade = await db.one(`
+        UPDATE classes_grades
+        SET grade = $3
+        WHERE composition_id = $1 AND student_id = $2
+        RETURNING *;
+        `, [reviewDetail.composition_id, reviewDetail.student_id, reviewDetail.student_expected_grade]);
+
+        return studentGrade;
+      }
+      return { status: "success" };
+    } catch (error) {
+      console.log(`Error finalizing grade review: `, error);
+      return null;
+    }
+  },
 
 };

@@ -9,7 +9,7 @@ module.exports = {
     const { classId } = req.query;
     try {
       const csvData = await teacherModel.getTemplateStudentList(classId);
-            // res.setHeader("Content-Type", "text/csv");
+      // res.setHeader("Content-Type", "text/csv");
       // res.setHeader(
       //   "Content-Disposition",
       //   "attachment; filename=student_template.csv"
@@ -177,7 +177,7 @@ module.exports = {
       );
 
       res.status(200).json({
-        status: "succeed",
+        status: "success",
         finalizedComposition
       });
     } catch (err) {
@@ -277,7 +277,7 @@ module.exports = {
     }
   },
 
-  mapStudenId: async (req, res) => { 
+  mapStudentId: async (req, res) => { 
     const {classId, userId, studentId, oldStudentId} = req.body;
     try {
       const rs = await teacherModel.mapStudentIdWithStudentAccount(classId, studentId, userId, oldStudentId);
@@ -307,6 +307,77 @@ module.exports = {
         err: err
       })
     }
-  }
+  },
 
+  getListGradeReview: async (req, res) => {
+    try {
+      const teacher_user_id = req.query.user_id;
+      const listGradeReview = await teacherModel.getListGradeReview(teacher_user_id);
+      res.send(listGradeReview);
+    } catch (error) {
+      res.json({
+        status: "failed",
+        err: error,
+      })
+    }
+  },
+
+  getDetailGradeReview: async (req, res) => {
+    try {
+      const review_id = req.query.review_id;
+      const reviewDetail = await teacherModel.getDetailGradeReview(review_id);
+
+      res.send(reviewDetail);
+    } catch (error) {
+      res.json({
+        status: "failed",
+        err: error,
+      })
+    }
+  },
+
+  postFeedbackOnReview: async (req, res) => {
+    try {
+      const data = {
+        review_id: req.body.review_id,
+        feedback: req.body.feedback,
+      }
+      const rs = await teacherModel.postFeedbackOnReview(data.review_id, data.feedback);
+      if (rs != null) {
+        res.send(rs);
+      }
+      else {
+        res.json({
+          status: "failed"
+        })
+      }
+    } catch (error) {
+      res.json({
+        status: "failed",
+        err: err,
+      });
+    }
+  },
+
+  postFinalizedGradeReview: async (req, res) => {
+    try {
+      const data = {
+        review_id: req.body.review_id,
+        accepted: req.body.accepted,
+      };
+      const rs = await teacherModel.postFinalizedGradeReview(data.review_id, data.accepted);
+      if (rs != null) {
+        res.json(rs);
+      } else {
+        res.json({
+          status: 'failed',
+        })
+      }
+    } catch (error) {
+      res.json({
+        status: "failed",
+        err: error,
+      });
+    }
+  }
 };

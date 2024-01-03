@@ -286,7 +286,189 @@ router.post("/editGradeStructure", middlewareController.isTeacherOfClass, teache
 
 router.get("/getGradeBoard", middlewareController.verifyToken, teacherController.getGradeBoard);
 
-router.post('/mapStudentId', middlewareController.verifyToken, teacherController.mapStudenId);
+router.post('/mapStudentId', middlewareController.verifyToken, teacherController.mapStudentId);
 
+
+/**
+ * @swagger
+ * /teacher/getListGradeReview?user_id={user_id}:
+ *  get:
+ *   summary: View list of grade reviews requested by students
+ *   tags: [/teacher]
+ *   parameters:
+ *     - name: user_id
+ *       in: path
+ *       description: teacher's user ID
+ *       required: true
+ *       type: string
+ *   security:
+ *     - tokenAuth: []
+ *   responses:
+ *     '200':
+ *       description: Successful response. Returns list of grade review for teacher.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 student_id:
+ *                   type: string
+ *                 composition_id:
+ *                   type: string
+ *                 current_grade:
+ *                   type: number
+ *                 student_expected_grade:
+ *                   type: number
+ *                 student_explain:
+ *                   type: string
+ *                 feedback:
+ *                   type: string
+ *                 review_success:
+ *                   type: boolean
+ *                 composition_name:
+ *                   type: string
+ *     '500':
+ *       description: Internal server error. Something went wrong on the server.
+ */
+router.get("/getListGradeReview", middlewareController.verifyToken, teacherController.getListGradeReview);
+
+/**
+ * @swagger
+ * /teacher/getDetailGradeReview?review_id={review_id}:
+ *  get:
+ *   summary: View grade review details 
+ *   tags: [/teacher]
+ *   parameters:
+ *     - name: review_id
+ *       in: path
+ *       description: grade review's ID
+ *       required: true
+ *       type: string
+ *   security:
+ *     - tokenAuth: []
+ *   responses:
+ *     '200':
+ *       description: Successful response. Returns detail of the grade review.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: array
+ *             items:
+ *               properties:
+ *                 id:
+ *                   type: string
+ *                 student_id:
+ *                   type: string
+ *                 composition_id:
+ *                   type: string
+ *                 current_grade:
+ *                   type: number
+ *                 student_expected_grade:
+ *                   type: number
+ *                 student_explain:
+ *                   type: string
+ *                 feedback:
+ *                   type: string
+ *                 review_success:
+ *                   type: boolean
+ *                 student_name:
+ *                   type: string
+ *                 class_id:
+ *                   type: string
+ *                 composition_name:
+ *                   type: string
+ *                 grade_scale:
+ *                   type: string
+ *     '500':
+ *       description: Internal server error. Something went wrong on the server.
+ */
+router.get("/getDetailGradeReview", middlewareController.verifyToken, teacherController.getDetailGradeReview);
+
+/**
+ * @swagger
+ * /teacher/postFeedbackOnReview:
+ *  post:
+ *   summary: Comment on a student review
+ *   tags: [/teacher]
+ *   requestBody:
+ *     required: true
+ *     content:
+ *       application/json:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             review_id:
+ *               type: string
+ *             feedback:
+ *               type: object
+ *               properties: 
+ *                 comment: 
+ *                   type: string 
+ *   security:
+ *     - tokenAuth: []
+ *   responses:
+ *     '200':
+ *       description: Successful response.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 description: successful message
+ *     '500':
+ *       description: Internal server error. Something went wrong on the server.
+ */
+router.post("/postFeedbackOnReview", middlewareController.verifyToken, teacherController.postFeedbackOnReview);
+
+/**
+ * @swagger
+ * /teacher/postFinalizedGradeReview:
+ *  post:
+ *   summary: Mark the final decision for a student review with an updated grade
+ *   tags: [/teacher]
+ *   requestBody:
+ *     required: true
+ *     content:
+ *       application/json:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             review_id:
+ *               type: string
+ *             accepted:
+ *               type: boolean
+ *   security:
+ *     - tokenAuth: []
+ *   responses:
+ *     '200':
+ *       description: Successful response.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             oneOf:
+ *               - type: object
+ *                 properties:
+ *                   status:
+ *                     type: string
+ *                     description: success or failed message
+ *               - type: object
+ *                 properties:
+ *                   class_id:
+ *                     type: string
+ *                   student_id:
+ *                     type: string
+ *                   composition_id:
+ *                     type: string
+ *                   grade:
+ *                     type: number
+ *     '500':
+ *       description: Internal server error. Something went wrong on the server.
+ */
+router.post("/postFinalizedGradeReview", middlewareController.verifyToken, teacherController.postFinalizedGradeReview);
 
 module.exports = router; 

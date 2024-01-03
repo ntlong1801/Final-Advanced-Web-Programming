@@ -69,6 +69,9 @@ router.post("/register", authController.registerUser);
  *             password:
  *               type: string
  *               description: user's password
+ *           example:
+ *             email: example@gmail.com
+ *             password: 123
  *   responses:
  *     '200':
  *       description: Login successfully
