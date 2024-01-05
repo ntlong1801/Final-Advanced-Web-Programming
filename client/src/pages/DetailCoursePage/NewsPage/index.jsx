@@ -2,14 +2,14 @@ import { useParams } from 'react-router';
 import { useRef, useState, useMemo } from 'react';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
-import { isTeacherOfClass, getClassByID } from 'apis/class.api';
+import { getClassByID } from 'apis/class.api';
 import { useQuery } from 'react-query';
 import Loading from 'components/Loading';
+import PropTypes from 'prop-types';
 
 import GradeStucture from '../GradeStructure';
 
-export default function NewsPage() {
-  const user = JSON.parse(localStorage.getItem('user_profile'));
+export default function NewsPage({ isTeacher }) {
   const { classId } = useParams();
   const toast = useRef(null);
   const [confirmCopyDialog, setConfirmCopyDialog] = useState(false);
@@ -35,14 +35,8 @@ export default function NewsPage() {
     queryFn: () => getClassByID(classId)
   });
   const infoClass = useMemo(() => _data?.data ?? [], [_data]);
-  const { data: checkTeacher,
-    isLoading: isCheckLoading } = useQuery({
-    queryKey: [classId],
-    queryFn: () => isTeacherOfClass(user?.id, classId)
-  });
-  const isTeacher = useMemo(() => checkTeacher?.data?.status !== 'false', [checkTeacher]);
 
-  if (isCheckLoading || isLoading) {
+  if (isLoading) {
     return (
       <Loading />
     );
@@ -88,3 +82,11 @@ export default function NewsPage() {
 
   );
 }
+
+NewsPage.propTypes = {
+  isTeacher: PropTypes.bool
+};
+
+NewsPage.defaultProps = {
+  isTeacher: false,
+};

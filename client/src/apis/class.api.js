@@ -41,6 +41,9 @@ export const joinClassByLink = (email, link) =>
 export const joinClassByEmail = (tokenFromMail, userId) =>
   instance.get(CLASS.JOIN_CLASS_BY_EMAIL(tokenFromMail), { params: { userId } });
 
+export const joinClassByCode = (body = {}) =>
+  instance.post(CLASS.JOIN_CLASS_BY_CODE, body);
+
 // eslint-disable-next-line camelcase
 export const getGradeStructure = (class_id) =>
   instance.get(CLASS.GET_GRADE_STRUCTURE(class_id));

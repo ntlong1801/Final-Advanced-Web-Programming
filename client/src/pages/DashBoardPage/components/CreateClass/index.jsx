@@ -6,7 +6,8 @@ import { Toast } from 'primereact/toast';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import instance from 'config';
+import { useMutation } from 'react-query';
+import { createClass, addUserToClass } from 'apis/class.api';
 
 const CreateClass = forwardRef((props, ref) => {
   // #region Data
@@ -57,6 +58,9 @@ const CreateClass = forwardRef((props, ref) => {
     []
   );
 
+  const { mutate: createClassMutate } = useMutation(createClass);
+  const { mutate: addUserToClassMutate } = useMutation(addUserToClass);
+
   const handleCreateClass = async () => {
     const isValidTrigger = await trigger();
     if (!isValidTrigger) {
@@ -65,25 +69,31 @@ const CreateClass = forwardRef((props, ref) => {
     }
 
     const data = getValues();
-    const { userId, setRefetch } = createClassControl;
+    const { userId, refetch } = createClassControl;
     const dataSender = { ...data, userId };
-    const createClass = await instance.post('/class/addClass', dataSender);
-    if (createClass?.data?.id) {
-      const userClass = { id_class: createClass?.data?.id,
-        id_user: userId,
-        role: 'teacher' };
-      const addOwnerToClass = await instance.post('/class/addUserToClass', userClass);
-      if (addOwnerToClass?.data?.id_class) {
-        showSuccess('Tạo lớp học thành công');
-        setRefetch(true);
-      } else {
-        showError('Có lỗi xảy ra, vui lòng thử lại!');
+    createClassMutate(dataSender, {
+      onSuccess: (res) => {
+        if (res?.data?.id) {
+          const userClass = { id_class: res?.data?.id,
+            id_user: userId,
+            role: 'teacher' };
+          addUserToClassMutate(userClass, {
+            onSuccess: (res1) => {
+              if (res1?.data?.id_class) {
+                showSuccess('Tạo lớp học thành công');
+                refetch();
+                setVisible(false);
+              } else {
+                showError('Có lỗi xảy ra, vui lòng thử lại!');
+              }
+            },
+            onError: () => {
+              showError('Có lỗi xảy ra');
+            }
+          });
+        }
       }
-    } else {
-      showError('Có lỗi xảy ra, vui lòng thử lại!');
-    }
-
-    setVisible(false);
+    });
   };
 
   // #endregion Event

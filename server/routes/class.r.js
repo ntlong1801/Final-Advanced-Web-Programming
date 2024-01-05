@@ -208,4 +208,6 @@ router.get("/join/:token", classController.inviteUserByEmail);
 router.post("/inviteByMail", middlewareController.isTeacherOfClass, middlewareController.verifyToken, classController.sendEmailInvitation);
 // router.post("/inviteByMail", middlewareController.isTeacherOfClass, classController.sendEmailInvitation);
 
+router.post("/joinClassByCode", middlewareController.verifyToken, classController.joinClassByCode);
+
 module.exports = router;

@@ -315,6 +315,40 @@ const classController = {
       message: "Check verify code in your email.",
     });
   },
+
+  joinClassByCode: async (req, res) => { 
+    const {userId, classCode} = req.body;
+    try {
+      const link = `${process.env.URL_CLIENT}/invite/${classCode}`;
+      const classByLink = await classM.getClassByLink(link);
+      if (!classByLink) {
+        return res.json({
+          status: "failed",
+          message: "Invalid class code"
+        })
+      }
+      const userDd = await classM.getUserOfClassById(classByLink[0].id, userId);
+      if (userDd.length > 0 ) {
+        return res.json({
+          status: "failed",
+          message: "You already in the class",
+        })
+      }
+      const rs = await classM.addUserToClass(classByLink[0].id, userId, "student");
+      if (rs) {
+        return res.json({ 
+          status: "success",
+          message: "Join class successfully"
+        });
+      }
+    } catch (err) {
+      return res.json({
+        status: "failed",
+        message: err
+      });
+    }
+  },
+
 };
 
 module.exports = classController;

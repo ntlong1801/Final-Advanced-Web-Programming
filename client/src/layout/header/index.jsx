@@ -14,7 +14,7 @@ import { useMutation } from 'react-query';
 
 export default function Header({
   isDashBoard,
-  setRefetch
+  refetch
 }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -38,14 +38,14 @@ export default function Header({
   const showCreateClassModal = () => {
     createClassRef.current.open({
       userId: user?.id,
-      setRefetch
+      refetch
     });
   };
 
   const showJoinClassModal = () => {
     joinClassRef.current.open({
       userId: user?.id,
-      setRefetch
+      refetch
     });
   };
 
@@ -203,9 +203,9 @@ export default function Header({
 
 Header.propTypes = {
   isDashBoard: PropTypes.bool,
-  setRefetch: PropTypes.func
+  refetch: PropTypes.func
 };
 Header.defaultProps = {
   isDashBoard: false,
-  setRefetch: () => null
+  refetch: () => null
 };

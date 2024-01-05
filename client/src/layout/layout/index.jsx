@@ -6,10 +6,10 @@ import { PropTypes } from 'prop-types';
 
 // eslint-disable-next-line react/prop-types
 export default function Layout({ children, isDashBoard,
-  setRefetch, isRefetch }) {
+  refetch, isRefetch }) {
   return (
     <>
-      <Header isDashBoard={isDashBoard} setRefetch={setRefetch} />
+      <Header isDashBoard={isDashBoard} refetch={refetch} />
       <div className="flex justify-content-start">
         <div className="flex-grow-0 flex-shrink-0">
           <div style={{ minWidth: 220, width: 220 }}>
@@ -29,11 +29,11 @@ export default function Layout({ children, isDashBoard,
 
 Layout.propTypes = {
   isDashBoard: PropTypes.bool,
-  setRefetch: PropTypes.func,
-  isRefetch: PropTypes.bool,
+  refetch: PropTypes.func,
+  isRefetch: PropTypes.bool
 };
 Layout.defaultProps = {
   isDashBoard: false,
-  setRefetch: () => null,
+  refetch: () => null,
   isRefetch: false,
 };
