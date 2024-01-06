@@ -1,4 +1,5 @@
 const db = require("../../config/connect_db");
+const { v4: uuidv4 } = require('uuid');
 
 require("dotenv").config();
 
@@ -97,7 +98,7 @@ module.exports = {
           return item;
         });
 
-        totalGrade = gradeOfStudent.reduce((grade, cur) => grade + ((cur?.grade || 0) * cur.grade_scale/100), 0 ).toFixed(2);
+        totalGrade = gradeOfStudent.reduce((grade, cur) => grade + ((cur?.grade || 0) * cur.grade_scale / 100), 0).toFixed(2);
 
         classGradesData.push({
           student_id: student.student_id,
@@ -167,8 +168,8 @@ module.exports = {
 
 
         const matchingGrade = studentGrades.find((studentGrade) => studentGrade.composition_id === gradeArr.id);
-        
-        
+
+
         classGradesData.push({
           StudentId: student.student_id,
           Grade: matchingGrade?.grade || null,
@@ -224,8 +225,27 @@ module.exports = {
             `,
         [composition_id, !isPublic]
       );
+      const studentList = await db.any(
+        `
+        SELECT us.id
+        FROM users us
+        JOIN class_user cu ON us.id = cc.id_user
+        JOIN classes_composition cc ON cu.id_class = cc.class_id
+        WHERE cu.role = 'student' AND cc.id = $1;
+      `, [composition_id]);
+      for (const student of studentList) {
+        const makeNotification = await db.any(
+          `
+          INSERT
+          INTO student_notifications (notification_id, student_id, notification_type)
+          VALUES ($1, $2, $3);
+        `, [uuidv4(), student.id, 'FinalizeGradeComposition']);
+      }
 
-      return finalizedComposition;
+      return {
+        finalizedComposition: finalizedComposition,
+        studentList: studentList,
+      };
     } catch (error) {
       console.error("Error mark a grade composition as finalized:", error);
       return null;
@@ -304,16 +324,16 @@ module.exports = {
 
         const gradeOfStudent = gradeArr.map((item) => {
           const matchingGrade = studentGrades.find((studentGrade) => studentGrade.composition_id === item.id);
-        
+
           if (matchingGrade) {
             return { ...item, grade: matchingGrade.grade };
           }
-        
+
           return item;
         });
 
-        totalGrade = gradeOfStudent.reduce((grade, cur) => grade + ((cur?.grade || 0) * cur.grade_scale/100), 0 );
-        
+        totalGrade = gradeOfStudent.reduce((grade, cur) => grade + ((cur?.grade || 0) * cur.grade_scale / 100), 0);
+
         classGradesData.push({
           StudentId: student.student_id,
           FullName: student.full_name,
@@ -339,15 +359,15 @@ module.exports = {
         [student_id, class_id, user_id]
       );
       if (old_student_id) {
-        const rs1 = db.any( 
+        const rs1 = db.any(
           `
           UPDATE classes_grades
           SET student_id = $1
           WHERE student_id = $2 RETURNING*;
           `,
           [student_id, old_student_id]
-      )
-      return rs1;
+        )
+        return rs1;
       }
       return rs;
     }
@@ -411,8 +431,26 @@ module.exports = {
       WHERE id = $1;
       `, [review_id, feedback]);
 
+      const studentId = await db.one(
+        `
+        SELECT us.id
+        FROM users us
+        JOIN class_user cu ON us.id = cu.id_user
+        JOIN classes_composition cc ON cu.id_class = cc.class_id
+        JOIN grades_reviews gr ON gr.composition_id = cc.id AND gr.student_id = cu.student_id
+        WHERE gr.id = $1
+      `, [review_id]);
+
+      const makeNotification = await db.any(
+        `
+        INSERT
+        INTO student_notifications (notification_id, student_id, notification_type)
+        VALUES ($1, $2, $3);
+      `, [uuidv4(), studentId, 'FeedBackOnReview']);
+
       return {
-        status: "success"
+        status: "success",
+        studentId: studentId,
       }
     } catch (error) {
       console.log('Error updating feedback on grade review: ', error);
@@ -420,7 +458,7 @@ module.exports = {
     }
   },
 
-  postFinalizedGradeReview: async (review_id, accepted, data) => {
+  postFinalizedGradeReview: async (review_id, accepted) => {
     try {
       const closeReview = await db.none(`
       UPDATE grades_reviews
@@ -434,7 +472,7 @@ module.exports = {
         FROM grades_reviews
         WHERE id = $1;
         `, [review_id]);
-        
+
         const studentGrade = await db.one(`
         UPDATE classes_grades
         SET grade = $3
@@ -442,7 +480,28 @@ module.exports = {
         RETURNING *;
         `, [reviewDetail.composition_id, reviewDetail.student_id, reviewDetail.student_expected_grade]);
 
-        return studentGrade;
+        const studentId = await db.one(
+          `
+            SELECT us.id
+            FROM users us
+            JOIN class_user cu ON us.id = cu.id_user
+            JOIN classes_composition cc ON cu.id_class = cc.class_id
+            JOIN grades_reviews gr ON gr.composition_id = cc.id AND gr.student_id = cu.student_id
+            WHERE gr.id = $1
+          `, [review_id]);
+
+        const makeNotification = await db.any(
+          `
+            INSERT
+            INTO student_notifications (notification_id, student_id, notification_type)
+            VALUES ($1, $2, $3);
+          `, [uuidv4(), studentId, 'FinalizedGradeReview']);
+
+
+        return {
+          studentGrade:studentGrade,
+          studentId: studentId,
+        };
       }
       return { status: "success" };
     } catch (error) {

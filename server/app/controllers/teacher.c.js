@@ -90,7 +90,7 @@ module.exports = {
 
   getGradingTemplate: async (req, res) => {
     try {
-      const {id_class, compositionId} = req.query;
+      const { id_class, compositionId } = req.query;
       console.log(compositionId);
       const csvData = await teacherModel.getGradingTemplate(id_class, compositionId);
       res.json({
@@ -108,73 +108,81 @@ module.exports = {
   postAllGradesAssignment: async (req, res) => {
     let form = new formidable.IncomingForm();
     let data = []
-      form.parse(req, async (err, fields, files) => {
-    files.grades.forEach((file) => {
-      const filePath = file.filepath;
+    form.parse(req, async (err, fields, files) => {
+      files.grades.forEach((file) => {
+        const filePath = file.filepath;
 
-      // fs.readFile(filePath, 'utf8', (err, data) => {
-      //   if (err) {
-      //     console.error('Error reading file:', err);
-      //     // Handle the error
-      //   } else {
-      //     // 'data' will contain the contents of the file
-      //     console.log('File contents:', data);
-  
-      //     // Continue with your logic here, e.g., parsing CSV data, processing, etc.
-      //   }
-      // }); 
-       // Read the XLSX file
-       const workbook = xlsx.readFile(filePath);
-  
-        
-    
-      const sheets = workbook.SheetNames 
-    
-      for(let i = 0; i < sheets.length; i++) 
-      { 
-        const temp = xlsx.utils.sheet_to_json( 
-              workbook.Sheets[workbook.SheetNames[i]]) 
-        temp.forEach((res) => { 
-            data.push(res) 
-        }) 
-      } 
-    
-    })
-    const student_id_arr = data?.map((item) => item.StudentId)
-    const grade_arr = data?.map((item) => item.Grade)
-    try {
-      const data = {
-        class_id: fields.classId.toLocaleString(),
-        student_id_arr,
-        composition_id: fields.compositionId.toLocaleString(),
-        grade_arr
-      };
-      
-      const updatedGradingList = await teacherModel.postAllGradesAssignment(
-        data.class_id,
-        data.student_id_arr,
-        data.composition_id,
-        data.grade_arr
-      );
+        // fs.readFile(filePath, 'utf8', (err, data) => {
+        //   if (err) {
+        //     console.error('Error reading file:', err);
+        //     // Handle the error
+        //   } else {
+        //     // 'data' will contain the contents of the file
+        //     console.log('File contents:', data);
 
-      res.status(200).json(updatedGradingList);
-    } catch (err) {
-      res.json({
-        status: "failed",
-        err: err,
-      });
-    }
-  });
-   
-    
+        //     // Continue with your logic here, e.g., parsing CSV data, processing, etc.
+        //   }
+        // }); 
+        // Read the XLSX file
+        const workbook = xlsx.readFile(filePath);
+
+
+
+        const sheets = workbook.SheetNames
+
+        for (let i = 0; i < sheets.length; i++) {
+          const temp = xlsx.utils.sheet_to_json(
+            workbook.Sheets[workbook.SheetNames[i]])
+          temp.forEach((res) => {
+            data.push(res)
+          })
+        }
+
+      })
+      const student_id_arr = data?.map((item) => item.StudentId)
+      const grade_arr = data?.map((item) => item.Grade)
+      try {
+        const data = {
+          class_id: fields.classId.toLocaleString(),
+          student_id_arr,
+          composition_id: fields.compositionId.toLocaleString(),
+          grade_arr
+        };
+
+        const updatedGradingList = await teacherModel.postAllGradesAssignment(
+          data.class_id,
+          data.student_id_arr,
+          data.composition_id,
+          data.grade_arr
+        );
+
+        res.status(200).json(updatedGradingList);
+      } catch (err) {
+        res.json({
+          status: "failed",
+          err: err,
+        });
+      }
+    });
+
+
   },
 
   postFinalizedComposition: async (req, res) => {
-    const {compositionId, isPublic} = req.body;
+    const { compositionId, isPublic } = req.body;
     try {
-      const finalizedComposition = await teacherModel.postFinalizedComposition(
+      const rs = await teacherModel.postFinalizedComposition(
         compositionId, isPublic
       );
+      const finalizedComposition = rs.finalizedComposition;
+      const studentList = rs.studentList;
+
+      for (const student of studentList) {
+        if (req.body.activeClient.has(student.id)) {
+          const clientId = req.body.activeClient.get(student.id);
+          req.body.io.to(clientId).emit("notificationCompositionFinalized", compositionId);
+        }
+      }
 
       res.status(200).json({
         status: "success",
@@ -263,25 +271,25 @@ module.exports = {
   getGradeBoard: async (req, res) => {
     const classId = req.query.classId;
     try {
-    const csvData = await teacherModel.getGradeBoard(classId);
-    res.json({
-      status: 'success',
-      csvData
-    })
+      const csvData = await teacherModel.getGradeBoard(classId);
+      res.json({
+        status: 'success',
+        csvData
+      })
     }
-    catch (err) { 
+    catch (err) {
       res.json({
         status: 'failed',
         err: err
-    })
+      })
     }
   },
 
-  mapStudentId: async (req, res) => { 
-    const {classId, userId, studentId, oldStudentId} = req.body;
+  mapStudentId: async (req, res) => {
+    const { classId, userId, studentId, oldStudentId } = req.body;
     try {
       const rs = await teacherModel.mapStudentIdWithStudentAccount(classId, studentId, userId, oldStudentId);
-      res.json ({
+      res.json({
         status: 'success',
         data: rs
       })
@@ -293,11 +301,11 @@ module.exports = {
     }
   },
 
-  postFinalized: async (req, res) => { 
+  postFinalized: async (req, res) => {
     const composition_id = req.body.compositionId;
     try {
       const rs = await teacherModel.postFinalizedComposition(composition_id);
-      res.json ({
+      res.json({
         status: 'success',
         data: rs
       })
@@ -344,7 +352,11 @@ module.exports = {
       }
       const rs = await teacherModel.postFeedbackOnReview(data.review_id, data.feedback);
       if (rs != null) {
-        res.send(rs);
+        if (req.body.activeClient.has(rs.studentId.id)) {
+          const clientId = req.body.activeClient.get(rs.studentId.id);
+          req.body.io.to(clientId).emit('notificationFeedBackOnReview', 'have new notification');
+        }
+        res.send(rs.status);
       }
       else {
         res.json({
@@ -367,7 +379,11 @@ module.exports = {
       };
       const rs = await teacherModel.postFinalizedGradeReview(data.review_id, data.accepted);
       if (rs != null) {
-        res.json(rs);
+        if (req.body.activeClient.has(rs.studentId.id)) {
+          const clientId = req.body.activeClient.get(rs.studentId.id);
+          req.body.io.to(clientId).emit('notificationFeedBackOnReview', 'have new notification');
+        }
+        res.json(rs.studentGrade);
       } else {
         res.json({
           status: 'failed',
