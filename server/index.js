@@ -8,6 +8,8 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerOptions = require("./config/swaggerConfig");
 const session = require('express-session');
 const authenticate = require('./app/models/auth.m')
+const { createServer } = require("http");
+const { Server } = require("socket.io");
 
 require("dotenv").config();
 
@@ -27,8 +29,28 @@ app.use(cors());
 
 authenticate(app);
 
-router(app);
+const server = createServer(app);
+const io = new Server(server, {
+  cors: ['localhost:3000']
+});
+const activeClient = new Map();
+app.use((req, res, next) => {
+  req.body.io = io;
+  req.body.activeClient = activeClient;
+  next();
+})
 
-app.listen(port, () => {
+// Socket.IO integration
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
+
+router(app);
+server.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });

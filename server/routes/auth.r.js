@@ -69,9 +69,13 @@ router.post("/register", authController.registerUser);
  *             password:
  *               type: string
  *               description: user's password
+ *             clientId:
+ *               type: string
+ *               description: Socket IO client'id
  *           example:
  *             email: example@gmail.com
  *             password: 123
+ *             clientId: abc
  *   responses:
  *     '200':
  *       description: Login successfully
@@ -171,6 +175,16 @@ router.post("/refresh", authController.requestRefreshToken);
  *  post:
  *   summary: user logout
  *   tags: [/auth]
+ *   requestBody:
+ *     required: true
+ *     content:
+ *       application/json:
+ *         schema:
+ *           type: object
+ *           properties:
+ *             id:
+ *               type: string
+ *               description: user's id
  *   security:
  *     - cookieAuth: []
  *     - tokenAuth: []
