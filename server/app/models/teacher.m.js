@@ -255,7 +255,7 @@ module.exports = {
   getAllGradeStructureForClass: async (class_id) => {
     try {
       const rs = await db.any(
-        "SELECT * FROM classes_composition WHERE class_id = $1;",
+        "SELECT * FROM classes_composition WHERE class_id = $1 ORDER BY order_id ASC;",
         [class_id]
       );
       return rs;
@@ -275,8 +275,8 @@ module.exports = {
 
   updateGradeCompositionForClass: async (new_composition) => {
     try {
-      const rs = await db.one("UPDATE classes_composition SET name = $2, grade_scale = $3 WHERE id = $1 RETURNING *;",
-        [new_composition.id, new_composition.name, new_composition.grade_scale]);
+      const rs = await db.one("UPDATE classes_composition SET name = $2, grade_scale = $3, order_id = $4 WHERE id = $1 RETURNING *;",
+        [new_composition.id, new_composition.name, new_composition.grade_scale, new_composition.order_id]);
       return rs;
     } catch (err) {
       console.log("Error in update grade structure for class: ", err);

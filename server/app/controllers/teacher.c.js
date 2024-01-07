@@ -214,6 +214,11 @@ module.exports = {
     try {
       const { listGrade, classId } = req.body;
 
+      // handle order of list grade from client
+      for (let i = 0; i< listGrade.length; i++) {
+        listGrade[i].order_id = i + 1; 
+      }
+
       // get grade structure from db by class_id
       const listGradeFromDb = await teacherModel.getAllGradeStructureForClass(
         classId
@@ -232,7 +237,8 @@ module.exports = {
             // changed name or grade_scale
             if (
               grade.name != gradeDb.name ||
-              grade.grade_scale != gradeDb.grade_scale
+              grade.grade_scale != gradeDb.grade_scale ||
+              grade.order_id != gradeDb.order_id
             ) {
               // update new value for this grade of list grade
               await teacherModel.updateGradeCompositionForClass(grade);

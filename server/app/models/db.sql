@@ -44,6 +44,7 @@ CREATE TABLE classes_composition (
     name character varying,
     grade_scale numeric,
     public_grade boolean DEFAULT false,
+    order_id numeric,
     CONSTRAINT classes_composition_pkey PRIMARY KEY (id)
 );
 
