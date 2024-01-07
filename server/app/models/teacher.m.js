@@ -510,4 +510,17 @@ module.exports = {
     }
   },
 
+  getGradeCompositionByID: async (class_id) => {
+    try {
+      const rs = await db.any("SELECT * FROM classes_composition WHERE class_id = $1;", [class_id]);
+      return rs;
+    } catch (err) {
+      if (err.code === 0) {
+        return null;
+      } else {
+        throw err;
+      }
+    }
+  },
+
 };
