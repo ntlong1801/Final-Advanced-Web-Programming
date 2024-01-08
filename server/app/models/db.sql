@@ -65,7 +65,7 @@ CREATE TABLE grades_reviews (
     current_grade character varying,
     student_expected_grade character varying,
     student_explain character varying,
-    feedback json,
+    feedback jsonb[],
     review_success boolean DEFAULT false,
     CONSTRAINT grades_reviews_pkey PRIMARY KEY (student_id, id, composition_id)
 );
