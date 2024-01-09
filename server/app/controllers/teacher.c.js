@@ -180,7 +180,7 @@ module.exports = {
       for (const student of studentList) {
         if (req.body.activeClient.has(student.id)) {
           const clientId = req.body.activeClient.get(student.id);
-          req.body.io.to(clientId).emit("notificationCompositionFinalized", compositionId);
+          req.body.io.to(clientId).emit("notification", compositionId);
         }
       }
 
@@ -360,7 +360,7 @@ module.exports = {
       if (rs != null) {
         if (req.body.activeClient.has(rs.studentId.id)) {
           const clientId = req.body.activeClient.get(rs.studentId.id);
-          req.body.io.to(clientId).emit('notificationFeedBackOnReview', 'have new notification');
+          req.body.io.to(clientId).emit('notification', 'have new notification');
         }
         res.send(rs.status);
       }
@@ -387,7 +387,7 @@ module.exports = {
       if (rs != null) {
         if (req.body.activeClient.has(rs.studentId.id)) {
           const clientId = req.body.activeClient.get(rs.studentId.id);
-          req.body.io.to(clientId).emit('notificationFeedBackOnReview', 'have new notification');
+          req.body.io.to(clientId).emit('notification', 'have new notification');
         }
         res.json(rs.studentGrade);
       } else {
