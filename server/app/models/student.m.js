@@ -26,7 +26,29 @@ module.exports = {
         "INSERT INTO grades_reviews (id, student_id, composition_id, student_expected_grade, student_explain) VALUES ($1, $2, $3, $4, $5) RETURNING *",
         [uuidv4(), student_id, composition_id, student_expected_grade, student_explain]
       );
-      return rs;
+
+      const teacherList = await db.any(
+        `
+        SELECT us.id
+        FROM users us
+        JOIN class_user cu ON us.id = cc.id_user
+        JOIN classes_composition cc ON cu.id_class = cc.class_id
+        WHERE cu.role = 'teacher' AND cc.id = $1;
+      `, [composition_id]);
+
+      for (const teacher of teacherList) {
+        const makeNotification = await db.any(
+          `
+          INSERT
+          INTO teacher_notifications (notification_id, teacher_id, notification_type)
+          VALUES ($1, $2, $3);
+        `, [uuidv4(), teacher.id, 'RequestCompositionReview ' + rs.id]);
+      }
+
+      return {
+        rs: rs,
+        teacherList: teacherList,
+      };
     } catch (err) {
       if (err.code === 0) {
         return null;
@@ -42,7 +64,29 @@ module.exports = {
         "UPDATE grades_reviews SET feedback = feedback || $2::jsonb WHERE composition_id = $1 RETURNING *",
         [composition_id, feedback]
       );
-      return rs;
+
+      const teacherList = await db.any(
+        `
+        SELECT us.id
+        FROM users us
+        JOIN class_user cu ON us.id = cc.id_user
+        JOIN classes_composition cc ON cu.id_class = cc.class_id
+        WHERE cu.role = 'teacher' AND cc.id = $1;
+      `, [composition_id]);
+
+      for (const teacher of teacherList) {
+        const makeNotification = await db.any(
+          `
+          INSERT
+          INTO teacher_notifications (notification_id, teacher_id, notification_type)
+          VALUES ($1, $2, $3);
+        `, [uuidv4(), teacher.id, 'CommentGradeReview ' + rs.id]);
+      }
+
+      return {
+        rs: rs,
+        teacherList: teacherList,
+      };
     } catch (err) {
       if (err.code === 0) {
         return null;

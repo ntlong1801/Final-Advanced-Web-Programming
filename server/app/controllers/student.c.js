@@ -1,12 +1,12 @@
 const studentModel = require("../models/student.m");
 const classModel = require("../models/class.m");
 const teacherModel = require("../models/teacher.m");
-const {v4 : uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require('uuid');
 
 module.exports = {
   getGradeCompositionByStudent: async (req, res) => {
     const class_id = req.body.classId || "";
-    const student_id = req.body.studenId || "";
+    const student_id = req.body.studentId || "";
 
     try {
       let dataGrade = [];
@@ -35,12 +35,19 @@ module.exports = {
   postRequestReviewComposition: async (req, res) => {
     const student_id = req.body.studentId;
     const composition_id = req.body.compositionId;
-    const {student_explain, student_expected_grade} = req.body;
+    const { student_explain, student_expected_grade } = req.body;
 
     try {
-      const rsRequest = await studentModel.postRequestCompositionReview(student_id, composition_id, student_expected_grade, student_explain);
+      const { rs, teacherList } = await studentModel.postRequestCompositionReview(student_id, composition_id, student_expected_grade, student_explain);
 
-      res.json(rsRequest);
+      for (const teacher of teacherList) {
+        if (req.body.activeClient.has(teacher.id)) {
+          const clientId = req.body.activeClient.get(teacher.id);
+          req.body.io.to(clientId).emit("notification", "have new notification!");
+        }
+      }
+
+      res.json(rs);
     } catch (error) {
       res.json(error);
     }
@@ -58,8 +65,14 @@ module.exports = {
     }
 
     try {
-      const rs = await studentModel.commentGradeReview(composition_id, feedback);
+      const { rs, teacherList } = await studentModel.commentGradeReview(composition_id, feedback);
 
+      for (const teacher of teacherList) {
+        if (req.body.activeClient.has(teacher.id)) {
+          const clientId = req.body.activeClient.get(teacher.id);
+          req.body.io.to(clientId).emit("notification", "have new notification!");
+        }
+      }
       res.json(rs);
     } catch (error) {
       res.json(error);
@@ -67,7 +80,7 @@ module.exports = {
   },
 
   getCommentReview: async (req, res) => {
-    const {review_id} = req.body;
+    const { review_id } = req.body;
 
     try {
       const rs = await studentModel.getCommentReview(review_id);
