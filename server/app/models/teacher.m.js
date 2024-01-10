@@ -427,7 +427,7 @@ module.exports = {
     try {
       const rs = await db.none(`
       UPDATE grades_reviews
-      SET feedback = $2
+      SET feedback = feedback || $2::jsonb
       WHERE id = $1;
       `, [review_id, feedback]);
 
