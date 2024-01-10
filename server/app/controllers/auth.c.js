@@ -37,6 +37,20 @@ const authController = {
 
   // [POST] /register
   registerUser: async (req, res) => {
+    if (req.body.email === undefined || req.body.password === undefined || req.body.fullName === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data',
+      });
+    }
+
+    if (typeof req.body.email !== 'string' || typeof req.body.password !== 'string' || typeof req.body.fullName !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (email should be string, password should be string, fullName should be string)',
+      });
+    }
+
     try {
       // check if email exists
       const checkEmail = await userModel.getUserByEmail(req.body.email);
@@ -67,9 +81,22 @@ const authController = {
   // [POST] /register-email
   registerUserByEmail: async (req, res) => {
     // check if email exists
-    const checkEmail = await userModel.getUserByEmail(req.body.email);
-    console.log(checkEmail);
     const { email, password, fullName } = req.body;
+    if (email === undefined || password === undefined || fullName === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data',
+      });
+    }
+    
+    if (typeof email !== 'string' || typeof password !== 'string' || typeof fullName !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (email should be string, password should be string, fullName should be string)',
+      });
+    }
+    
+    const checkEmail = await userModel.getUserByEmail(email);
     if (checkEmail?.activation) {
       return res.json({
         status: "failed",
@@ -136,10 +163,12 @@ const authController = {
           });
         }
       });
-    } catch (error) { return res.json({
-      status: "failed",
-      message: "Error register, please check information again.",
-    }); }
+    } catch (error) {
+      return res.json({
+        status: "failed",
+        message: "Error register, please check information again.",
+      });
+    }
   },
 
   // [GET] /verify-email/token
@@ -179,23 +208,87 @@ const authController = {
     });
   },
 
+  googleAuth: async (req, res) => {
+    if (req.user) {
+      const accessToken = authController.generateAccessToken(req.user);
+      const refreshToken = authController.generateRefreshToken(req.user);
+
+      refreshTokens.push(refreshToken);
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+        sameSite: "none",
+      });
+
+      const { password, ...others } = req.user;
+
+      res.json({
+        user: others,
+        accessToken,
+        status: "success",
+        message: "login successfully!",
+      });
+    }
+  },
+
+  facebookAuth: async (req, res) => {
+    if (req.user) {
+      const accessToken = authController.generateAccessToken(req.user);
+      const refreshToken = authController.generateRefreshToken(req.user);
+
+      refreshTokens.push(refreshToken);
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: true,
+        path: "/",
+        sameSite: "none",
+      });
+
+      const { password, ...others } = req.user;
+
+      res.json({
+        user: others,
+        accessToken,
+        status: "success",
+        message: "login successfully!",
+      });
+    }
+  },
+
   // [POST] /login
   loginUser: async (req, res) => {
+    const { email, password } = req.body;
+    if (email === undefined || password === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data',
+      });
+    }
+    
+    if (typeof email !== 'string' || typeof password !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (email should be string, password should be string)',
+      });
+    }
+
     try {
       // get user from database
-      const { email, password } = req.body;
       const user = await userModel.getUserByEmail(email);
       if (user == null) {
-        return res.json({status: "failed", message:"Account or password is incorect"});
+        return res.json({ status: "failed", message: "Account or password is incorect" });
       }
 
       const validPassword = await bcrypt.compare(password, user.password);
 
       if (!validPassword) {
-        res.json({status: "failed", message:"Account or password is incorect"});
+        res.json({ status: "failed", message: "Account or password is incorect" });
       } else {
         if (!user.activation) {
-          return res.json({status: "failed", message:"Please check your email to activate your account!"});
+          return res.json({ status: "failed", message: "Please check your email to activate your account!" });
         }
         const accessToken = authController.generateAccessToken(user);
         const refreshToken = authController.generateRefreshToken(user);
@@ -261,63 +354,29 @@ const authController = {
 
   // [POST] /logout
   logoutUser: async (req, res) => {
+    const { id } = req.body;
+    if (id === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data',
+      });
+    }
+    
+    if (typeof id !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (id should be string)',
+      });
+    }
+
+
     refreshTokens = refreshTokens.filter(
       (token) => token !== req.cookies.refreshToken
     );
-    req.body.activeClient.delete(req.body.id);
+    req.body.activeClient.delete(id);
     res.clearCookie("refreshToken");
     res.status(200).json("Logged out successfully!");
   },
-
-  googleAuth: async (req, res) =>{
-    if (req.user) {
-      const accessToken = authController.generateAccessToken(req.user);
-        const refreshToken = authController.generateRefreshToken(req.user);
-
-        refreshTokens.push(refreshToken);
-
-        res.cookie("refreshToken", refreshToken, {
-          httpOnly: true,
-          secure: true,
-          path: "/",
-          sameSite: "none",
-        });
-
-        const { password, ...others } = req.user;
-
-        res.json({
-          user: others,
-          accessToken,
-          status: "success",
-          message: "login successfully!",
-        });
-    }
-  },
-
-  facebookAuth: async (req, res) => {
-    if (req.user) {
-      const accessToken = authController.generateAccessToken(req.user);
-        const refreshToken = authController.generateRefreshToken(req.user);
-
-        refreshTokens.push(refreshToken);
-
-        res.cookie("refreshToken", refreshToken, {
-          httpOnly: true,
-          secure: true,
-          path: "/",
-          sameSite: "none",
-        });
-
-        const { password, ...others } = req.user;
-
-        res.json({
-          user: others,
-          accessToken,
-          status: "success",
-          message: "login successfully!",
-        });
-    }
-  }
 };
 
 module.exports = authController;
