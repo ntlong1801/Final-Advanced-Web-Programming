@@ -1,16 +1,32 @@
 import Header from 'layout/header';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { Toast } from 'primereact/toast';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 import { joinClassByLink } from 'apis/class.api';
 import Loading from 'components/Loading';
+import { getStudentId } from 'apis/user.api';
+import { useForm } from 'react-hook-form';
+import TextInput from 'components/FormControl/TextInput';
+
+import { Button } from 'primereact/button';
 
 export default function InvitationPage() {
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user_profile'));
   const link = window.location.href;
   const toast = useRef(null);
+
+  const { control, formState: { errors } } = useForm({ mode: 'onChange' });
+
+  const { data, isLoading } = useQuery({
+    queryKey: ['studentId', user?.id],
+    queryFn: () => getStudentId(user?.id)
+  });
+
+  const studentId = useMemo(() => data?.data?.studentId ?? null, [data]);
+
+  const { mutate } = useMutation(joinClassByLink);
 
   const showSuccess = (msg) => {
     toast.current.show({ severity: 'success', summary: 'Success', detail: msg, life: 3000 });
@@ -20,19 +36,27 @@ export default function InvitationPage() {
     toast.current.show({ severity: 'error', summary: 'Fail', detail: msg, life: 3000 });
   };
 
-  const { data: _data, isLoading } = useQuery({
-    queryKey: [link],
-    queryFn: () => joinClassByLink(user?.email, link)
-  });
-
-  if (_data?.data?.status === 'failed') {
-    showError(_data?.data?.message);
-    setTimeout(() => navigate('/dashboard'), 3000);
-  }
-  if (_data?.data?.status === 'success') {
-    showSuccess(_data?.data?.message);
-    setTimeout(() => navigate('/dashboard'), 3000);
-  }
+  const handleJoinClass = () => {
+    const dataSender = {
+      email: user?.email,
+      link
+    };
+    if (studentId) {
+      dataSender.studentId = studentId;
+    }
+    mutate(dataSender, {
+      onSuccess: (res) => {
+        if (res?.data?.status === 'failed') {
+          showError(res?.data?.message);
+          setTimeout(() => navigate('/dashboard'), 3000);
+        }
+        if (res?.data?.status === 'success') {
+          showSuccess(res?.data?.message);
+          setTimeout(() => navigate('/dashboard'), 3000);
+        }
+      }
+    });
+  };
 
   useEffect(() => {
     if (!user) {
@@ -43,12 +67,26 @@ export default function InvitationPage() {
     <div>
       <Header />
       <Toast ref={toast} />
-      <div className="text-center mb-5">
+      <form autoComplete="false">
+        <div className="flex flex-column align-items-center justify-content-center" style={{ height: '90vh' }}>
+          {!studentId && (
+            <TextInput
+              name="studentId"
+              label="studentId"
+              control={control}
+              errors={errors}
+              isRequired
+            />
+          ) }
 
-        <div className="text-900 text-3xl font-medium my-3">
-          Bạn sẽ quay lại trang chủ trong vài giây tới...
+          <Button
+            type="button"
+            severity="primary"
+            onClick={() => handleJoinClass()}
+          >Join class
+          </Button>
         </div>
-      </div>
+      </form>
       {isLoading && <Loading />}
     </div>
   );

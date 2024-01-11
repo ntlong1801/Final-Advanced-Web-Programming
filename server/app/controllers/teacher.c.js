@@ -36,33 +36,71 @@ module.exports = {
   },
 
   postStudentList: async (req, res) => {
-    try {
-      const { student_id, full_name, id_class } = req.body;
-      if (student_id === undefined || full_name === undefined || id_class === undefined) {
-        return res.status(400).json({
-          status: 'failed',
-          error: 'Missing required input data (student_id, full_name, id_class)',
+    let form = new formidable.IncomingForm();
+    let data = []
+    form.parse(req, async (err, fields, files) => {
+      files.grades.forEach((file) => {
+        const filePath = file.filepath;
+        // Read the XLSX file
+        const workbook = xlsx.readFile(filePath);
+        const sheets = workbook.SheetNames
+
+        for (let i = 0; i < sheets.length; i++) {
+          const temp = xlsx.utils.sheet_to_json(
+            workbook.Sheets[workbook.SheetNames[i]])
+          temp.forEach((res) => {
+            data.push(res)
+          })
+        }
+      })
+      const student_id_arr = data?.map((item) => item.StudentId)
+      const full_name_arr = data?.map((item) => item.FullName)
+      try {
+        const data = {
+          class_id: fields.classId.toLocaleString(),
+          student_id_arr,
+          composition_id: fields.compositionId.toLocaleString(),
+          full_name_arr
+        };
+
+        const postStudentList = await teacherModel.postStudentList(data);
+
+        return res.status(200).json(postStudentList);
+      } catch (err) {
+        return res.json({
+          status: "failed",
+          err: err,
         });
       }
+    });
 
-      if (typeof student_id !== 'string' || typeof full_name !== 'string' || typeof id_class !== 'string') {
-        return res.status(400).json({
-          status: 'failed',
-          error: 'Invalid data types for input (student_id should be string, full_name should be string, id_class should be string)',
-        });
-      }
-      var csvData = student_id.map(function (id_student, index) {
-        return { student_id: id_student, full_name: full_name[index] };
-      });
-      const updateList = await teacherModel.postStudentList(csvData, id_class);
+    // try {
+    //   const { student_id, full_name, id_class } = req.body;
+    //   if (student_id === undefined || full_name === undefined || id_class === undefined) {
+    //     return res.status(400).json({
+    //       status: 'failed',
+    //       error: 'Missing required input data (student_id, full_name, id_class)',
+    //     });
+    //   }
 
-      res.json({ updateList: updateList });
-    } catch (err) {
-      res.json({
-        status: "failed",
-        err: err,
-      });
-    }
+    //   if (typeof student_id !== 'string' || typeof full_name !== 'string' || typeof id_class !== 'string') {
+    //     return res.status(400).json({
+    //       status: 'failed',
+    //       error: 'Invalid data types for input (student_id should be string, full_name should be string, id_class should be string)',
+    //     });
+    //   }
+    //   var csvData = student_id.map(function (id_student, index) {
+    //     return { student_id: id_student, full_name: full_name[index] };
+    //   });
+    //   const updateList = await teacherModel.postStudentList(csvData, id_class);
+
+    //   res.json({ updateList: updateList });
+    // } catch (err) {
+    //   res.json({
+    //     status: "failed",
+    //     err: err,
+    //   });
+    // }
   },
 
   getClassGradeBoard: async (req, res) => {
@@ -194,9 +232,9 @@ module.exports = {
           data.grade_arr
         );
 
-        res.status(200).json(updatedGradingList);
+        return res.status(200).json(updatedGradingList);
       } catch (err) {
-        res.json({
+        return res.json({
           status: "failed",
           err: err,
         });

@@ -8,8 +8,7 @@ import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import { Message } from 'primereact/message';
 
-export default function SwitchInput({ compositionId, isPublic }) {
-  const [checked, setChecked] = useState(isPublic);
+export default function SwitchInput({ compositionId, isPublic, refetch }) {
   const { mutate } = useMutation(postFinalized);
   const toast = useRef(null);
 
@@ -18,7 +17,7 @@ export default function SwitchInput({ compositionId, isPublic }) {
   const handleChangeFinalized = async () => {
     mutate({ compositionId, isPublic }, {
       onSuccess: () => {
-        setChecked(!checked);
+        refetch();
         return true;
       },
       onError: () => false
@@ -48,7 +47,7 @@ export default function SwitchInput({ compositionId, isPublic }) {
       <div className="card flex justify-content-center">
         <InputSwitch
           id={compositionId}
-          checked={checked}
+          checked={isPublic}
           onChange={() => setVisible(true)}
           tooltip="Public grade"
           tooltipOptions={{ position: 'left' }}
@@ -56,7 +55,7 @@ export default function SwitchInput({ compositionId, isPublic }) {
       </div>
       <Dialog header="Xác nhận" visible={visible} className="text-center" style={{ width: '20rem' }} onHide={() => setVisible(false)} footer={footerContent}>
         <p className="m-0">
-          {!checked ?
+          {!isPublic ?
             <Message severity="info" text="Do you want to public this grade?" />
             :
             <Message severity="info" text="Do you want to unPublic this grade?" />}
@@ -68,9 +67,12 @@ export default function SwitchInput({ compositionId, isPublic }) {
 
 SwitchInput.propTypes = {
   compositionId: PropTypes.string,
-  isPublic: PropTypes.bool.isRequired,
+  isPublic: PropTypes.bool,
+  refetch: PropTypes.func
 };
 
 SwitchInput.defaultProps = {
   compositionId: '',
+  isPublic: true,
+  refetch: () => null
 };
