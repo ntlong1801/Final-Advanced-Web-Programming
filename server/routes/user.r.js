@@ -109,4 +109,8 @@ router.post('/renew-password-by-forgot-email/:token', userController.renewPasswo
 
 router.get('/allUsers', middlewareController.verifyToken, userController.getAllUsers);
 
+router.post("/studentId", middlewareController.verifyToken, userController.postStudentId);
+
+router.get("/studentId", middlewareController.verifyToken, userController.getStudentId);
+
 module.exports = router;

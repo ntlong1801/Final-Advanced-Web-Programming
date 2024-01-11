@@ -71,5 +71,26 @@ module.exports = {
       console.log("Error in activeUser in user.m: ", err);
       return null;
     }
-  }
+  },
+  postStudentId: async (userId, studentId) => {
+    try {
+      const rs = await db.one("INSERT INTO student_id (user_id, student_id) VALUES ($1, $2) RETURNING *;", [userId, studentId]);
+      return rs;
+    } catch (err) {
+      console.log("Error in postStudentId in user.m: ", err);
+      return null;
+    }
+  },
+  getStudentId: async (userId) => {
+    try {
+      const rs = await db.one("SELECT * FROM users WHERE user_id = $1;", [userId]);
+      return rs;
+    } catch (err) {
+      if (err.code === 0) {
+        return null;
+      } else {
+        throw err;
+      }
+    }
+}
 };

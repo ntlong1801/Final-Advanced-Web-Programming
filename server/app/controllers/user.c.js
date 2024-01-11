@@ -267,6 +267,26 @@ const userController = {
       users: rs,
       status: "success",
     })
+  },
+
+  // [POST] /user/studentId
+  postStudentId: async (req, res) => { 
+    const {userId, studentId} = req.body;
+    const rs = await userM.postStudentId(userId, studentId);
+    return res.json({ 
+      studentId: rs,
+      status: "success",
+    })
+  },
+
+  // [GET] /user/studentId
+  getStudentId: async (req, res) => { 
+    const {userId} = req.body;
+    const rs = await userM.getStudentId(userId);
+    return res.json({ 
+      studentId: rs,
+      status: "success",
+    });
   }
 };
 

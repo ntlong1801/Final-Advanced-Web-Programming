@@ -14,6 +14,14 @@ CREATE TABLE IF NOT EXISTS users
     CONSTRAINT users_email_key UNIQUE (email)
 );
 
+DROP TABLE IF EXISTS student_id;
+CREATE TABLE IF NOT EXISTS student_id
+(
+    user_id character varying(255) NOT NULL,
+    student_id character varying(255) NOT NULL,
+    CONSTRAINT student_pkey PRIMARY KEY (user_id, student_id)
+);
+
 DROP TABLE IF EXISTS classes;
 CREATE TABLE IF NOT EXISTS classes
 (
