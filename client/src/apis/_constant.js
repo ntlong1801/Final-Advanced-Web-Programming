@@ -53,3 +53,10 @@ export const GRADE = {
   POST_FINALIZED: 'teacher/postFinalizedComposition',
   MAP_STUDENT_ID: 'teacher/mapStudentId',
 };
+
+export const STUDENT = {
+  GET_GRADE_STRUCTURE: 'student/getGradeStructure',
+  POST_REQUEST_REVIEW: 'student/requestReview',
+  POST_COMMENT: 'student/postComment',
+  GET_COMMENT: 'student/getComment',
+};

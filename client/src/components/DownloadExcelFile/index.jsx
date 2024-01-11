@@ -24,7 +24,7 @@ export default function DownloadExcelFile({
 
         const ws = XLSX.utils.json_to_sheet(res.data.csvData.length !== 0 ?
           res.data.csvData :
-          [{ studentid: null, fullname: null }], { skipHeader: false });
+          [{ StudentId: null, FullName: null }], { skipHeader: false });
         const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
         const data = new Blob([excelBuffer], { type: fileType });

@@ -48,5 +48,8 @@
     "dashBoard": {
         "teachingClass": "Lớp học giảng dạy",
         "enrolledClass": "Lớp học đã đăng ký"
+    },
+    "detail": {
+        "news": "Bảng tin"
     }
 }

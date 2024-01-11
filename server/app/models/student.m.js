@@ -22,16 +22,22 @@ module.exports = {
 
   postRequestCompositionReview: async (student_id, composition_id, student_expected_grade, student_explain) => {
     try {
+      const currentGrade = await db.one(`SELECT grade 
+      FROM classes_grades 
+      WHERE student_id = $1 AND composition_id = $2;`, [student_id, composition_id])
       const rs = await db.one(
-        "INSERT INTO grades_reviews (id, student_id, composition_id, student_expected_grade, student_explain) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-        [uuidv4(), student_id, composition_id, student_expected_grade, student_explain]
+        `INSERT INTO grades_reviews (id, student_id, composition_id,current_grade, student_expected_grade, student_explain) 
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING *`,
+        [uuidv4(), student_id, composition_id,currentGrade.grade, student_expected_grade, student_explain]
       );
+
 
       const teacherList = await db.any(
         `
         SELECT us.id
         FROM users us
-        JOIN class_user cu ON us.id = cc.id_user
+        JOIN class_user cu ON us.id = cu.id_user
         JOIN classes_composition cc ON cu.id_class = cc.class_id
         WHERE cu.role = 'teacher' AND cc.id = $1;
       `, [composition_id]);

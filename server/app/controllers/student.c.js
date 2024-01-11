@@ -5,8 +5,8 @@ const { v4: uuidv4 } = require('uuid');
 
 module.exports = {
   getGradeCompositionByStudent: async (req, res) => {
-    const class_id = req.body.classId;
-    const student_id = req.body.studentId;
+    const class_id = req.query.classId;
+    const student_id = req.query.studentId;
     if (class_id === undefined || student_id === undefined) {
       return res.status(400).json({
         status: 'failed',
@@ -20,28 +20,39 @@ module.exports = {
         error: 'Invalid data types for input (classId should be string, studentId should be string)',
       });
     }
+    let totalGrade = 0;
 
     try {
-      let dataGrade = [];
+      let dataGrade = {};
       // check grade composition of has been made public
       const compositionDb = await teacherModel.getGradeCompositionByID(
         class_id
       );
 
-      for (let grade of compositionDb) {
-        if (grade.public_grade) {
-          let dataGradeDb = await studentModel.getGradeComposition(
+      for (let gradeComposition of compositionDb) {
+        if (gradeComposition.public_grade) {
+          const dataGradeDb = await studentModel.getGradeComposition(
             class_id,
             student_id,
-            grade.id
+            gradeComposition.id
           );
-          dataGrade.push(dataGradeDb);
+          
+          dataGrade[`${gradeComposition.id}`] = dataGradeDb;
+          if (dataGradeDb?.grade) {
+            totalGrade += parseFloat(dataGradeDb.grade*gradeComposition.grade_scale/100);
+          }
         }
       }
+      dataGrade['student_id'] = student_id;
+      dataGrade['totalGrade'] = totalGrade;
 
-      res.json(dataGrade);
+      return res.json({
+        classComposition: compositionDb,
+        grade: [dataGrade]
+      });
     } catch (error) {
-      res.json(error);
+      console.log(error);
+      return res.json(error);
     }
   },
 
@@ -76,6 +87,7 @@ module.exports = {
 
       res.json(rs);
     } catch (error) {
+      console.log(error);
       res.json(error);
     }
   },

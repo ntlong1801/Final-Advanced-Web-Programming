@@ -48,5 +48,8 @@
     "dashBoard": {
         "teachingClass": "Teaching class",
         "enrolledClass": "Enrolled class"
+    },
+    "detail": {
+        "news": "News"
     }
 }
