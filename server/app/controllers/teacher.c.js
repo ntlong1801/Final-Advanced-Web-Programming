@@ -7,13 +7,22 @@ const xlsx = require('xlsx');
 module.exports = {
   getTemplateStudentList: async (req, res) => {
     const { classId } = req.query;
+    if (classId === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data (classId)',
+      });
+    }
+
+    if (typeof classId !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (classId should be string)',
+      });
+    }
+
     try {
       const csvData = await teacherModel.getTemplateStudentList(classId);
-      // res.setHeader("Content-Type", "text/csv");
-      // res.setHeader(
-      //   "Content-Disposition",
-      //   "attachment; filename=student_template.csv"
-      // );
       res.json(({
         status: 'success',
         csvData
@@ -28,9 +37,20 @@ module.exports = {
 
   postStudentList: async (req, res) => {
     try {
-      const student_id = req.body.student_id;
-      const full_name = req.body.full_name;
-      const id_class = req.body.id_class;
+      const { student_id, full_name, id_class } = req.body;
+      if (student_id === undefined || full_name === undefined || id_class === undefined) {
+        return res.status(400).json({
+          status: 'failed',
+          error: 'Missing required input data (student_id, full_name, id_class)',
+        });
+      }
+
+      if (typeof student_id !== 'string' || typeof full_name !== 'string' || typeof id_class !== 'string') {
+        return res.status(400).json({
+          status: 'failed',
+          error: 'Invalid data types for input (student_id should be string, full_name should be string, id_class should be string)',
+        });
+      }
       var csvData = student_id.map(function (id_student, index) {
         return { student_id: id_student, full_name: full_name[index] };
       });
@@ -47,7 +67,20 @@ module.exports = {
 
   getClassGradeBoard: async (req, res) => {
     try {
-      const id_class = req.query.id_class;
+      const { id_class } = req.query;
+      if (id_class === undefined) {
+        return res.status(400).json({
+          status: 'failed',
+          error: 'Missing required input data (id_class)',
+        });
+      }
+
+      if (typeof id_class !== 'string') {
+        return res.status(400).json({
+          status: 'failed',
+          error: 'Invalid data types for input (id_class should be string)',
+        });
+      }
       const gradeBoardData = await teacherModel.getClassGradeBoard(id_class);
 
 
@@ -64,19 +97,27 @@ module.exports = {
   },
 
   postSingleGradeAssignment: async (req, res) => {
+    const { classId, studentId, compositionId, grade } = req.body;
+    if (classId === undefined || studentId === undefined || compositionId === undefined || grade === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data (classId, studentId, compositionId, grade)',
+      });
+    }
+
+    if (typeof classId !== 'string' || typeof studentId !== 'string' || typeof compositionId !== 'string' || typeof grade !== 'number') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (classId should be string, studentId should be string, compositionId should be string, grade should be number)',
+      });
+    }
+
     try {
-      const data = {
-        class_id: req.body.classId,
-        student_id: req.body.studentId,
-        composition_id: req.body.compositionId,
-        grade: req.body.grade,
-      };
-      console.log(data);
       const updatedGrade = await teacherModel.postSingleGradeAssignment(
-        data.class_id,
-        data.student_id,
-        data.composition_id,
-        data.grade
+        classId,
+        studentId,
+        compositionId,
+        grade
       );
 
       res.status(200).json(updatedGrade);
@@ -91,7 +132,20 @@ module.exports = {
   getGradingTemplate: async (req, res) => {
     try {
       const { id_class, compositionId } = req.query;
-      console.log(compositionId);
+      if (id_class === undefined || compositionId === undefined) {
+        return res.status(400).json({
+          status: 'failed',
+          error: 'Missing required input data (id_class, compositionId)',
+        });
+      }
+
+      if (typeof id_class !== 'string' || typeof compositionId !== 'string') {
+        return res.status(400).json({
+          status: 'failed',
+          error: 'Invalid data types for input (id_class should be string, compositionId should be string)',
+        });
+      }
+
       const csvData = await teacherModel.getGradingTemplate(id_class, compositionId);
       res.json({
         status: 'success',
@@ -111,23 +165,8 @@ module.exports = {
     form.parse(req, async (err, fields, files) => {
       files.grades.forEach((file) => {
         const filePath = file.filepath;
-
-        // fs.readFile(filePath, 'utf8', (err, data) => {
-        //   if (err) {
-        //     console.error('Error reading file:', err);
-        //     // Handle the error
-        //   } else {
-        //     // 'data' will contain the contents of the file
-        //     console.log('File contents:', data);
-
-        //     // Continue with your logic here, e.g., parsing CSV data, processing, etc.
-        //   }
-        // }); 
         // Read the XLSX file
         const workbook = xlsx.readFile(filePath);
-
-
-
         const sheets = workbook.SheetNames
 
         for (let i = 0; i < sheets.length; i++) {
@@ -137,7 +176,6 @@ module.exports = {
             data.push(res)
           })
         }
-
       })
       const student_id_arr = data?.map((item) => item.StudentId)
       const grade_arr = data?.map((item) => item.Grade)
@@ -164,12 +202,24 @@ module.exports = {
         });
       }
     });
-
-
   },
 
   postFinalizedComposition: async (req, res) => {
     const { compositionId, isPublic } = req.body;
+    if (isPublic === undefined || compositionId === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data (isPublic, compositionId)',
+      });
+    }
+
+    if (typeof isPublic !== 'boolean' || typeof compositionId !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (isPublic should be boolean, compositionId should be string)',
+      });
+    }
+
     try {
       const rs = await teacherModel.postFinalizedComposition(
         compositionId, isPublic
@@ -177,10 +227,11 @@ module.exports = {
       const finalizedComposition = rs.finalizedComposition;
       const studentList = rs.studentList;
 
+      // socket.io
       for (const student of studentList) {
         if (req.body.activeClient.has(student.id)) {
           const clientId = req.body.activeClient.get(student.id);
-          req.body.io.to(clientId).emit("notificationCompositionFinalized", compositionId);
+          req.body.io.to(clientId).emit("notification", compositionId);
         }
       }
 
@@ -197,8 +248,21 @@ module.exports = {
   },
 
   getGradeDataOfClass: async (req, res) => {
+    const { class_id } = req.query;
+    if (class_id === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data (class_id)',
+      });
+    }
+
+    if (typeof class_id !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (class_id should be string)',
+      });
+    }
     try {
-      const class_id = req.query.class_id;
       const rs = await teacherModel.getAllGradeStructureForClass(class_id);
 
       return res.json({ result: rs });
@@ -211,12 +275,25 @@ module.exports = {
   },
 
   handleGradeStructure: async (req, res) => {
-    try {
-      const { listGrade, classId } = req.body;
+    const { listGrade, classId } = req.body;
+    if (listGrade === undefined || classId === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data (listGrade, classId)',
+      });
+    }
 
+    if (typeof listGrade !== 'object' || typeof classId !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (listGrade should be array, classId should be string)',
+      });
+    }
+
+    try {
       // handle order of list grade from client
-      for (let i = 0; i< listGrade.length; i++) {
-        listGrade[i].order_id = i + 1; 
+      for (let i = 0; i < listGrade.length; i++) {
+        listGrade[i].order_id = i + 1;
       }
 
       // get grade structure from db by class_id
@@ -258,7 +335,7 @@ module.exports = {
           }
         }
 
-        // listgrade from client has not this grade composition
+        // list grade from client has not this grade composition
         if (!isLived) {
           // remove this grade composition in db
           await teacherModel.deleteGradeCompositionById(gradeDb.id);
@@ -275,7 +352,21 @@ module.exports = {
   },
 
   getGradeBoard: async (req, res) => {
-    const classId = req.query.classId;
+    const { classId } = req.query;
+    if (classId === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data (classId)',
+      });
+    }
+
+    if (typeof classId !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (classId should be string)',
+      });
+    }
+
     try {
       const csvData = await teacherModel.getGradeBoard(classId);
       res.json({
@@ -293,6 +384,20 @@ module.exports = {
 
   mapStudentId: async (req, res) => {
     const { classId, userId, studentId, oldStudentId } = req.body;
+    if (classId === undefined || userId === undefined || studentId === undefined || oldStudentId === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data (classId, userId, studentId, oldStudentId)',
+      });
+    }
+
+    if (typeof classId !== 'string' || typeof userId !== 'string' || typeof studentId !== 'string' || typeof oldStudentId !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (classId should be string, userId should be string, studentId should be string, oldStudentId should be string)',
+      });
+    }
+
     try {
       const rs = await teacherModel.mapStudentIdWithStudentAccount(classId, studentId, userId, oldStudentId);
       res.json({
@@ -309,6 +414,20 @@ module.exports = {
 
   postFinalized: async (req, res) => {
     const composition_id = req.body.compositionId;
+    if (composition_id === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data (compositionId)',
+      });
+    }
+
+    if (typeof composition_id !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (compositionId should be string)',
+      });
+    }
+
     try {
       const rs = await teacherModel.postFinalizedComposition(composition_id);
       res.json({
@@ -326,6 +445,20 @@ module.exports = {
   getListGradeReview: async (req, res) => {
     try {
       const teacher_user_id = req.query.user_id;
+      if (teacher_user_id === undefined) {
+        return res.status(400).json({
+          status: 'failed',
+          error: 'Missing required input data (user_id)',
+        });
+      }
+
+      if (typeof teacher_user_id !== 'string') {
+        return res.status(400).json({
+          status: 'failed',
+          error: 'Invalid data types for input (user_id should be string)',
+        });
+      }
+
       const listGradeReview = await teacherModel.getListGradeReview(teacher_user_id);
       res.send(listGradeReview);
     } catch (error) {
@@ -337,8 +470,22 @@ module.exports = {
   },
 
   getDetailGradeReview: async (req, res) => {
+    const { review_id } = req.query;
+    if (review_id === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data (review_id)',
+      });
+    }
+
+    if (typeof review_id !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (review_id should be string)',
+      });
+    }
+
     try {
-      const review_id = req.query.review_id;
       const reviewDetail = await teacherModel.getDetailGradeReview(review_id);
 
       res.send(reviewDetail);
@@ -351,16 +498,32 @@ module.exports = {
   },
 
   postFeedbackOnReview: async (req, res) => {
+    const { review_id, user_id, feedback } = req.body;
+    if (review_id === undefined || user_id === undefined || feedback === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data (review_id, user_id, feedback)',
+      });
+    }
+
+    if (typeof review_id !== 'string' || typeof user_id !== 'string' || typeof feedback !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (review_id should be string, user_id should be string, feedback should be string)',
+      });
+    }
     try {
-      const data = {
-        review_id: req.body.review_id,
-        feedback: req.body.feedback,
+      const storeFeedback = {
+        orderId: uuidv4(),
+        user_id: user_id,
+        comment_content: feedback,
       }
-      const rs = await teacherModel.postFeedbackOnReview(data.review_id, data.feedback);
+      const rs = await teacherModel.postFeedbackOnReview(review_id, storeFeedback);
       if (rs != null) {
+        // socket.io
         if (req.body.activeClient.has(rs.studentId.id)) {
           const clientId = req.body.activeClient.get(rs.studentId.id);
-          req.body.io.to(clientId).emit('notificationFeedBackOnReview', 'have new notification');
+          req.body.io.to(clientId).emit('notification', 'have new notification');
         }
         res.send(rs.status);
       }
@@ -378,16 +541,28 @@ module.exports = {
   },
 
   postFinalizedGradeReview: async (req, res) => {
+    const { review_id, accepted } = req.body;
+    if (review_id === undefined || accepted === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data (review_id, accepted)',
+      });
+    }
+
+    if (typeof review_id !== 'string' || typeof accepted !== 'boolean') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (review_id should be string, accepted should be boolean)',
+      });
+    }
+
     try {
-      const data = {
-        review_id: req.body.review_id,
-        accepted: req.body.accepted,
-      };
-      const rs = await teacherModel.postFinalizedGradeReview(data.review_id, data.accepted);
+      const rs = await teacherModel.postFinalizedGradeReview(review_id, accepted);
       if (rs != null) {
+        // socket.io
         if (req.body.activeClient.has(rs.studentId.id)) {
           const clientId = req.body.activeClient.get(rs.studentId.id);
-          req.body.io.to(clientId).emit('notificationFeedBackOnReview', 'have new notification');
+          req.body.io.to(clientId).emit('notification', 'have new notification');
         }
         res.json(rs.studentGrade);
       } else {

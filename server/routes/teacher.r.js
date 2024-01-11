@@ -402,11 +402,10 @@ router.get("/getDetailGradeReview", middlewareController.verifyToken, teacherCon
  *           properties:
  *             review_id:
  *               type: string
+ *             user_id:
+ *               type: string
  *             feedback:
- *               type: object
- *               properties: 
- *                 comment: 
- *                   type: string 
+ *               type: string
  *   security:
  *     - tokenAuth: []
  *   responses:
