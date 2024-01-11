@@ -3,14 +3,16 @@ import './style.scss';
 import { Button } from 'primereact/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { OverlayPanel } from 'primereact/overlaypanel';
-import { useRef } from 'react';
+import { useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import LanguageSelect from 'components/LanguageSelect';
 import CreateClass from 'pages/DashBoardPage/components/CreateClass';
 import JoinClass from 'pages/DashBoardPage/components/JoinClass';
 import { PropTypes } from 'prop-types';
 import { logout } from 'apis/auth.api';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
+
+import { getStudentId } from 'apis/user.api';
 
 export default function Header({
   isDashBoard,
@@ -25,6 +27,13 @@ export default function Header({
   const classRef = useRef(null);
   const createClassRef = useRef(null);
   const joinClassRef = useRef(null);
+
+  const { data, refetch: refetchStudentId } = useQuery({
+    queryKey: ['studentId', user?.id],
+    queryFn: () => getStudentId(user?.id)
+  });
+
+  const studentId = useMemo(() => data?.data?.studentId ?? null, [data]);
 
   const showSettingModal = (event) => {
     settingRef.current.toggle(event);
@@ -45,6 +54,8 @@ export default function Header({
   const showJoinClassModal = () => {
     joinClassRef.current.open({
       userId: user?.id,
+      refetchStudentId,
+      studentId,
       refetch
     });
   };
@@ -52,7 +63,7 @@ export default function Header({
   const { mutate } = useMutation(logout);
 
   const handleLogout = async () => {
-    mutate({}, {
+    mutate({ id: user?.id }, {
       onSuccess: () => {
         localStorage.removeItem('access_token');
         localStorage.removeItem('user_profile');

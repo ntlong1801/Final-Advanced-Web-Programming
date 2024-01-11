@@ -74,7 +74,7 @@ function GradeStructure() {
 
   const handleSave = () => {
     const dataSender = {
-      emailSend: user.email,
+      emailSend: user?.email,
       classId,
       listGrade,
     };

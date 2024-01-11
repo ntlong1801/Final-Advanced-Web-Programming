@@ -18,3 +18,6 @@ export const changePasswordByForgot = ({ token, body }) =>
 
 export const getProfile = (id) =>
   instance.get(USER.GET_INFO(id));
+
+export const getStudentId = (id) =>
+  instance.get(USER.GET_STUDENT_ID(id));

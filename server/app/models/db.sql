@@ -19,7 +19,9 @@ CREATE TABLE IF NOT EXISTS student_id
 (
     user_id character varying(255) NOT NULL,
     student_id character varying(255) NOT NULL,
-    CONSTRAINT student_pkey PRIMARY KEY (user_id, student_id)
+    CONSTRAINT student_pkey PRIMARY KEY (user_id, student_id),
+	CONSTRAINT student_id_key UNIQUE (student_id),
+    CONSTRAINT student_user_key UNIQUE (user_id)
 );
 
 DROP TABLE IF EXISTS classes;

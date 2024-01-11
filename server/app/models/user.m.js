@@ -83,7 +83,7 @@ module.exports = {
   },
   getStudentId: async (userId) => {
     try {
-      const rs = await db.one("SELECT * FROM users WHERE user_id = $1;", [userId]);
+      const rs = await db.one("SELECT * FROM student_id WHERE user_id = $1;", [userId]);
       return rs;
     } catch (err) {
       if (err.code === 0) {

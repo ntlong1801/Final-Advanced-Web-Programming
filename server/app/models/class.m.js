@@ -25,8 +25,8 @@ module.exports = {
         return rs;
     },
 
-    addUserToClass: async(id_class, id_user, role) => {
-        const rs = await db.one("INSERT INTO class_user (id_class, id_user, role) VALUES ($1, $2, $3) RETURNING *;", [id_class, id_user, role]);
+    addUserToClass: async(id_class, id_user, role, student_id = null) => {
+        const rs = await db.one("INSERT INTO class_user (id_class, id_user, role, student_id) VALUES ($1, $2, $3, $4) RETURNING *;", [id_class, id_user, role, student_id]);
         return rs;
     },
     

@@ -351,7 +351,7 @@ const userController = {
 
   // [GET] /user/studentId
   getStudentId: async (req, res) => { 
-    const {userId} = req.body;
+    const {userId} = req.query;
     const rs = await userM.getStudentId(userId);
     return res.json({ 
       studentId: rs,

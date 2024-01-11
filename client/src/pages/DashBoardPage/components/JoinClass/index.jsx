@@ -17,6 +17,7 @@ const JoinClass = forwardRef((props, ref) => {
   // eslint-disable-next-line no-unused-vars
   const [joinClassControl, setJoinClassControl] = useState();
   const [visible, setVisible] = useState(false);
+  const [studentId, setStudentId] = useState(null);
 
   const {
     control,
@@ -51,6 +52,7 @@ const JoinClass = forwardRef((props, ref) => {
     () => ({
       open: (_joinClassControl) => {
         setJoinClassControl(_joinClassControl);
+        setStudentId(_joinClassControl.studentId);
         reset();
         setVisible(true);
       },
@@ -67,12 +69,14 @@ const JoinClass = forwardRef((props, ref) => {
       showError(t('errorMessage.validationErrorMessage'));
       return;
     }
-    const { userId, refetch } = joinClassControl;
+    const { userId, refetch, refetchStudentId } = joinClassControl;
     const classCode = getValues('classCode');
-    mutate({ userId, classCode }, {
+    const studentIdInput = getValues('studentId');
+    mutate({ userId, studentId: studentIdInput, classCode }, {
       onSuccess: (res) => {
         if (res?.data.status === 'success') {
           refetch();
+          refetchStudentId();
           showSuccess(res?.data.message);
         } else {
           showError(res?.data.message);
@@ -106,6 +110,19 @@ const JoinClass = forwardRef((props, ref) => {
               errors={errors}
             />
           </div>
+
+          {!studentId && (
+            <div className="col-12">
+              <TextInput
+                name="studentId"
+                label="Mã số sinh viên"
+                isRequired
+                control={control}
+                errors={errors}
+                defaultValue={studentId}
+              />
+            </div>
+          )}
 
         </div>
 

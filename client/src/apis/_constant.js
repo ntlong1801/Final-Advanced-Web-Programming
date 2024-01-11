@@ -36,7 +36,8 @@ export const USER = {
   UPDATE_INFO: 'user/updatePRofile',
   CHANGE_PASSWORD: 'user/changePassword',
   FORGOT_PASSWORD: 'user/forgot-password-email',
-  RENEW_PASSWORD: (token) => `user/renew-password-by-forgot-email/${token}`
+  RENEW_PASSWORD: (token) => `user/renew-password-by-forgot-email/${token}`,
+  GET_STUDENT_ID: (id) => `user/studentId?userId=${id}`,
 };
 
 export const GRADE = {

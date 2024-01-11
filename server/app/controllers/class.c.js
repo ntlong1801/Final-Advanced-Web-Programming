@@ -3,6 +3,7 @@ const userModel = require("../models/user.m");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const classM = require("../models/class.m");
+const userM = require("../models/user.m");
 
 const URLClient = process.env.URL_CLIENT;
 
@@ -459,7 +460,8 @@ const classController = {
   },
 
   joinClassByCode: async (req, res) => {
-    const { userId, classCode } = req.body;
+    const { userId, studentId, classCode } = req.body;
+
     if (userId === undefined || classCode === undefined) {
       return res.status(400).json({
         status: 'failed',
@@ -475,14 +477,16 @@ const classController = {
     }
 
     try {
-      const link = `${process.env.URL_CLIENT}/invite/${classCode}`;
+      const link = `${URLClient}/invite/${classCode}`;
       const classByLink = await classM.getClassByLink(link);
-      if (!classByLink) {
+      if (classByLink.length === 0) {
         return res.json({
           status: "failed",
           message: "Invalid class code"
         })
       }
+
+
       const userDd = await classM.getUserOfClassById(classByLink[0].id, userId);
       if (userDd.length > 0) {
         return res.json({
@@ -490,7 +494,16 @@ const classController = {
           message: "You already in the class",
         })
       }
-      const rs = await classM.addUserToClass(classByLink[0].id, userId, "student");
+      if (studentId) { 
+        const createStudentId = await userM.postStudentId(userId, studentId);
+        if (!createStudentId) {
+          return res.json({
+            status: "failed",
+            message: "StudentId already exists",
+          })
+        }
+      }
+      const rs = await classM.addUserToClass(classByLink[0].id, userId, "student", studentId);
       if (rs) {
         return res.json({
           status: "success",
@@ -498,6 +511,7 @@ const classController = {
         });
       }
     } catch (err) {
+      console.log(err);
       return res.json({
         status: "failed",
         message: err
