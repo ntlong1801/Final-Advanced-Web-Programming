@@ -1,7 +1,8 @@
 import Header from 'layout/header';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 import { useMemo, useRef, useState } from 'react';
 import { getAllClass } from 'apis/class.api';
+import { activeClass } from 'apis/admin.api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -34,49 +35,54 @@ export default function ManageClassesPage() {
     setGlobalFilterValue(value);
   };
 
-  const accept = () => {
-    toast.current.show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
-  };
-
-  const reject = () => {
-    toast.current.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-  };
-
   const {
     data: _data,
-    isLoading
+    isLoading,
+    refetch
   } = useQuery({
     queryKey: ['allClasses'],
     queryFn: () => getAllClass()
   });
   const data = useMemo(() => _data?.data ?? null, [_data]);
 
-  const confirmBan = () => {
+  const { mutate } = useMutation(activeClass);
+
+  const acceptActive = (value) => {
+    const dataSender = {
+      active: !value.inactive,
+      classId: value.id
+    };
+    mutate(dataSender, {
+      onSuccess: (res) => {
+        refetch();
+        toast.current.show({ severity: 'success', summary: 'Success', detail: res.data.message, life: 3000 });
+      }
+    });
+  };
+
+  const reject = () => {
+    toast.current.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+  };
+
+  const confirmActive = (value) => {
     confirmDialog({
       message: 'Are you sure you want to proceed?',
       header: 'Confirmation',
       icon: 'pi pi-exclamation-triangle',
-      accept,
+      accept: () => acceptActive(value),
       reject
     });
   };
 
   const formatAction = (value) => (
-    <div>
-      {value?.inactive ? (
-        <Button
-          type="button"
-          label={t('manageClassPage.active')}
-          onClick={confirmBan}
-        />
-      ) : (
-        <Button
-          type="button"
-          label={t('manageClassPage.inactive')}
-          onClick={confirmBan}
-        />
-      )}
-
+    <div className="flex justify-content-center">
+      <Button
+        type="button"
+        tooltip={t('manageClassPage.inactive')}
+        tooltipOptions={{ position: 'left' }}
+        icon="pi pi-lock"
+        onClick={() => confirmActive(value)}
+      />
     </div>
   );
 
@@ -108,14 +114,41 @@ export default function ManageClassesPage() {
           emptyMessage="No customers found."
           header={renderHeader}
           tableStyle={{ minWidth: '50rem' }}
-          className="p-2"
+          className="p-4"
           loading={isLoading}
           removableSort
+          showGridlines
         >
-          <Column field="name" header={t('manageClassPage.name')} sortable filter filterPlaceholder="Search by name" />
-          <Column field="description" header={t('manageClassPage.description')} sortable filter filterPlaceholder="Search by country" />
-          <Column field="inactive" header={t('manageClassPage.inactive')} sortable filter filterElement={inactiveRowFilterTemplate} />
-          <Column body={formatAction} header={t('manageClassPage.actions')} style={{ minWidth: 160, width: 160 }} />
+          <Column
+            field="name"
+            header={t('manageClassPage.name')}
+            sortable
+            filter
+            filterPlaceholder="Search by name"
+            headerStyle={{ textAlign: 'center' }}
+          />
+          <Column
+            field="description"
+            header={t('manageClassPage.description')}
+            sortable
+            filter
+            filterPlaceholder="Search by description"
+            headerStyle={{ textAlign: 'center' }}
+          />
+          <Column
+            field="inactive"
+            header={t('manageClassPage.inactive')}
+            sortable
+            filter
+            filterElement={inactiveRowFilterTemplate}
+            headerStyle={{ textAlign: 'center' }}
+          />
+          <Column
+            body={formatAction}
+            header={t('manageClassPage.actions')}
+            style={{ minWidth: 160, width: 160 }}
+            headerStyle={{ textAlign: 'center' }}
+          />
         </DataTable>
       </div>
       <Toast ref={toast} />

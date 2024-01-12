@@ -42,7 +42,7 @@ export default function ViewListGradeReview() {
   };
 
   const formatActions = (value) => (
-    <div className="flex  justify-content-center gap-2">
+    <div className="flex justify-content-center gap-2">
       <Button
         icon="pi pi-comments"
         onClick={() => handleOpenModal(value)}

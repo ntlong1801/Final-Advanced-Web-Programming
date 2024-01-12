@@ -64,7 +64,6 @@ export default function GradeStudentPage() {
     </div>
   );
   const formatGrade = (value, classComposition) => {
-    console.log(value);
     let grade = null;
     const gradeTemp = value[classComposition];
     if (gradeTemp === null) {

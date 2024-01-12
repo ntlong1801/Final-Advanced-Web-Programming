@@ -11,6 +11,26 @@ const router = require("express").Router();
 
 /**
  * @swagger
+ * /admin/getAllUsers:
+ *  get:
+ *   summary: add new user
+ *   tags: [/admin]
+ *   security:
+ *     - tokenAuth: []
+ *   responses:
+ *     '200':
+ *       description: get all users
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UserInfo'
+ *     '500':
+ *       description: Internal server error
+ */
+router.get('/getAllUsers', middlewareController.verifyToken, adminController.getAllAccount);
+
+/**
+ * @swagger
  * /admin/addUser:
  *  post:
  *   summary: add new user
@@ -176,6 +196,14 @@ router.post('/banUser', middlewareController.verifyToken, adminController.banUse
  *       description: Internal server error
  */
 router.post('/activeClass', middlewareController.verifyToken, adminController.inactiveClass);
+
+
+router.post('/mapStudentId', middlewareController.verifyToken, adminController.mapStudentId);
+
+router.post('/postListStudentId', middlewareController.verifyToken, adminController.postStudentListId);
+
+router.get('/getStudentListIdTemplate', middlewareController.verifyToken, adminController.getTemplateStudentListId);
+
 
 
 module.exports = router;

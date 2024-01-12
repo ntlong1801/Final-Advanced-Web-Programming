@@ -91,6 +91,6 @@ const ConnectNotification = function () {
       <Toast ref={toast} />
     </div>
   );
-};
+}
 
 export default ConnectNotification;

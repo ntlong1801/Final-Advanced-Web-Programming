@@ -38,7 +38,7 @@ export const USER = {
   FORGOT_PASSWORD: 'user/forgot-password-email',
   RENEW_PASSWORD: (token) => `user/renew-password-by-forgot-email/${token}`,
   GET_STUDENT_ID: (id) => `user/studentId?userId=${id}`,
- 
+
   TEACHER_NOTIFICATION: 'teacher/getNotification',
   STUDENT_NOTIFICATION: 'student/getNotification',
 };
@@ -66,4 +66,16 @@ export const STUDENT = {
   POST_REQUEST_REVIEW: 'student/requestReview',
   POST_COMMENT: 'student/postComment',
   GET_COMMENT: 'student/getComment',
+};
+
+export const ADMIN = {
+  GET_ALL_USERS: 'admin/getAllUsers',
+  ADD_NEW_USER: 'admin/addUser',
+  UPDATE_USER: 'admin/updateUser',
+  DELETE_USER: (id) => `admin/deleteUser?userId=${id}`,
+  BAN_USER: 'admin/banUser',
+  ACTIVE_CLASS: 'admin/activeClass',
+  MAP_STUDENT_ID: 'admin/mapStudentId',
+  POST_LIST_STUDENT_ID: 'admin/postListStudentId',
+  GET_TEMPLATE_STUDENT_LIST_ID: 'admin/getStudentListIdTemplate',
 };

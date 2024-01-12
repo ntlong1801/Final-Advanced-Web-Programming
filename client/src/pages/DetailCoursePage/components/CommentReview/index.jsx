@@ -37,7 +37,6 @@ const CommentReview = forwardRef((props, ref) => {
     enabled: !!info?.id
   });
   const detailComment = useMemo(() => data?.data ?? null, [data]);
-  console.log(detailComment);
   // #endregion Data
 
   // #region Event
