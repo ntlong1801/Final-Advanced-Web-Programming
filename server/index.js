@@ -41,8 +41,39 @@ app.use((req, res, next) => {
 })
 
 // Socket.IO integration
+const classrooms = {};
+
 io.on('connection', (socket) => {
-  console.log('A user connected');
+  socket.on('joinClass', (classroomId, userId) => {
+    // create or join a class
+    socket.join(classroomId);
+
+    // storage information in class
+    if (!classrooms[classroomId]) {
+      classrooms[classroomId] = [];
+    }
+
+    // check student connect class existed in storage => no push
+    let inConnectStorage = false;
+    for(let conClass of classrooms[classroomId]) {
+      if(conClass.userId === userId) {
+        inConnectStorage = true;
+        // update socketid
+        conClass.socketId = socket.id;
+        break;
+      }
+    }
+    // if connection existed yet => push to storage
+    if(!inConnectStorage) {
+      classrooms[classroomId].push({ socketId: socket.id, userId });
+    }
+  });
+
+
+  socket.on('broadcastMessage', (classroomId, message) => {
+    io.to(classroomId).emit('publicGradeFromTeacher', { from: socket.id, message });
+    // we can send email notification here.
+  });
 
   // Handle disconnection
   socket.on('disconnect', () => {

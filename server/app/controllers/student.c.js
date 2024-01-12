@@ -157,4 +157,29 @@ module.exports = {
     }
   },
 
+  getAllNotificationsByStudentId: async (req, res) => {
+    const { studentId } = req.body;
+    if (studentId === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data studentId',
+      });
+    }
+
+    if (typeof studentId !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (studentId should be string)',
+      });
+    }
+
+    try {
+      const rs = await teacherModel.getAllNotificationsByTeacherId(studentId);
+
+      res.json(rs);
+    } catch (error) {
+      
+    }
+  },
+
 };

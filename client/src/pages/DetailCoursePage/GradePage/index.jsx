@@ -11,6 +11,7 @@ import { Button } from 'primereact/button';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { useParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import DownloadExcelFile from 'components/DownloadExcelFile';
 import UploadExcelFile from 'components/UploadExcelFile';
 import SwitchInput from 'pages/DetailCoursePage/components/SwitchInput';
@@ -18,6 +19,7 @@ import InputGrade from '../components/InputGrade';
 import MapStudentId from '../components/MapStudentId';
 
 export default function GradePage() {
+  const { t } = useTranslation();
   const { classId } = useParams();
   const toast = useRef(null);
   const inputGrade = useRef(null);
@@ -149,13 +151,13 @@ export default function GradePage() {
       {value?.banned ? (
         <Button
           type="button"
-          label="Unban"
+          label={t('detail.gradePage.unban')}
           onClick={confirmBan}
         />
       ) : (
         <Button
           type="button"
-          label="Ban"
+          label={t('detail.gradePage.ban')}
           onClick={confirmBan}
         />
       )}
@@ -198,13 +200,13 @@ export default function GradePage() {
         className="p-2"
         loading={isLoading || gradeStructureLoading}
       >
-        <Column field="student_id" body={formatStudentId} header="StudentId" />
-        <Column field="full_name" header="Full name" />
+        <Column field="student_id" body={formatStudentId} header={t('detail.gradePage.studentId')} />
+        <Column field="full_name" header={t('detail.gradePage.fullName')} />
         {classcompositions?.map((classcomposition) =>
           <Column body={formatGrade} header={() => formatColHeader(classcomposition)} className="text-center" />
         )}
-        <Column field="totalGrade" header="Total grade" className="text-center" />
-        <Column body={formatAction} header="Actions" />
+        <Column field="totalGrade" header={t('detail.gradePage.totalGrade')} className="text-center" />
+        <Column body={formatAction} header={t('detail.gradePage.actions')} />
       </DataTable>
       <UploadExcelFile ref={uploadFile} link={link} refetch={refetch} />
       <InputGrade ref={inputGrade} refetch={refetch} oldGrade={0} />

@@ -5,11 +5,13 @@ import { useParams } from 'react-router';
 import { getStudentId } from 'apis/user.api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { useTranslation } from 'react-i18next';
 import { Badge } from 'primereact/badge';
 import RequestGrade from '../components/RequestGrade';
 import CommentReview from '../components/CommentReview';
 
 export default function GradeStudentPage() {
+  const { t } = useTranslation();
   const userId = JSON.parse(localStorage.getItem('user_profile')).id;
   const fullName = JSON.parse(localStorage.getItem('user_profile')).full_name;
   const { classId } = useParams();
@@ -94,7 +96,7 @@ export default function GradeStudentPage() {
         className="p-2"
         loading={isLoading}
       >
-        <Column field="student_id" header="StudentId" style={{ minWidth: 140, width: 140 }} />
+        <Column field="student_id" header={t('detail.gradeStudentPage.studentId')} style={{ minWidth: 140, width: 140 }} />
         {classcompositions?.map((classcomposition) => (
           <Column
             body={(value) => formatGrade(value, classcomposition.id)}
@@ -103,7 +105,7 @@ export default function GradeStudentPage() {
           />
         )
         )}
-        <Column field="totalGrade" header="Total grade" headerStyle={{ textAlign: 'center' }} style={{ minWidth: 110, width: 110 }} className="text-center" />
+        <Column field="totalGrade" header={t('detail.gradeStudentPage.totalGrade')} headerStyle={{ textAlign: 'center' }} style={{ minWidth: 110, width: 110 }} className="text-center" />
       </DataTable>
       <RequestGrade ref={requestRef} />
       <CommentReview ref={commentRef} />

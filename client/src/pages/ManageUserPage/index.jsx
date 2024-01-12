@@ -7,11 +7,13 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
+import { useTranslation } from 'react-i18next';
 import AddUser from './components/AddUser';
 import EditUSer from './components/EditUser';
 import MapStudentId from './MapStudentId';
 
 export default function ManageUserPage() {
+  const { t } = useTranslation();
   const toast = useRef(null);
   const addUserRef = useRef(null);
   const editUserRef = useRef(null);

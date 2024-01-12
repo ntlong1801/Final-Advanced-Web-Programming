@@ -1,3 +1,4 @@
+const { as } = require("pg-promise");
 const db = require("../../config/connect_db");
 const { v4: uuidv4 } = require('uuid');
 
@@ -499,5 +500,18 @@ module.exports = {
       }
     }
   },
+
+  getAllNotificationsByTeacherId: async (teacherId) => {
+    try {
+      const rs = await db.any("SELECT * FROM teacher_notifications WHERE teacher_id = $1;", [teacherId]);
+      return rs;
+    } catch (err) {
+      if (err.code === 0) {
+        return null;
+      } else {
+        throw err;
+      }
+    }
+  }
 
 };

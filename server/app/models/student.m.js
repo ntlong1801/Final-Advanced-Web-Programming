@@ -124,6 +124,19 @@ module.exports = {
         throw err;
       }
     }
+  },
+  
+  getAllNotificationsByStudentId: async (studentId) => {
+    try {
+      const rs = await db.any("SELECT * FROM student_notifications WHERE teacher_id = $1;", [studentId]);
+      return rs;
+    } catch (err) {
+      if (err.code === 0) {
+        return null;
+      } else {
+        throw err;
+      }
+    }
   }
 
 };

@@ -99,7 +99,7 @@ const InputGrade = forwardRef((props, ref) => {
     <>
       {isLoading && <Loading />}
       <Dialog
-        header="Nhập điểm"
+        header={t('detail.components.inputGrade.inputGrade')}
         visible={visible}
         onHide={() => {
           setVisible(false);
@@ -125,7 +125,7 @@ const InputGrade = forwardRef((props, ref) => {
 
         <div className="flex justify-content-end mt-4">
           <Button
-            label="Cập nhật"
+            label={t('detail.components.inputGrade.update')}
             type="submit"
             severity="info"
             onClick={handleInputGrade}

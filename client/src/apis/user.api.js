@@ -16,6 +16,12 @@ export const forgotPassword = (body = {}) =>
 export const changePasswordByForgot = ({ token, body }) =>
   instance.post(USER.RENEW_PASSWORD(token), body);
 
+export const getNotificationStudent = (body = {}) =>
+  instance.post(USER.STUDENT_NOTIFICATION, body);
+
+export const getNotificationTeacher = (body = {}) =>
+  instance.post(USER.TEACHER_NOTIFICATION, body);
+
 export const getProfile = (id) =>
   instance.get(USER.GET_INFO(id));
 

@@ -4,10 +4,12 @@ import { getListGradeReviews } from 'apis/grade.api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
+import { useTranslation } from 'react-i18next';
 import CommentReview from '../components/CommentReview';
 import Decision from '../components/Decision';
 
 export default function ViewListGradeReview() {
+  const { t } = useTranslation();
   const userId = JSON.parse(localStorage.getItem('user_profile')).id;
   const fullName = JSON.parse(localStorage.getItem('user_profile')).full_name;
   const commentRef = useRef(null);
@@ -63,10 +65,10 @@ export default function ViewListGradeReview() {
         value={studentReviews}
         showGridlines
       >
-        <Column field="student_id" header="StudentId" style={{ textAlign: 'center' }} />
-        <Column field="composition_name" header="Grade composition" style={{ textAlign: 'center' }} />
-        <Column field="student_expected_grade" header="Expected grade" style={{ textAlign: 'center' }} />
-        <Column header="Actions" body={formatActions} style={{ textAlign: 'center' }} />
+        <Column field="student_id" header={t('detail.viewListGradeReview.studentId')} style={{ textAlign: 'center' }} />
+        <Column field="composition_name" header={t('detail.viewListGradeReview.gradeComposition')} style={{ textAlign: 'center' }} />
+        <Column field="student_expected_grade" header={t('detail.viewListGradeReview.expectedGrade')} style={{ textAlign: 'center' }} />
+        <Column header={t('detail.viewListGradeReview.actions')} body={formatActions} style={{ textAlign: 'center' }} />
       </DataTable>
       <CommentReview ref={commentRef} />
       <Decision ref={decisionRef} />

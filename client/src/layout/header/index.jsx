@@ -13,11 +13,9 @@ import { logout } from 'apis/auth.api';
 import { useMutation, useQuery } from 'react-query';
 
 import { getStudentId } from 'apis/user.api';
+import ConnectNotification from './ConnectNotification';
 
-export default function Header({
-  isDashBoard,
-  refetch
-}) {
+export default function Header({ isDashBoard, refetch }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const user = JSON.parse(localStorage.getItem('user_profile'));
@@ -30,7 +28,7 @@ export default function Header({
 
   const { data, refetch: refetchStudentId } = useQuery({
     queryKey: ['studentId', user?.id],
-    queryFn: () => getStudentId(user?.id)
+    queryFn: () => getStudentId(user?.id),
   });
 
   const studentId = useMemo(() => data?.data?.studentId ?? null, [data]);
@@ -47,7 +45,7 @@ export default function Header({
   const showCreateClassModal = () => {
     createClassRef.current.open({
       userId: user?.id,
-      refetch
+      refetch,
     });
   };
 
@@ -56,20 +54,23 @@ export default function Header({
       userId: user?.id,
       refetchStudentId,
       studentId,
-      refetch
+      refetch,
     });
   };
 
   const { mutate } = useMutation(logout);
 
   const handleLogout = async () => {
-    mutate({ id: user?.id }, {
-      onSuccess: () => {
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('user_profile');
-        navigate('/signin');
+    mutate(
+      { id: user?.id },
+      {
+        onSuccess: () => {
+          localStorage.removeItem('access_token');
+          localStorage.removeItem('user_profile');
+          navigate('/signin');
+        },
       }
-    });
+    );
   };
   const handleGoHome = () => {
     if (!user) return '/';
@@ -80,28 +81,25 @@ export default function Header({
       <div className="flex justify-content-between p-2 bg-header fixed top-0 left-0 w-full">
         <div className="flex align-items-center p-2 ml-2">
           <Link to={handleGoHome()}>
-            <i className="pi pi-home text-white" style={{ fontSize: '2rem' }}>{t('home')}</i>
+            <i className="pi pi-home text-white" style={{ fontSize: '2rem' }}>
+              {t('home')}
+            </i>
           </Link>
         </div>
         <div className="flex gap-2 align-items-center">
           {!user ? (
             <>
               <Link to="/signin">
-                <Button
-                  label={t('signIn.name')}
-                  severity="primary"
-                  type="button"
-
-                />
+                <Button label={t('signIn.name')} severity="primary" type="button" />
               </Link>
               <Link to="/signup">
-                <Button
-                  label={t('signUp.name')}
-                  severity="help"
-                  type="button"
-                />
+                <Button label={t('signUp.name')} severity="help" type="button" />
               </Link>
-              <button type="button" className="p-link layout-topbar-button mr-2" onClick={showSettingModal}>
+              <button
+                type="button"
+                className="p-link layout-topbar-button mr-2"
+                onClick={showSettingModal}
+              >
                 <i className="pi pi-cog text-white" style={{ fontSize: '1.5rem' }} />
                 {/* <span>{t('settings.name')}</span> */}
               </button>
@@ -118,7 +116,13 @@ export default function Header({
           ) : (
             <>
               {isDashBoard && (
-                <Button icon="pi pi-plus" severity="help" aria-label="User" rounded onClick={showClassModal}>
+                <Button
+                  icon="pi pi-plus"
+                  severity="help"
+                  aria-label="User"
+                  rounded
+                  onClick={showClassModal}
+                >
                   <OverlayPanel
                     ref={classRef}
                     appendTo={typeof window !== 'undefined' ? document.body : null}
@@ -126,11 +130,10 @@ export default function Header({
                     id="overlay_panel_class"
                   >
                     <ul className="profile-menu list-none p-0 m-0">
-
                       <div onClick={showJoinClassModal}>
                         <li className="hover:surface-200 p-2 span-button">
                           <span>
-                            Tham gia lớp học
+                            {t('header.joinClass')}
                           </span>
                         </li>
                       </div>
@@ -139,17 +142,22 @@ export default function Header({
                       <div onClick={showCreateClassModal}>
                         <li className="hover:surface-200 p-2 span-button">
                           <span>
-                            Tạo lớp học
+                            {t('header.createClass')}
                           </span>
                         </li>
                       </div>
-
                     </ul>
                   </OverlayPanel>
                 </Button>
               )}
-
-              <Button icon="pi pi-user" severity="help" aria-label="User" rounded onClick={showProfileModal}>
+              <ConnectNotification />
+              <Button
+                icon="pi pi-user"
+                severity="help"
+                aria-label="User"
+                rounded
+                onClick={showProfileModal}
+              >
                 <OverlayPanel
                   ref={profileRef}
                   appendTo={typeof window !== 'undefined' ? document.body : null}
@@ -160,14 +168,11 @@ export default function Header({
                     <i className="pi pi-user text-2xl" />
                     <div className="ml-4">
                       <h6 className="m-0">{user.email}</h6>
-                      <p>
-                        {user.full_name}
-                      </p>
+                      <p>{user.full_name}</p>
                     </div>
                   </div>
                   <hr className="my-2" />
                   <ul className="profile-menu list-none p-0 m-0">
-
                     <Link to="/me" className="text-color">
                       <li className="hover:surface-200 p-2">
                         <i className="pi pi-user mr-3" />
@@ -178,18 +183,20 @@ export default function Header({
                     <hr />
                     <div onClick={handleLogout}>
                       <li className="hover:surface-200 p-2 span-button">
-
                         <span>
                           <i className="pi pi-sign-out mr-3" />
                           {t('settings.logout')}
                         </span>
                       </li>
                     </div>
-
                   </ul>
                 </OverlayPanel>
               </Button>
-              <button type="button" className="p-link layout-topbar-button mr-2" onClick={showSettingModal}>
+              <button
+                type="button"
+                className="p-link layout-topbar-button mr-2"
+                onClick={showSettingModal}
+              >
                 <i className="pi pi-cog text-white" style={{ fontSize: '1.5rem' }} />
                 {/* <span>{t('settings.name')}</span> */}
               </button>
@@ -214,9 +221,9 @@ export default function Header({
 
 Header.propTypes = {
   isDashBoard: PropTypes.bool,
-  refetch: PropTypes.func
+  refetch: PropTypes.func,
 };
 Header.defaultProps = {
   isDashBoard: false,
-  refetch: () => null
+  refetch: () => null,
 };

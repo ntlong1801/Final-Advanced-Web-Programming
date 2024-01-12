@@ -12,5 +12,7 @@ router.post("/postComment", studentController.commentGradeReview);
 
 router.get("/getComment", studentController.getCommentReview);
 
+router.post("/getNotification", studentController.getAllNotificationsByStudentId);
+
 
 module.exports = router;

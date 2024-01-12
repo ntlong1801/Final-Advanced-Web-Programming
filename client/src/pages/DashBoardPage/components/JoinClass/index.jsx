@@ -92,7 +92,7 @@ const JoinClass = forwardRef((props, ref) => {
   return (
     <>
       <Dialog
-        header="Tham gia lớp học"
+        header={t('dashBoard.components.joinClass.joinClass')}
         visible={visible}
         onHide={() => {
           setVisible(false);
@@ -104,7 +104,7 @@ const JoinClass = forwardRef((props, ref) => {
           <div className="col-12">
             <TextInput
               name="classCode"
-              label="Mã lớp"
+              label={t('dashBoard.components.joinClass.classId')}
               isRequired
               control={control}
               errors={errors}
@@ -115,7 +115,7 @@ const JoinClass = forwardRef((props, ref) => {
             <div className="col-12">
               <TextInput
                 name="studentId"
-                label="Mã số sinh viên"
+                label={t('dashBoard.components.joinClass.studentId')}
                 isRequired
                 control={control}
                 errors={errors}
@@ -128,7 +128,7 @@ const JoinClass = forwardRef((props, ref) => {
 
         <div className="flex justify-content-end mt-4">
           <Button
-            label="Tham gia"
+            label={t('dashBoard.components.joinClass.join')}
             type="submit"
             severity="info"
             onClick={handleJoinClass}

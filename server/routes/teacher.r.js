@@ -470,4 +470,6 @@ router.post("/postFeedbackOnReview", middlewareController.verifyToken, teacherCo
  */
 router.post("/postFinalizedGradeReview", middlewareController.verifyToken, teacherController.postFinalizedGradeReview);
 
+router.post("/getNotification", teacherController.getAllNotificationsByTeacherId);
+
 module.exports = router; 

@@ -95,7 +95,7 @@ const InviteStudent = forwardRef((props, ref) => {
     <>
       {isLoading && <Loading />}
       <Dialog
-        header="Mời học sinh"
+        header={t('detail.components.inviteStudent.inviteStudent')}
         visible={visible}
         onHide={() => {
           setVisible(false);
@@ -118,7 +118,7 @@ const InviteStudent = forwardRef((props, ref) => {
 
         <div className="flex justify-content-end mt-4">
           <Button
-            label="Mời"
+            label={t('detail.components.inviteStudent.invite')}
             type="submit"
             severity="info"
             onClick={handleInviteStudent}

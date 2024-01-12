@@ -4,11 +4,13 @@ import { Toast } from 'primereact/toast';
 import { useParams } from 'react-router';
 import { getAllUserOfClass, isTeacherOfClass } from 'apis/class.api';
 import { useQuery } from 'react-query';
+import { useTranslation } from 'react-i18next';
 import Loading from 'components/Loading';
 import InviteStudent from '../components/InviteStudent';
 import InviteTeacher from '../components/InviteTeacher';
 
 export default function PeoplePage() {
+  const { t } = useTranslation();
   const user = JSON.parse(localStorage.getItem('user_profile'));
   const { classId } = useParams();
   const toast = useRef(null);
@@ -59,7 +61,7 @@ export default function PeoplePage() {
     <div className="flex flex-column w-full align-items-center">
       <div className="border-round p-2" style={{ width: '75%', minWidth: '20rem' }}>
         <div className="flex align-items-center justify-content-between">
-          <div className="align-items-center text-primary-color" style={{ fontSize: '2rem' }}>Giáo viên</div>
+          <div className="align-items-center text-primary-color" style={{ fontSize: '2rem' }}>{t('detail.peoplePage.teacher')}</div>
           {isTeacher && <Button onClick={hanldleClickInviteTeacherButton} icon="pi pi-fw pi-user-plus" rounded outlined severity="info" aria-label="User" />}
         </div>
         <hr />
@@ -67,9 +69,9 @@ export default function PeoplePage() {
       </div>
       <div className="border-round p-2" style={{ width: '75%', minWidth: '20rem' }}>
         <div className="flex align-items-center justify-content-between">
-          <div className="align-items-center text-primary-color" style={{ fontSize: '2rem' }}>Học sinh</div>
+          <div className="align-items-center text-primary-color" style={{ fontSize: '2rem' }}>{t('detail.peoplePage.student')}</div>
           <div className="flex">
-            <p className="text-primary-color mr-2 font-bold">{students.length} học sinh</p>
+            <p className="text-primary-color mr-2 font-bold">{students.length} {t('detail.peoplePage.student')}</p>
             {isTeacher && <Button onClick={hanldleClickInviteStudentButton} icon="pi pi-fw pi-user-plus" rounded outlined severity="info" aria-label="User" />}
           </div>
         </div>
