@@ -37,6 +37,7 @@ const CommentReview = forwardRef((props, ref) => {
     enabled: !!info?.id
   });
   const detailComment = useMemo(() => data?.data ?? null, [data]);
+  console.log(detailComment);
   // #endregion Data
 
   // #region Event
@@ -81,14 +82,15 @@ const CommentReview = forwardRef((props, ref) => {
       return;
     }
 
-    const { value, userId, refetch, fullName } = commentReviewControl;
+    const { value, userId, refetch, fullName, role } = commentReviewControl;
 
     const feedback = getValues('feedback');
     const dataSender = {
       review_id: value.id,
       user_id: userId,
       feedback,
-      fullName
+      fullName,
+      role
     };
 
     mutate(dataSender, {

@@ -25,7 +25,8 @@ export default function ViewListGradeReview() {
       value,
       userId,
       refetch,
-      fullName
+      fullName,
+      role: 'teacher'
     });
   };
 

@@ -10,7 +10,14 @@ module.exports = {
         "SELECT * FROM classes_grades WHERE class_id = $1 AND student_id = $2 AND composition_id = $3;",
         [class_id, student_id, composition_id]
       );
-      return rs;
+      const isRequest = await db.one(`
+      SELECT * FROM grades_reviews
+      WHERE student_id = $1 AND composition_id = $2;
+      `, [student_id, composition_id])
+      return {
+        isRequest,
+        ...rs
+      };
     } catch (err) {
       if (err.code === 0) {
         return null;

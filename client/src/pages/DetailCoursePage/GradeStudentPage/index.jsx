@@ -5,13 +5,17 @@ import { useParams } from 'react-router';
 import { getStudentId } from 'apis/user.api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import { Badge } from 'primereact/badge';
 import RequestGrade from '../components/RequestGrade';
+import CommentReview from '../components/CommentReview';
 
 export default function GradeStudentPage() {
   const userId = JSON.parse(localStorage.getItem('user_profile')).id;
+  const fullName = JSON.parse(localStorage.getItem('user_profile')).full_name;
   const { classId } = useParams();
 
   const requestRef = useRef(null);
+  const commentRef = useRef(null);
 
   const { data: _stuedntId } = useQuery({
     queryKey: ['studentId', userId],
@@ -20,7 +24,8 @@ export default function GradeStudentPage() {
   });
   const studentId = useMemo(() => _stuedntId?.data.studentId.student_id ?? null, [_stuedntId]);
   const { data,
-    isLoading } = useQuery({
+    isLoading,
+    refetch } = useQuery({
     queryKey: ['gradeStructureOfStudent', classId],
     queryFn: () => getGradeStructure(studentId, classId),
     enabled: !!studentId
@@ -32,6 +37,16 @@ export default function GradeStudentPage() {
     requestRef.current.open({
       studentId,
       compositionId
+    });
+  };
+
+  const handleOpenComment = (value) => {
+    commentRef.current.open({
+      userId,
+      value,
+      refetch,
+      fullName,
+      role: 'student'
     });
   };
 
@@ -47,6 +62,7 @@ export default function GradeStudentPage() {
     </div>
   );
   const formatGrade = (value, classComposition) => {
+    console.log(value);
     let grade = null;
     const gradeTemp = value[classComposition];
     if (gradeTemp === null) {
@@ -58,8 +74,14 @@ export default function GradeStudentPage() {
     }
     return (
       <div>
-        <span className="text-primary mr-2">{grade}</span>
-        <i className="pi pi-pencil cursor-pointer" onClick={() => handleOpenRequest(classComposition)} />
+        <span className="text-primary mr-2 ">{grade}</span>
+        {grade !== 'Chưa công bố' && value[classComposition]?.isRequest === undefined &&
+          <i className="pi pi-pencil cursor-pointer text-2xl" onClick={() => handleOpenRequest(classComposition)} />}
+        {grade !== 'Chưa công bố' && value[classComposition]?.isRequest && (
+          <i className="pi pi-comments cursor-pointer text-2xl" onClick={() => handleOpenComment(value[classComposition].isRequest)}>
+            {value[classComposition]?.isRequest.review_success && <Badge value="Đã phúc khảo" />}
+          </i>
+        )}
       </div>
     );
   };
@@ -82,9 +104,10 @@ export default function GradeStudentPage() {
           />
         )
         )}
-        <Column field="totalGrade" header="Total grade" style={{ minWidth: 110, width: 110 }} className="text-center" />
+        <Column field="totalGrade" header="Total grade" headerStyle={{ textAlign: 'center' }} style={{ minWidth: 110, width: 110 }} className="text-center" />
       </DataTable>
       <RequestGrade ref={requestRef} />
+      <CommentReview ref={commentRef} />
     </>
   );
 }

@@ -536,7 +536,7 @@ module.exports = {
   },
 
   postFeedbackOnReview: async (req, res) => {
-    const { review_id, user_id, feedback, fullName } = req.body;
+    const { review_id, user_id, feedback, fullName, role } = req.body;
     if (review_id === undefined || user_id === undefined || feedback === undefined) {
       return res.status(400).json({
         status: 'failed',
@@ -554,7 +554,7 @@ module.exports = {
       const storeFeedback = {
         user_id: user_id,
         full_name: fullName,
-        role: "teacher",
+        role: role,
         comment_content: feedback,
         create_at: new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' })
       }
