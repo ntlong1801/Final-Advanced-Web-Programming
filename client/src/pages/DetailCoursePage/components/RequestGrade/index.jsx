@@ -98,7 +98,7 @@ const RequestReview = forwardRef((props, ref) => {
     <>
       {isLoading && <Loading />}
       <Dialog
-        header="Nhập thông tin"
+        header={t('detail.components.requestGrade.fillInfo')}
         visible={visible}
         onHide={() => {
           setVisible(false);
@@ -109,7 +109,7 @@ const RequestReview = forwardRef((props, ref) => {
         <div className="grid p-fluid">
           <div className="col-12">
             <NumberInput
-              label="Điểm mong muốn"
+              label={t('detail.components.requestGrade.expectedGrade')}
               name="studentExpectedGrade"
               control={control}
               errors={errors}
@@ -118,7 +118,7 @@ const RequestReview = forwardRef((props, ref) => {
           </div>
           <div className="col-12">
             <TextAreaInput
-              label="Lý do"
+              label={t('detail.components.requestGrade.explain')}
               name="studentExplain"
               control={control}
               errors={errors}
@@ -129,7 +129,7 @@ const RequestReview = forwardRef((props, ref) => {
 
         <div className="flex justify-content-end mt-4">
           <Button
-            label="Gửi yêu cầu"
+            label={t('detail.components.requestGrade.send')}
             type="submit"
             severity="info"
             onClick={handleRequestReview}

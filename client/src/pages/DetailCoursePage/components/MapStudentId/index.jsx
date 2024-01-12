@@ -102,7 +102,7 @@ const MapStudentId = forwardRef((props, ref) => {
     <>
       {isLoading && <Loading />}
       <Dialog
-        header="Nhập mã số sinh viên"
+        header={t('detail.components.inputStudentId.inputStudentId')}
         visible={visible}
         onHide={() => {
           setVisible(false);
@@ -123,7 +123,7 @@ const MapStudentId = forwardRef((props, ref) => {
 
         <div className="flex justify-content-end mt-4">
           <Button
-            label="Cập nhật"
+            label={t('detail.components.inputStudentId.update')}
             type="submit"
             severity="info"
             onClick={handleMapStudentId}

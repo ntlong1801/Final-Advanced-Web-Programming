@@ -21,6 +21,10 @@
         "signInNow": "Đăng nhập tại đây",
         "fullName": "Họ và tên"
     },
+    "header" : {
+        "joinClass": "Tham gia lớp học",
+        "createClass": "Tạo lớp học"
+    },
     "password": "Mật khẩu",
     "sidebar": {
         "teaching": "Giảng dạy",
@@ -47,9 +51,129 @@
     },
     "dashBoard": {
         "teachingClass": "Lớp học giảng dạy",
-        "enrolledClass": "Lớp học đã đăng ký"
+        "enrolledClass": "Lớp học đã đăng ký",
+        "components": {
+            "createClass": {
+                "createClass": "Tạo lớp học",
+                "name": "Tên lớp",
+                "description": "Mô tả",
+                "create": "Tạo"
+            },
+            "joinClass": {
+                "joinClass": "Tham gia lớp học",
+                "classId": "Mã lớp",
+                "studentId": "Mã số sinh viên",
+                "join": "Tham gia"
+            }
+        }
     },
     "detail": {
-        "news": "Bảng tin"
+        "news": "Bảng tin",
+        "members": "Mọi người",
+        "grades": "Điểm",
+        "feedbacks": "Phản hồi",
+        "components": {
+            "commentReview": {
+                "comment": "Nhận xét",
+                "feedback": "Phản hồi",
+                "submit": "Phản hồi"
+            },
+            "decision": {
+                "decision": "Quyết định",
+                "finalGrade": "Điểm cuối cùng",
+                "success": "Đã gửi quyết định",
+                "send": "Gửi quyết định"
+            },
+            "inputGrade": {
+                "inputGrade": "Nhập điểm",
+                "update": "Cập nhật"
+            },
+            "inviteStudent": {
+                "inviteStudent": "Mời học sinh",
+                "invite": "Mời"
+            },
+            "inviteTeacher": {
+                "inviteTeacher": "Mời giáo viên",
+                "invite": "Mời"
+            },
+            "inputStudentId": {
+                "inputStudentId": "Nhập mã số sinh viên",
+                "update":"Cập nhật"
+            },
+            "requestGrade": {
+                "fillInfo": "Nhập thông tin",
+                "expectedGrade":"Số điểm mong muốn",
+                "explain": "Lý do",
+                "send": "Gửi yêu cầu"
+            },
+            "switchInput": {
+                "accept": "Xác nhận",
+                "yes": "Có",
+                "no": "Không"
+            }
+        },
+        "gradePage": {
+            "studentId": "Mã số sinh viên",
+            "fullName": "Họ và tên",
+            "totalGrade": "Tổng điểm",
+            "actions": "Tùy chọn",
+            "ban": "Cấm",
+            "unban": "Gỡ cấm"
+        },
+        "gradeStructure": {
+            "gradeStructure": "Thành phần điểm",
+            "name": "Tên",
+            "close": "Đóng",
+            "save": "Lưu"
+        },
+        "gradeStudentPage": {
+            "studentId": "Mã số sinh viên",
+            "totalGrade": "Tổng điểm"
+        },
+        "newsPage": {
+            "copied": "Sao chép thành công!",
+            "cantCopy": "Không thể sao chép!",
+            "classCode": "Mã lớp học",
+            "nothingHappen": "Chưa có gì xảy ra",
+            "postNewsForClass": "Hãy đăng gì đó cho lớp học của bạn"
+        },
+        "peoplePage": {
+            "teacher": "Giáo viên",
+            "student": "Học sinh"
+        },
+        "viewListGradeReview": {
+            "studentId": "Mã số sinh viên",
+            "gradeComposition": "Thành phần điểm",
+            "expectedGrade": "Số điểm mong muốn",
+            "actions": "Tùy chọn"
+        }
+    },
+    "forgotPw": {
+        "renew": "Đổi mật khẩu"
+    },
+    "invitationPage": {
+        "studentId": "Mã số sinh viên"
+    },
+    "manageClassPage": {
+        "name": "Tên lớp",
+        "description": "Mô tả",
+        "active": "Hoạt động",
+        "inactive": "Dừng hoạt động",
+        "actions": "Tùy chọn"
+    },
+    "manageUserPage": {
+        "fullName": "Họ và tên",
+        "phoneNumber": "Số điện thoại",
+        "activation": "Kích hoạt",
+        "banned": "Cấm",
+        "actions": "Tùy chọn",
+        "ban": "Cấm",
+        "unban":"Gỡ cấm"
+    },
+    "waitingConformForgotEmail": {
+        "newPw": "Mật khẩu mới",
+        "reNewPw": "Nhập lại mật khẩu mới",
+        "change": "Thay đổi"
     }
+
 }

@@ -7,8 +7,10 @@ import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import { Message } from 'primereact/message';
+import { useTranslation } from 'react-i18next';
 
 export default function SwitchInput({ compositionId, isPublic, refetch }) {
+  const { t } = useTranslation();
   const { mutate } = useMutation(postFinalized);
   const toast = useRef(null);
 
@@ -25,9 +27,9 @@ export default function SwitchInput({ compositionId, isPublic, refetch }) {
   };
   const footerContent = (
     <div>
-      <Button label="No" icon="pi pi-times" onClick={() => setVisible(false)} className="p-button-text" />
+      <Button label={t('detail.components.switchInput.no')} icon="pi pi-times" onClick={() => setVisible(false)} className="p-button-text" />
       <Button
-        label="Yes"
+        label={t('detail.components.switchInput.yes')}
         icon="pi pi-check"
         onClick={() => {
           const rs = handleChangeFinalized();
@@ -53,7 +55,7 @@ export default function SwitchInput({ compositionId, isPublic, refetch }) {
           tooltipOptions={{ position: 'left' }}
         />
       </div>
-      <Dialog header="Xác nhận" visible={visible} className="text-center" style={{ width: '20rem' }} onHide={() => setVisible(false)} footer={footerContent}>
+      <Dialog header={t('detail.components.switchInput.accept')} visible={visible} className="text-center" style={{ width: '20rem' }} onHide={() => setVisible(false)} footer={footerContent}>
         <p className="m-0">
           {!isPublic ?
             <Message severity="info" text="Do you want to public this grade?" />

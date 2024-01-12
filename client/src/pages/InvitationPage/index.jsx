@@ -10,8 +10,10 @@ import { useForm } from 'react-hook-form';
 import TextInput from 'components/FormControl/TextInput';
 
 import { Button } from 'primereact/button';
+import { useTranslation } from 'react-i18next';
 
 export default function InvitationPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user_profile'));
   const link = window.location.href;
@@ -72,7 +74,7 @@ export default function InvitationPage() {
           {!studentId && (
             <TextInput
               name="studentId"
-              label="studentId"
+              label={t('invitationPage.studentId')}
               control={control}
               errors={errors}
               isRequired

@@ -113,7 +113,7 @@ const CommentReview = forwardRef((props, ref) => {
     <>
       {isLoading && <Loading />}
       <Dialog
-        header="Nhận xét"
+        header={t('detail.components.commentReview.comment')}
         visible={visible}
         style={{ width: '50vw' }}
         maximizable
@@ -151,7 +151,7 @@ const CommentReview = forwardRef((props, ref) => {
 
           <div className="p-fluid">
             <TextAreaInput
-              label="Phản hồi"
+              label={t('detail.components.commentReview.feedback')}
               name="feedback"
               control={control}
               errors={errors}
@@ -161,7 +161,7 @@ const CommentReview = forwardRef((props, ref) => {
 
         <div className="flex justify-content-end mt-4">
           <Button
-            label="Phản hồi"
+            label={t('detail.components.commentReview.submit')}
             type="submit"
             severity="info"
             onClick={handleCommentReview}

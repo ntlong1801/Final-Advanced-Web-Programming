@@ -101,7 +101,7 @@ const CreateClass = forwardRef((props, ref) => {
   return (
     <>
       <Dialog
-        header="Tạo lớp học"
+        header={t('dashBoard.components.createClass.createClass')}
         visible={visible}
         onHide={() => {
           setVisible(false);
@@ -113,7 +113,7 @@ const CreateClass = forwardRef((props, ref) => {
           <div className="col-12">
             <TextInput
               name="name"
-              label="Tên lớp học"
+              label={t('dashBoard.components.createClass.name')}
               isRequired
               control={control}
               errors={errors}
@@ -122,7 +122,7 @@ const CreateClass = forwardRef((props, ref) => {
           <div className="col-12">
             <TextInput
               name="description"
-              label="Mô tả"
+              label={t('dashBoard.components.createClass.description')}
               isRequired
               control={control}
               errors={errors}
@@ -133,7 +133,7 @@ const CreateClass = forwardRef((props, ref) => {
 
         <div className="flex justify-content-end mt-4">
           <Button
-            label="Tạo"
+            label={t('dashBoard.components.createClass.create')}
             type="submit"
             severity="info"
             onClick={handleCreateClass}

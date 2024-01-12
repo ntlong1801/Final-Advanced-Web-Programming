@@ -130,7 +130,7 @@ export default function Header({
                       <div onClick={showJoinClassModal}>
                         <li className="hover:surface-200 p-2 span-button">
                           <span>
-                            Tham gia lớp học
+                            {t('header.joinClass')}
                           </span>
                         </li>
                       </div>
@@ -139,7 +139,7 @@ export default function Header({
                       <div onClick={showCreateClassModal}>
                         <li className="hover:surface-200 p-2 span-button">
                           <span>
-                            Tạo lớp học
+                            {t('header.createClass')}
                           </span>
                         </li>
                       </div>

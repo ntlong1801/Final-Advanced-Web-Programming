@@ -9,8 +9,10 @@ import TextInput from 'components/FormControl/TextInput';
 import { Button } from 'primereact/button';
 import { useMutation } from 'react-query';
 import { changePasswordByForgot } from 'apis/user.api';
+import { useTranslation } from 'react-i18next';
 
 export default function WaitingConfirmForgotEmail() {
+  const { t } = useTranslation();
   const { handleSubmit, control } = useForm({ mode: 'onChange' });
 
   const navigate = useNavigate();
@@ -69,7 +71,7 @@ export default function WaitingConfirmForgotEmail() {
             name="newPassword"
             control={control}
             errors={errors}
-            label="New password"
+            label={t('waitingConformForgotEmail.newPw')}
             defaultValue=""
           />
           <TextInput
@@ -77,13 +79,13 @@ export default function WaitingConfirmForgotEmail() {
             name="renewPassword"
             control={control}
             errors={errors}
-            label="Re-New password"
+            label={t('waitingConformForgotEmail.reNewPw')}
             defaultValue=""
           />
           {errorSamePassword && <span className="text-red-500">Re-new password must be the same as new password</span>}
           <div className="text-center mt-4">
             <Button
-              label="Change"
+              label={t('waitingConformForgotEmail.change')}
               type="submit"
             />
           </div>
