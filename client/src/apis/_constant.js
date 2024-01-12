@@ -64,3 +64,13 @@ export const STUDENT = {
   POST_COMMENT: 'student/postComment',
   GET_COMMENT: 'student/getComment',
 };
+
+export const ADMIN = {
+  GET_ALL_USERS: 'admin/getAllUsers',
+  ADD_NEW_USER: 'admin/addUser',
+  UPDATE_USER: 'admin/updateUser',
+  DELETE_USER: (id) => `admin/deleteUser?userId=${id}`,
+  BAN_USER: 'admin/banUser',
+  ACTIVE_CLASS: 'admin/activeClass',
+  MAP_STUDENT_ID: 'admin/mapStudentId',
+};

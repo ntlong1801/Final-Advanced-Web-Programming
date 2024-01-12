@@ -1,11 +1,29 @@
 const userM = require('./user.m')
 const db = require("../../config/connect_db");
+const {v4 : uuidv4} = require('uuid')
 require('dotenv').config();
 
 module.exports = {
+    getAllAccount: async () => {
+        try {
+            const rs = db.any(`
+            SELECT * FROM users u
+            LEFT JOIN student_id s ON u.id = s.user_id;
+            `)
+            return rs;
+        } catch (err) {
+            console.log('Error in getAllAccount', err);
+            return null;
+        }
+    },
+
     addAccount: async (user) => {
         try {
-           const rs = await userM.addUser(user);
+           const rs = await db.one(
+            `INSERT INTO users (id, email, password, full_name, address, phone_number, activation)
+            VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING*;`,
+            [uuidv4(), user.email, user.password, user.full_name, user.address, user.phone_number, user.activation]
+           )
            return rs;
         } catch (err) {
             console.error('Error in addAccount', err);;
@@ -15,8 +33,21 @@ module.exports = {
 
     updateAccount: async (user) => { 
         try {
-            const rs = await userM.updateUserByEmail(user);
-            return rs;
+            if (user.password) {
+                const rs = await db.one(`UPDATE users 
+                SET full_name = $2, password = $3, address = $4, phone_number = $5
+                WHERE email = $1 RETURNING *;`, 
+                [ user.email, user.full_name, user.password, user.address, user.phone_number]);
+                return rs;
+            } 
+            else {
+                const rs = await db.one(`UPDATE users 
+                SET full_name = $2, address = $3, phone_number = $4
+                WHERE email = $1 RETURNING *;`, 
+                [ user.email, user.full_name, user.address, user.phone_number]);
+                return rs;
+            }
+            
          } catch (err) {
              console.error('Error in updateAccount', err);;
              return null;
@@ -27,7 +58,11 @@ module.exports = {
         try {
             const rs = await db.one(`
             DELETE FROM users 
-            WHERE userId = $1;
+            WHERE id = $1 RETURNING*;
+            `, [userId]);
+            await db.one(`
+            DELETE FROM student_id 
+            WHERE user_id = $1 RETURNING*;
             `, [userId]);
             return rs;
         } catch (err) {
@@ -61,6 +96,21 @@ module.exports = {
             return null;
         }
     },
+
+    mapStudenId: async (user_id, student_id) => {
+        try {
+            const rs = await db.one(`
+            INSERT INTO student_id (user_id, student_id) VALUES ($1, $2) 
+            ON CONFLICT (user_id) 
+            DO UPDATE SET student_id = $2
+            WHERE student_id.user_id = $1 RETURNING*;
+            `, [user_id, student_id]);
+            return rs;
+        } catch (err) {
+            console.error('Error in mapStudenId', err);;
+            return null;
+        }
+    }
 
 
  }

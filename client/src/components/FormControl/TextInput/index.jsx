@@ -19,7 +19,9 @@ export default function TextInput({
   errors,
   autoFocus,
   errorMessage,
-  defaultValue
+  defaultValue,
+  hasPen,
+  setDisablePassword
 }) {
   // #region data
   const op = useRef(null);
@@ -42,6 +44,7 @@ export default function TextInput({
               *
             </span>
           )}
+
         </label>
       )}
       {type === 'password' && (
@@ -53,7 +56,15 @@ export default function TextInput({
           <OverlayPanel ref={op} className="w-18rem">
             Mật khẩu phải chứa ít nhất 6 kí tự gồm chữ và số
           </OverlayPanel>
+
         </>
+
+      )}
+      {hasPen && (
+        <i
+          className="pi pi-pencil ml-2 cursor-pointer"
+          onClick={() => setDisablePassword(false)}
+        />
       )}
       <div className={type === 'password' ? 'p-input-icon-right' : ''}>
         <Controller
@@ -105,7 +116,9 @@ TextInput.propTypes = {
   control: PropTypes.shape({}).isRequired,
   errors: PropTypes.shape({}).isRequired,
   errorMessage: PropTypes.string,
-  defaultValue: PropTypes.string
+  defaultValue: PropTypes.string,
+  hasPen: PropTypes.bool,
+  setDisablePassword: PropTypes.func,
 };
 
 TextInput.defaultProps = {
@@ -117,4 +130,6 @@ TextInput.defaultProps = {
   disabled: false,
   errorMessage: '',
   defaultValue: '',
+  hasPen: false,
+  setDisablePassword: () => null
 };
