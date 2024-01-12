@@ -22,7 +22,9 @@ export default function DownloadExcelFile({
         const fileType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         const fileExtension = '.xlsx';
 
-        const ws = XLSX.utils.json_to_sheet(res.data.csvData, { skipHeader: false });
+        const ws = XLSX.utils.json_to_sheet(res.data.csvData.length !== 0 ?
+          res.data.csvData :
+          [{ StudentId: null, FullName: null }], { skipHeader: false });
         const wb = { Sheets: { data: ws }, SheetNames: ['data'] };
         const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
         const data = new Blob([excelBuffer], { type: fileType });

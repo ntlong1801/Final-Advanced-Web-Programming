@@ -33,10 +33,8 @@ export const isTeacherOfClass = (userId, classId) =>
     params: { user_id: userId, class_id: classId }
   });
 
-export const joinClassByLink = (email, link) =>
-  instance.get(CLASS.JOIN_CLASS_BY_LINK, {
-    params: { email, link }
-  });
+export const joinClassByLink = (body = {}) =>
+  instance.post(CLASS.JOIN_CLASS_BY_LINK, body);
 
 export const joinClassByEmail = (tokenFromMail, userId) =>
   instance.get(CLASS.JOIN_CLASS_BY_EMAIL(tokenFromMail), { params: { userId } });

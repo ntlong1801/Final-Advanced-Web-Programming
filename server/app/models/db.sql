@@ -24,6 +24,16 @@ CREATE TABLE IF NOT EXISTS student_id
     CONSTRAINT student_user_key UNIQUE (user_id)
 );
 
+DROP TABLE IF EXISTS student_list;
+CREATE TABLE IF NOT EXISTS student_list
+(
+	student_id character varying(255) NOT NULL,
+	class_id character varying(255) NOT NULL,
+	full_name character varying(255),
+	isMap boolean DEFAULT false,
+	CONSTRAINT student_list_pkey PRIMARY KEY (student_id, class_id)
+);
+
 DROP TABLE IF EXISTS classes;
 CREATE TABLE IF NOT EXISTS classes
 (

@@ -1,9 +1,10 @@
 import { useQuery } from 'react-query';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { getClassGradeBoard,
   getTemplateStudentList,
   getGradeTemplate,
   getGradeBoard } from 'apis/grade.api';
+import { getGradeStructure } from 'apis/class.api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -23,6 +24,7 @@ export default function GradePage() {
   const mapStudentId = useRef(null);
   const uploadFile = useRef(null);
   const dt = useRef(null);
+  const [link, setLink] = useState('');
 
   const accept = () => {
     toast.current.show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
@@ -41,8 +43,20 @@ export default function GradePage() {
     queryFn: () => getClassGradeBoard(classId)
   });
   const data = useMemo(() => _data?.data ?? null, [_data]);
+
+  const {
+    data: gradeStructureData,
+    isLoading: gradeStructureLoading,
+    refetch: gradeStructureRefetch
+  } = useQuery({
+    queryKey: ['gradeStructure'],
+    queryFn: () => getGradeStructure(classId)
+  });
   const classcompositions = useMemo(() =>
-    data?.data?.[0]?.gradeArray ?? null, [data]
+    gradeStructureData?.data?.result.sort(
+      (a, b) =>
+        a.order_id - b.order_id) ?? null,
+  [gradeStructureData]
   );
 
   const confirmBan = () => {
@@ -78,10 +92,6 @@ export default function GradePage() {
     });
   };
 
-  const exportCSV = () => {
-    dt.current.exportCSV();
-  };
-
   const formatStudentId = (value) => (
     <span className="cursor-pointer text-primary" onClick={() => openModalMapStudentId(value)}>
       {value?.student_id || 'Map studentId'}
@@ -90,9 +100,10 @@ export default function GradePage() {
 
   const formatGrade = (value, index) => {
     const idx = parseInt(index.field.split('_')[1], 10) - 2;
+    const gradeArray = value.gradeArray.sort((a, b) => a.order_id - b.order_id);
     return (
       <div>
-        <span className="cursor-pointer text-primary" onClick={() => openModalInputGrade(value, idx)}>{value.gradeArray[idx]?.grade || '__'}</span>
+        <span className="cursor-pointer text-primary" onClick={() => openModalInputGrade(value, idx)}>{gradeArray[idx]?.grade || '__'}</span>
         /10
       </div>
     );
@@ -112,9 +123,16 @@ export default function GradePage() {
         <i
           className="pi pi-fw pi-file-import cursor-pointer mr-1"
           style={{ fontSize: '2rem' }}
-          onClick={() => handleOpenUploadFile(classcomposition.id)}
+          onClick={() => {
+            setLink('/teacher/postAllGradesAssignment');
+            handleOpenUploadFile(classcomposition.id);
+          }}
         />
-        <SwitchInput compositionId={classcomposition.id} isPublic={classcomposition.public_grade} />
+        <SwitchInput
+          compositionId={classcomposition.id}
+          isPublic={classcomposition.public_grade}
+          refetch={gradeStructureRefetch}
+        />
       </div>
       <span>
         {classcomposition.name}
@@ -153,7 +171,17 @@ export default function GradePage() {
           classId={classId}
           tooltip="Download student list"
         />
-        <Button type="button" icon="pi pi-file-excel" severity="success" rounded onClick={() => exportCSV()} data-pr-tooltip="XLS" />
+        <Button
+          type="button"
+          icon="pi pi-upload"
+          severity="success"
+          rounded
+          onClick={() => {
+            setLink('/teacher/postStudentList');
+            handleOpenUploadFile(null);
+          }}
+          data-pr-tooltip="XLS"
+        />
         <DownloadExcelFile
           downloadFunc={getGradeBoard}
           classId={classId}
@@ -168,17 +196,17 @@ export default function GradePage() {
         showGridlines
         tableStyle={{ minWidth: '50rem' }}
         className="p-2"
-        loading={isLoading}
+        loading={isLoading || gradeStructureLoading}
       >
-        <Column field="student_id" body={formatStudentId} header="StudentId" style={{ minWidth: 140, width: 140 }} />
-        <Column field="full_name" header="Full name" style={{ minWidth: 220, width: 220 }} />
+        <Column field="student_id" body={formatStudentId} header="StudentId" />
+        <Column field="full_name" header="Full name" />
         {classcompositions?.map((classcomposition) =>
           <Column body={formatGrade} header={() => formatColHeader(classcomposition)} className="text-center" />
         )}
-        <Column field="totalGrade" header="Total grade" style={{ minWidth: 110, width: 110 }} className="text-center" />
-        <Column body={formatAction} header="Actions" style={{ minWidth: 160, width: 160 }} />
+        <Column field="totalGrade" header="Total grade" className="text-center" />
+        <Column body={formatAction} header="Actions" />
       </DataTable>
-      <UploadExcelFile ref={uploadFile} link="/teacher/postAllGradesAssignment" refetch={refetch} />
+      <UploadExcelFile ref={uploadFile} link={link} refetch={refetch} />
       <InputGrade ref={inputGrade} refetch={refetch} oldGrade={0} />
       <MapStudentId ref={mapStudentId} refetch={refetch} />
       <Toast ref={toast} />

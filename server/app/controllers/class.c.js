@@ -220,10 +220,9 @@ const classController = {
     }
   },
 
-  // [get]/class/join?email=email&link=link
+  // [post]/class/join?email=email&link=link
   inviteUserByLink: async (req, res) => {
-    const email = req.query.email;
-    const linkJoinClass = req.query.link;
+    const {email, link: linkJoinClass, studentId} = req.body;
     if (email === undefined || linkJoinClass === undefined) {
       return res.status(400).json({
         status: 'failed',
@@ -243,7 +242,7 @@ const classController = {
       const classInfo = await classModel.getClassByLink(linkJoinClass);
       // find class by link
       // link is invalid
-      if (!classInfo) {
+      if (classInfo.length === 0) {
         return res.json({
           status: "failed",
           message: "Invalid link of class.",
@@ -267,6 +266,16 @@ const classController = {
           status: 'failed',
           message: 'You already in the class',
         })
+      }
+      // add studentId
+      if (studentId) { 
+        const createStudentId = await userM.postStudentId(userDb?.id, studentId);
+        if (!createStudentId) {
+          return res.json({
+            status: "failed",
+            message: "StudentId already exists",
+          })
+        }
       }
       // join user to class
       await classModel.addUserToClass(classInfo[0].id, userDb.id, role);
@@ -339,7 +348,7 @@ const classController = {
         const userDb = await userModel.getUserByEmail(emailUser);
         if (!userDb) {
           return res.json({
-            status: 'fail',
+            status: 'failed',
             code: '403',
             message: 'You have not register this app'
           })
@@ -347,7 +356,7 @@ const classController = {
 
         if (userId !== userDb.id) {
           return res.json({
-            status: 'fail',
+            status: 'failed',
             code: '404',
             message: 'You must sign in with the truth email'
           })

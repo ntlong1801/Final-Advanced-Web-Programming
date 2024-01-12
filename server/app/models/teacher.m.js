@@ -9,10 +9,9 @@ module.exports = {
     try {
       const csvData = await db.any(
         `
-        SELECT cu.student_id as StudentId, u.full_name as FullName
-        FROM class_user cu
-        JOIN users u ON cu.id_user = u.id
-        WHERE cu.id_class = $1 AND cu.role = 'student';
+        SELECT student_id as "StudentId", full_name as "FullName"
+        FROM student_list
+        WHERE class_id = $1;
         `, [class_id]
       )
       return csvData;
@@ -23,38 +22,19 @@ module.exports = {
 
   },
 
-  postStudentList: async (csvData, id_class) => {
+  postStudentList: async (data) => {
     try {
-      const listStudent = await db.any(
-        `
-            SELECT id_user, full_name
-            FROM class_user cu
-            JOIN users u ON cu.id_user = u.id
-            WHERE cu.id_class = $1 AND cu.role = 'student';`,
-        [id_class]
-      );
-      const mapListStudent = listStudent.reduce((map, user) => {
-        map[user.full_name] = user.id_user;
-        return map;
-      }, {});
-
-      const mergedData = csvData.map((student) => ({
-        student_id: student.student_id,
-        id_user: mapListStudent[student.full_name],
-      }));
-
       const updateListStudent = [];
-      for (const index of mergedData) {
-        const addStudentID = await db.any(
-          `
-                UPDATE class_user 
-                SET student_id = $3 
-                WHERE id_class = $1 AND id_user = $2 
-                RETURNING *;
-                `,
-          [id_class, index.id_user, index.student_id]
-        );
-        updateListStudent.push(addStudentID);
+      for (const [index, studentId] of data.student_id_arr.entries()) {
+        
+        const rs = await db.one(`
+        INSERT INTO student_list (student_id, class_id, full_name) values ($1, $2, $3) 
+        ON CONFLICT (student_id, class_id)
+        DO UPDATE SET full_name = $3
+        WHERE student_list.student_id = $1 AND student_list.class_id = $2 AND student_list.isMap = false
+        RETURNING*;
+        `, [studentId.toString(), data.class_id, data.full_name_arr[index]])
+        updateListStudent.push(rs);
       }
       return updateListStudent;
     } catch (error) {
@@ -67,10 +47,9 @@ module.exports = {
     try {
       const listStudent = await db.any(
         `
-            SELECT id_user, full_name, student_id
-            FROM class_user cu
-            JOIN users u ON cu.id_user = u.id
-            WHERE cu.id_class = $1 AND cu.role = 'student';`,
+            SELECT *
+            FROM student_list
+            WHERE class_id = $1;`,
         [id_class]
       );
 
@@ -144,10 +123,9 @@ module.exports = {
     try {
       const listStudent = await db.any(
         `
-            SELECT id_user, full_name, student_id
-            FROM class_user cu
-            JOIN users u ON cu.id_user = u.id
-            WHERE cu.id_class = $1 AND cu.role = 'student';`,
+            SELECT *
+            FROM student_list
+            WHERE class_id = $1;`,
         [id_class]
       );
 
@@ -230,7 +208,7 @@ module.exports = {
         `
         SELECT us.id
         FROM users us
-        JOIN class_user cu ON us.id = cc.id_user
+        JOIN class_user cu ON us.id = cu.id_user
         JOIN classes_composition cc ON cu.id_class = cc.class_id
         WHERE cu.role = 'student' AND cc.id = $1;
       `, [composition_id]);
@@ -300,10 +278,9 @@ module.exports = {
     try {
       const listStudent = await db.any(
         `
-            SELECT id_user, full_name, student_id
-            FROM class_user cu
-            JOIN users u ON cu.id_user = u.id
-            WHERE cu.id_class = $1 AND cu.role = 'student';`,
+            SELECT *
+            FROM student_list
+            WHERE class_id = $1;`,
         [class_id]
       );
 
@@ -338,7 +315,7 @@ module.exports = {
         classGradesData.push({
           StudentId: student.student_id,
           FullName: student.full_name,
-          ...Object.fromEntries(gradeOfStudent.map((grade) => [grade.name.toLocaleString(), parseFloat(grade.grade || 0)])),
+          ...Object.fromEntries(gradeOfStudent.map((grade) => [grade.name, parseFloat(grade.grade || 0)])),
           totalGrade
         });
       }
@@ -419,7 +396,7 @@ module.exports = {
 
       return detailReview;
     } catch (error) {
-      console.log("Error getting a grade review detail: ", err);
+      console.log("Error getting a grade review detail: ", error);
       return null;
     }
   },
@@ -447,7 +424,7 @@ module.exports = {
         INSERT
         INTO student_notifications (notification_id, student_id, notification_type)
         VALUES ($1, $2, $3);
-      `, [uuidv4(), studentId, 'FeedBackOnReview']);
+      `, [uuidv4(), studentId.id, 'FeedBackOnReview']);
 
       return {
         status: "success",
@@ -459,7 +436,7 @@ module.exports = {
     }
   },
 
-  postFinalizedGradeReview: async (review_id, accepted) => {
+  postFinalizedGradeReview: async (review_id, accepted, new_grade) => {
     try {
       const closeReview = await db.none(`
       UPDATE grades_reviews
@@ -479,7 +456,7 @@ module.exports = {
         SET grade = $3
         WHERE composition_id = $1 AND student_id = $2
         RETURNING *;
-        `, [reviewDetail.composition_id, reviewDetail.student_id, reviewDetail.student_expected_grade]);
+        `, [reviewDetail.composition_id, reviewDetail.student_id, new_grade]);
 
         const studentId = await db.one(
           `
