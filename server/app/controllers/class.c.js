@@ -462,10 +462,10 @@ const classController = {
         });
       }
     });
-    return res.json({
-      status: "success",
-      message: "Check verify code in your email.",
-    });
+    // return res.json({
+    //   status: "success",
+    //   message: "Check verify code in your email.",
+    // });
   },
 
   joinClassByCode: async (req, res) => {

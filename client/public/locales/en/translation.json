@@ -21,6 +21,10 @@
         "signInNow": "Sign in here",
         "fullName": "Full Name"
     },
+    "header" : {
+        "joinClass": "Join class",
+        "createClass": "Create class"
+    },
     "password": "Password",
     "sidebar": {
         "teaching": "Teaching",
@@ -47,9 +51,128 @@
     },
     "dashBoard": {
         "teachingClass": "Teaching class",
-        "enrolledClass": "Enrolled class"
+        "enrolledClass": "Enrolled class",
+        "components": {
+            "createClass": {
+                "createClass": "Create class",
+                "name": "Class's name",
+                "description": "Description",
+                "create": "Create"
+            },
+            "joinClass": {
+                "joinClass": "Join class",
+                "classId": "Class's ID",
+                "studentId": "Student's ID",
+                "join": "Join"
+            }
+        }
     },
     "detail": {
-        "news": "News"
+        "news": "News",
+        "members": "Members",
+        "grades": "Grades",
+        "feedbacks": "Feedbacks",
+        "components": {
+            "commentReview": {
+                "comment": "Comment",
+                "feedback": "Feedback",
+                "submit": "Submit"
+            },
+            "decision": {
+                "decision": "Decision",
+                "finalGrade": "Final grade",
+                "success": "Success",
+                "send": "Send"
+            },
+            "inputGrade": {
+                "inputGrade": "Input Grade",
+                "update": "Update"
+            },
+            "inviteStudent": {
+                "inviteStudent": "Invite Student",
+                "invite": "Invite"
+            },
+            "inviteTeacher": {
+                "inviteTeacher": "Invite Teacher",
+                "invite": "Invite"
+            },
+            "inputStudentId": {
+                "inputStudentId": "Input Student's Id",
+                "update": "Update"
+            },
+            "requestGrade": {
+                "fillInfo": "Fill information",
+                "expectedGrade":"Expected Grade",
+                "explain": "Explain",
+                "send": "Send request"
+            },
+            "switchInput": {
+                "accept": "Accept",
+                "yes": "Yes",
+                "no": "No"
+            }
+        },
+        "gradePage": {
+            "studentId": "Student's ID",
+            "fullName": "Full name",
+            "totalGrade": "Total Grade",
+            "actions": "Actions",
+            "ban": "Ban",
+            "unban": "Unban"
+        },
+        "gradeStructure": {
+            "gradeStructure": "Grade structure",
+            "name": "Name",
+            "close": "Close",
+            "save": "Save"
+        },
+        "gradeStudentPage": {
+            "studentId": "Student's ID",
+            "totalGrade": "Total Grade"
+        },
+        "newsPage": {
+            "copied": "Copied!",
+            "cantCopy": "Can't copy!",
+            "classCode": "Class's code",
+            "nothingHappen": "Nothing has happened!",
+            "postNewsForClass": "Post some news for your class"
+        },
+        "peoplePage": {
+            "teacher": "Teachers",
+            "student": "Students"
+        },
+        "viewListGradeReview": {
+            "studentId": "Student's ID",
+            "gradeComposition": "Total Grade",
+            "expectedGrade": "Expected Grade",
+            "actions": "Actions"
+        }
+    },
+    "forgotPw": {
+        "renew": "Renew"
+    },
+    "invitationPage": {
+        "studentId": "Student's ID"
+    },
+    "manageClassPage": {
+        "name": "Class's name",
+        "description": "Description",
+        "active": "Active",
+        "inactive": "Inactive",
+        "actions": "Actions"
+    },
+    "manageUserPage": {
+        "fullName": "Full name",
+        "phoneNumber": "Phone number",
+        "activation": "Activation",
+        "banned": "Banned",
+        "actions": "Actions",
+        "ban": "Ban",
+        "unban": "Unban"
+    },
+    "waitingConformForgotEmail": {
+        "newPw": "New password",
+        "reNewPw": "Re-new password",
+        "change": "Change"
     }
 }

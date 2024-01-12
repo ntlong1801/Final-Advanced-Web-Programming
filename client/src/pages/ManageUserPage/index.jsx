@@ -7,8 +7,10 @@ import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
+import { useTranslation } from 'react-i18next';
 
 export default function ManageUserPage() {
+  const { t } = useTranslation();
   const toast = useRef(null);
 
   const accept = () => {
@@ -42,13 +44,13 @@ export default function ManageUserPage() {
       {value?.banned ? (
         <Button
           type="button"
-          label="Unban"
+          label={t('manageUserPage.unban')}
           onClick={confirmBan}
         />
       ) : (
         <Button
           type="button"
-          label="Ban"
+          label={t('manageUserPage.ban')}
           onClick={confirmBan}
         />
       )}
@@ -61,11 +63,11 @@ export default function ManageUserPage() {
       <Header />
       <DataTable value={data?.users} tableStyle={{ minWidth: '50rem' }} className="p-2">
         <Column field="email" header="Email" />
-        <Column field="full_name" header="Full Name" />
-        <Column field="phone_number" header="Phone Number" />
-        <Column field="activation" header="Activation" />
-        <Column field="banned" header="banned" />
-        <Column body={formatAction} header="Actions" style={{ minWidth: 160, width: 160 }} />
+        <Column field="full_name" header={t('manageUserPage.fullName')} />
+        <Column field="phone_number" header={t('manageUserPage.phoneNumber')} />
+        <Column field="activation" header={t('manageUserPage.activation')} />
+        <Column field="banned" header={t('manageUserPage.banned')} />
+        <Column body={formatAction} header="{t('manageUserPage.actions')}" style={{ minWidth: 160, width: 160 }} />
       </DataTable>
       <Toast ref={toast} />
       <ConfirmDialog />

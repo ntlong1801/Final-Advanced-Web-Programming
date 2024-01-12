@@ -107,7 +107,7 @@ const Decision = forwardRef((props, ref) => {
     <>
       {isLoading && <Loading />}
       <Dialog
-        header="Quyết định"
+        header={t('detail.components.decision.decision')}
         visible={visible}
         style={{ width: '50vw' }}
         maximizable
@@ -130,7 +130,7 @@ const Decision = forwardRef((props, ref) => {
 
           <div className="p-fluid">
             <NumberInput
-              label="Điểm cuối cùng"
+              label={t('detail.components.decision.finalGrade')}
               name="newGrade"
               control={control}
               errors={errors}
@@ -141,7 +141,7 @@ const Decision = forwardRef((props, ref) => {
 
         <div className="flex justify-content-end mt-4">
           <Button
-            label={detailComment?.review_success ? 'Đã gửi quyết định' : 'Gửi quyết định'}
+            label={detailComment?.review_success ? t('detail.components.decision.success') : t('detail.components.decision.send')}
             type="submit"
             severity="info"
             onClick={handleDecision}

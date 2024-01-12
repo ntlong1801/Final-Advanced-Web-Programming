@@ -132,14 +132,18 @@ export default function Header({ isDashBoard, refetch }) {
                     <ul className="profile-menu list-none p-0 m-0">
                       <div onClick={showJoinClassModal}>
                         <li className="hover:surface-200 p-2 span-button">
-                          <span>Tham gia lớp học</span>
+                          <span>
+                            {t('header.joinClass')}
+                          </span>
                         </li>
                       </div>
 
                       <hr />
                       <div onClick={showCreateClassModal}>
                         <li className="hover:surface-200 p-2 span-button">
-                          <span>Tạo lớp học</span>
+                          <span>
+                            {t('header.createClass')}
+                          </span>
                         </li>
                       </div>
                     </ul>

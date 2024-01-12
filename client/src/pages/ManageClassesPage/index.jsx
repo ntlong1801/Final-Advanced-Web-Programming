@@ -10,8 +10,10 @@ import { Toast } from 'primereact/toast';
 import { InputText } from 'primereact/inputtext';
 import { FilterMatchMode } from 'primereact/api';
 import { Dropdown } from 'primereact/dropdown';
+import { useTranslation } from 'react-i18next';
 
 export default function ManageClassesPage() {
+  const { t } = useTranslation();
   const toast = useRef(null);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -64,13 +66,13 @@ export default function ManageClassesPage() {
       {value?.inactive ? (
         <Button
           type="button"
-          label="Active"
+          label={t('manageClassPage.active')}
           onClick={confirmBan}
         />
       ) : (
         <Button
           type="button"
-          label="Inactive"
+          label={t('manageClassPage.inactive')}
           onClick={confirmBan}
         />
       )}
@@ -110,10 +112,10 @@ export default function ManageClassesPage() {
           loading={isLoading}
           removableSort
         >
-          <Column field="name" header="Name" sortable filter filterPlaceholder="Search by name" />
-          <Column field="description" header="Description" sortable filter filterPlaceholder="Search by country" />
-          <Column field="inactive" header="Inactive" sortable filter filterElement={inactiveRowFilterTemplate} />
-          <Column body={formatAction} header="Actions" style={{ minWidth: 160, width: 160 }} />
+          <Column field="name" header={t('manageClassPage.name')} sortable filter filterPlaceholder="Search by name" />
+          <Column field="description" header={t('manageClassPage.description')} sortable filter filterPlaceholder="Search by country" />
+          <Column field="inactive" header={t('manageClassPage.inactive')} sortable filter filterElement={inactiveRowFilterTemplate} />
+          <Column body={formatAction} header={t('manageClassPage.actions')} style={{ minWidth: 160, width: 160 }} />
         </DataTable>
       </div>
       <Toast ref={toast} />

@@ -9,8 +9,10 @@ import { useRef } from 'react';
 import Loading from 'components/Loading';
 import { useMutation } from 'react-query';
 import { forgotPassword } from 'apis/user.api';
+import { useTranslation } from 'react-i18next';
 
 export default function ForgotPassword() {
+  const { t } = useTranslation();
   const toast = useRef(null);
 
   const {
@@ -63,7 +65,7 @@ export default function ForgotPassword() {
             errorMessage={errors.email?.message || ''}
           />
           <div className="text-center mt-4">
-            <Button label="Renew" type="submit" />
+            <Button label={t('forgotPw.renew')} type="submit" />
           </div>
         </form>
 

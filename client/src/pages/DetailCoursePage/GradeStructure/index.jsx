@@ -10,10 +10,12 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router';
 import './style.scss';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { useTranslation } from 'react-i18next';
 
 const user = JSON.parse(localStorage.getItem('user_profile'));
 
 function GradeStructure() {
+  const { t } = useTranslation();
   const { classId } = useParams();
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isTeacherToEdit, setIsTeacherToEdit] = useState(false);
@@ -100,7 +102,7 @@ function GradeStructure() {
     <DragDropContext onDragEnd={handleDragEnd}>
       <div className="grade-structure">
         <button type="button" onClick={showForm}>
-          Grade Structure
+          {t('detail.gradeStructure.gradeStructure')}
         </button>
 
         {isFormVisible && (
@@ -125,7 +127,7 @@ function GradeStructure() {
                           >
                             <form>
                               <div className="form-group">
-                                <label htmlFor="componentName">Tên:</label>
+                                <label htmlFor="componentName">{t('detail.gradeStructure.name')}:</label>
                                 <input
                                   type="text"
                                   id="componentName"
@@ -173,11 +175,11 @@ function GradeStructure() {
 
               <div className="form-buttons">
                 <button type="button" className="close-button" onClick={hideForm}>
-                  Close
+                  {t('detail.gradeStructure.close')}
                 </button>
                 {isTeacherToEdit && (
                   <button type="button" className="submit-button" onClick={handleSave}>
-                    Save
+                    {t('detail.gradeStructure.save')}
                   </button>
                 )}
               </div>

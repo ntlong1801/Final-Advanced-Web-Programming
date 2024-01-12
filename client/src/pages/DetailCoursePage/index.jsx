@@ -42,10 +42,10 @@ export default function DetailCoursePage() {
             <NewsPage isTeacher={isTeacher} />
 
           </TabPanel>
-          <TabPanel header="Mọi người" leftIcon="pi pi-fw pi-users">
+          <TabPanel header={t('detail.members')} leftIcon="pi pi-fw pi-users">
             <PeoplePage />
           </TabPanel>
-          <TabPanel header="Điểm" leftIcon="pi pi-fw pi-calculator">
+          <TabPanel header={t('detail.grades')} leftIcon="pi pi-fw pi-calculator">
             {isLoading && <Loading />}
             {isTeacher ?
               <GradePage />
@@ -53,7 +53,7 @@ export default function DetailCoursePage() {
               <GradeStudentPage />}
           </TabPanel>
           {isTeacher && (
-            <TabPanel header="Phản hồi" leftIcon="pi pi-fw pi-inbox">
+            <TabPanel header={t('detail.feedbacks')} leftIcon="pi pi-fw pi-inbox">
               <ViewListGradeReview />
             </TabPanel>
           )}

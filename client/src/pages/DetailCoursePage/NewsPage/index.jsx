@@ -8,9 +8,11 @@ import PropTypes from 'prop-types';
 import getClassCode from 'utils/func';
 
 import { Toast } from 'primereact/toast';
+import { useTranslation } from 'react-i18next';
 import GradeStucture from '../GradeStructure';
 
 export default function NewsPage({ isTeacher }) {
+  const { t } = useTranslation();
   const { classId } = useParams();
   const toast = useRef(null);
   const showSuccess = (msg) => {
@@ -23,9 +25,9 @@ export default function NewsPage({ isTeacher }) {
   const handleCopyClick = async (link) => {
     try {
       await navigator.clipboard.writeText(link);
-      showSuccess('Sao chép thành công!');
+      showSuccess(t('detail.newsPage.copied'));
     } catch (err) {
-      showError('Không thể copy');
+      showError(t('detail.newsPage.cantCopy'));
     }
   };
 
@@ -62,7 +64,7 @@ export default function NewsPage({ isTeacher }) {
         <div className="col-2 mt-4">
           {isTeacher ? (
             <div className="p-3 border-round-md border-1 font-bold ">
-              Mã lớp
+              {t('detail.newsPage.classCode')}
               <p>{getClassCode(infoClass?.invitation)}<i
                 className="pi pi-fw pi-copy cursor-pointer"
                 onClick={() => {
@@ -74,7 +76,7 @@ export default function NewsPage({ isTeacher }) {
           )
             : (
               <div className="p-3 border-round-md border-1 font-bold ">
-                <span>Chưa có gì sắp xảy ra</span>
+                <span>{t('detail.newsPage.nothingHappen')}</span>
 
               </div>
             )}
@@ -83,7 +85,7 @@ export default function NewsPage({ isTeacher }) {
         <div className="col-10 mt-4">
           <div className="p-3 border-round-md border-1 cursor-pointer">
             <i className="pi pi-fw pi-user mr-2" />
-            Thông báo nội dung nào đó cho lớp học của bạn
+            {t('detail.newsPage.postNewsForClass')}
           </div>
         </div>
         <div className="col-9 mt-4">
