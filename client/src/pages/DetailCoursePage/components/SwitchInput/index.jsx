@@ -10,8 +10,8 @@ import { Message } from 'primereact/message';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router';
 import io from 'socket.io-client';
-
 import { isTeacherOfClass, getClassByID } from 'apis/class.api';
+
 const socket = io('http://localhost:5000');
 const user = JSON.parse(localStorage.getItem('user_profile'));
 

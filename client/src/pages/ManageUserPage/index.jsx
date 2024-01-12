@@ -166,12 +166,12 @@ export default function ManageUserPage() {
       >
         <Column field="email" header="Email" headerStyle={{ textAlign: 'center' }} sortable />
         <Column field="student_id" header="StudentId" headerStyle={{ textAlign: 'center' }} />
-        <Column field="full_name" header="Full Name" headerStyle={{ textAlign: 'center' }} />
+        <Column field="full_name" header={t('manageUserPage.fullName')} headerStyle={{ textAlign: 'center' }} />
         <Column field="address" header="Address" headerStyle={{ textAlign: 'center' }} />
-        <Column field="phone_number" header="Phone Number" headerStyle={{ textAlign: 'center' }} />
-        <Column field="activation" header="Activation" className="text-center" headerStyle={{ textAlign: 'center' }} />
-        <Column field="banned" header="banned" className="text-center" headerStyle={{ textAlign: 'center' }} />
-        <Column body={formatAction} header="Actions" headerStyle={{ textAlign: 'center' }} style={{ minWidth: 160, width: 160 }} frozen />
+        <Column field="phone_number" header={t('manageUserPage.phoneNumber')} headerStyle={{ textAlign: 'center' }} />
+        <Column field="activation" header={t('manageUserPage.activation')} className="text-center" headerStyle={{ textAlign: 'center' }} />
+        <Column field="banned" header={t('manageUserPage.banned')} className="text-center" headerStyle={{ textAlign: 'center' }} />
+        <Column body={formatAction} header={t('manageUserPage.actions')} headerStyle={{ textAlign: 'center' }} style={{ minWidth: 160, width: 160 }} frozen />
       </DataTable>
       <Toast ref={toast} />
       <ConfirmDialog />
