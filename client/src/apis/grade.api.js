@@ -13,6 +13,12 @@ export const getGradeTemplate = ({ classId, compositionId }) =>
 export const getGradeBoard = ({ classId }) =>
   instance.get(GRADE.GET_GRADE_BOARD(classId));
 
+export const getListGradeReviews = (id) =>
+  instance.get(GRADE.GET_LIST_GRADE_REVIEWS(id));
+
+export const getDetailGradeReviews = (id) =>
+  instance.get(GRADE.GET_DETAIL_REVIEWS(id));
+
 export const postStudentList = (body = {}) =>
   instance.post(GRADE.POST_STUDENT_LIST, body);
 
@@ -27,3 +33,9 @@ export const postFinalized = (body = {}) =>
 
 export const mapStudentId = (body = {}) =>
   instance.post(GRADE.MAP_STUDENT_ID, body);
+
+export const postFeedbackOnReview = (body = {}) =>
+  instance.post(GRADE.POST_FEEDBACK_ON_REVIEWS, body);
+
+export const postFinalizedDecision = (body = {}) =>
+  instance.post(GRADE.POST_FINALIZED_DECISION, body);

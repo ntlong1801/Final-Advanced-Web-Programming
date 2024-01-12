@@ -46,12 +46,16 @@ export const GRADE = {
   GET_GRADE_TEMPLATE_FOR_ASSIGNMENT: (classId, compositionId) =>
     `teacher/getGradingTemplate?id_class=${classId}&compositionId=${compositionId}`,
   GET_GRADE_BOARD: (id) => `teacher/getGradeBoard?classId=${id}`,
+  GET_LIST_GRADE_REVIEWS: (id) => `teacher/getListGradeReview?userId=${id}`,
+  GET_DETAIL_REVIEWS: (id) => `teacher/getDetailGradeReview?review_id=${id}`,
 
   POST_STUDENT_LIST: 'teacher/postStudentList',
   POST_SINGLE_GRADE_ASSIGNMENT: 'teacher/postSingleGradeAssignment',
   POST_ALL_GRADE_ASSIGNMENT: 'teacher/postAllGradesAssignment',
   POST_FINALIZED: 'teacher/postFinalizedComposition',
   MAP_STUDENT_ID: 'teacher/mapStudentId',
+  POST_FEEDBACK_ON_REVIEWS: 'teacher/postFeedbackOnReview',
+  POST_FINALIZED_DECISION: 'teacher/postFinalizedGradeReview'
 };
 
 export const STUDENT = {

@@ -2,7 +2,6 @@ import { Controller, get } from 'react-hook-form';
 import { InputNumber } from 'primereact/inputnumber';
 import { classNames } from 'primereact/utils';
 import PropTypes from 'prop-types';
-import { useState } from 'react';
 
 export default function NumberInput({
   label,
@@ -16,7 +15,6 @@ export default function NumberInput({
   errorMessage,
   defaultValue
 }) {
-  const [value, setValue] = useState(0);
   return (
     <div className="field text-input">
       {label && (
@@ -34,15 +32,12 @@ export default function NumberInput({
           control={control}
           name={name}
           defaultValue={defaultValue}
-          render={({ field: { onChange, ref } }) => (
+          render={({ field: { onChange, value, ref } }) => (
             <InputNumber
               inputId={name}
               value={value}
-              onValueChange={(e) => setValue(e.value)}
+              onValueChange={(e) => onChange(e.value ?? 0)}
               placeholder={placeholder}
-              onChange={(e) => {
-                onChange(e.value);
-              }}
               autoFocus={autoFocus}
               ref={ref}
               className={classNames({ 'p-invalid': !!get(errors, name), 'surface-200': disabled })}
@@ -51,6 +46,7 @@ export default function NumberInput({
               max={10}
               maxFractionDigits={3}
               disabled={disabled}
+              defaultValue={defaultValue}
             />
           )}
         />
@@ -81,5 +77,5 @@ NumberInput.defaultProps = {
   isRequired: false,
   disabled: false,
   errorMessage: '',
-  defaultValue: '',
+  defaultValue: 0,
 };

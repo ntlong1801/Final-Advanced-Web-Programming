@@ -482,7 +482,7 @@ module.exports = {
 
   getListGradeReview: async (req, res) => {
     try {
-      const teacher_user_id = req.query.user_id;
+      const teacher_user_id = req.query.userId;
       if (teacher_user_id === undefined) {
         return res.status(400).json({
           status: 'failed',
@@ -498,9 +498,9 @@ module.exports = {
       }
 
       const listGradeReview = await teacherModel.getListGradeReview(teacher_user_id);
-      res.send(listGradeReview);
+      return res.send(listGradeReview);
     } catch (error) {
-      res.json({
+      return res.json({
         status: "failed",
         err: error,
       })
@@ -526,9 +526,9 @@ module.exports = {
     try {
       const reviewDetail = await teacherModel.getDetailGradeReview(review_id);
 
-      res.send(reviewDetail);
+      return res.send(reviewDetail);
     } catch (error) {
-      res.json({
+      return res.json({
         status: "failed",
         err: error,
       })
@@ -536,7 +536,7 @@ module.exports = {
   },
 
   postFeedbackOnReview: async (req, res) => {
-    const { review_id, user_id, feedback } = req.body;
+    const { review_id, user_id, feedback, fullName } = req.body;
     if (review_id === undefined || user_id === undefined || feedback === undefined) {
       return res.status(400).json({
         status: 'failed',
@@ -552,9 +552,11 @@ module.exports = {
     }
     try {
       const storeFeedback = {
-        orderId: uuidv4(),
         user_id: user_id,
+        full_name: fullName,
+        role: "teacher",
         comment_content: feedback,
+        create_at: new Date().toLocaleString('en-US', { timeZone: 'Asia/Bangkok' })
       }
       const rs = await teacherModel.postFeedbackOnReview(review_id, storeFeedback);
       if (rs != null) {
@@ -579,7 +581,7 @@ module.exports = {
   },
 
   postFinalizedGradeReview: async (req, res) => {
-    const { review_id, accepted } = req.body;
+    const { review_id, accepted, newGrade } = req.body;
     if (review_id === undefined || accepted === undefined) {
       return res.status(400).json({
         status: 'failed',
@@ -595,7 +597,7 @@ module.exports = {
     }
 
     try {
-      const rs = await teacherModel.postFinalizedGradeReview(review_id, accepted);
+      const rs = await teacherModel.postFinalizedGradeReview(review_id, accepted, newGrade);
       if (rs != null) {
         // socket.io
         if (req.body.activeClient.has(rs.studentId.id)) {

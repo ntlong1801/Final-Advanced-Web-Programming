@@ -395,7 +395,7 @@ module.exports = {
 
       return detailReview;
     } catch (error) {
-      console.log("Error getting a grade review detail: ", err);
+      console.log("Error getting a grade review detail: ", error);
       return null;
     }
   },
@@ -423,7 +423,7 @@ module.exports = {
         INSERT
         INTO student_notifications (notification_id, student_id, notification_type)
         VALUES ($1, $2, $3);
-      `, [uuidv4(), studentId, 'FeedBackOnReview']);
+      `, [uuidv4(), studentId.id, 'FeedBackOnReview']);
 
       return {
         status: "success",
@@ -435,7 +435,7 @@ module.exports = {
     }
   },
 
-  postFinalizedGradeReview: async (review_id, accepted) => {
+  postFinalizedGradeReview: async (review_id, accepted, new_grade) => {
     try {
       const closeReview = await db.none(`
       UPDATE grades_reviews
@@ -455,7 +455,7 @@ module.exports = {
         SET grade = $3
         WHERE composition_id = $1 AND student_id = $2
         RETURNING *;
-        `, [reviewDetail.composition_id, reviewDetail.student_id, reviewDetail.student_expected_grade]);
+        `, [reviewDetail.composition_id, reviewDetail.student_id, new_grade]);
 
         const studentId = await db.one(
           `

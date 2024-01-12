@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import Loading from 'components/Loading';
 import NewsPage from './NewsPage';
+import ViewListGradeReview from './ViewListGradeReview';
 import PeoplePage from './PeoplePage';
 import GradePage from './GradePage';
 import GradeStudentPage from './GradeStudentPage';
@@ -51,6 +52,11 @@ export default function DetailCoursePage() {
               :
               <GradeStudentPage />}
           </TabPanel>
+          {isTeacher && (
+            <TabPanel header="Phản hồi" leftIcon="pi pi-fw pi-inbox">
+              <ViewListGradeReview />
+            </TabPanel>
+          )}
         </TabView>
         <ScrollTop />
       </Layout>

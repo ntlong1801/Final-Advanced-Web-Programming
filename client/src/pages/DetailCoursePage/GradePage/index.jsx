@@ -198,13 +198,13 @@ export default function GradePage() {
         className="p-2"
         loading={isLoading || gradeStructureLoading}
       >
-        <Column field="student_id" body={formatStudentId} header="StudentId" style={{ minWidth: 140, width: 140 }} />
-        <Column field="full_name" header="Full name" style={{ minWidth: 220, width: 220 }} />
+        <Column field="student_id" body={formatStudentId} header="StudentId" />
+        <Column field="full_name" header="Full name" />
         {classcompositions?.map((classcomposition) =>
           <Column body={formatGrade} header={() => formatColHeader(classcomposition)} className="text-center" />
         )}
-        <Column field="totalGrade" header="Total grade" style={{ minWidth: 110, width: 110 }} className="text-center" />
-        <Column body={formatAction} header="Actions" style={{ minWidth: 160, width: 160 }} />
+        <Column field="totalGrade" header="Total grade" className="text-center" />
+        <Column body={formatAction} header="Actions" />
       </DataTable>
       <UploadExcelFile ref={uploadFile} link={link} refetch={refetch} />
       <InputGrade ref={inputGrade} refetch={refetch} oldGrade={0} />
