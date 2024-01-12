@@ -1,6 +1,8 @@
 const adminM = require("../models/admin.m");
 const bcrypt = require("bcrypt");
-
+const formidable = require('formidable');
+const fs = require('fs');
+const xlsx = require('xlsx');
 
 const adminController = {
     getAllAccount: async (req, res) => {
@@ -192,10 +194,60 @@ const adminController = {
                 message: err 
             })
         }
+    },
+
+    postStudentListId: async (req, res) => {
+        let form = new formidable.IncomingForm();
+        let data = []
+        form.parse(req, async (err, fields, files) => {
+        files.grades.forEach((file) => {
+            const filePath = file.filepath;
+            // Read the XLSX file
+            const workbook = xlsx.readFile(filePath);
+            const sheets = workbook.SheetNames
+
+            for (let i = 0; i < sheets.length; i++) {
+            const temp = xlsx.utils.sheet_to_json(
+                workbook.Sheets[workbook.SheetNames[i]])
+            temp.forEach((res) => {
+                data.push(res)
+            })
+            }
+        })
+        const student_id_arr = data?.map((item) => item.StudentId)
+        const user_id_arr = data?.map((item) => item.id)
+        try {
+            const data = {
+            student_id_arr,
+            user_id_arr
+            };
+
+            const postStudentListId = await adminM.postStudentListId(data);
+
+            return res.status(200).json(postStudentListId);
+        } catch (err) {
+            return res.json({
+            status: "failed",
+            err: err,
+            });
+        }
+        });
+    },
+
+    getTemplateStudentListId: async (req, res) => { 
+        try {
+            const csvData = await adminM.getTemplateStudentListId();
+            return res.json({
+                status: 'success',
+                csvData
+            })
+        } catch (err) {
+            return res.json({ 
+                status: "failed",
+                err: err,
+            })
+        }
     }
-
-
-
 };
 
 module.exports = adminController;

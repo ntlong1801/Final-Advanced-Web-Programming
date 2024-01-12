@@ -14,7 +14,7 @@ import { getNotificationStudent, getNotificationTeacher } from 'apis/user.api';
 import { isTeacherOfClass, getClassByID } from 'apis/class.api';
 
 const socket = io('http://localhost:5000'); // Replace with your server URL
-const ConnectNotification = function () {
+function ConnectNotification() {
   const toast = useRef(null);
   const overlayPanelRef = useRef(null);
   const [notifications, setNotifications] = useState([]);
@@ -116,6 +116,6 @@ const ConnectNotification = function () {
       <Toast ref={toast} />
     </div>
   );
-};
+}
 
 export default ConnectNotification;

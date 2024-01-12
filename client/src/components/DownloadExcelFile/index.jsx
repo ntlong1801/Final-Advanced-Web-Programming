@@ -43,7 +43,6 @@ export default function DownloadExcelFile({
         <Button
           type="button"
           icon="pi pi-file-excel"
-          rounded
           severity={severity}
           tooltip={tooltip}
           tooltipOptions={{ position: 'left', at: 'left top' }}
@@ -66,7 +65,7 @@ export default function DownloadExcelFile({
 
 DownloadExcelFile.propTypes = {
   downloadFunc: PropTypes.func,
-  classId: PropTypes.string.isRequired,
+  classId: PropTypes.string,
   compositionId: PropTypes.string,
   isButton: PropTypes.bool,
   severity: PropTypes.string,
@@ -75,6 +74,7 @@ DownloadExcelFile.propTypes = {
 
 DownloadExcelFile.defaultProps = {
   downloadFunc: () => null,
+  classId: '',
   compositionId: null,
   isButton: true,
   severity: 'help',

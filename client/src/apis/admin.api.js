@@ -21,3 +21,6 @@ export const activeClass = (body = {}) =>
 
 export const mapStudentId = (body = {}) =>
   instance.post(ADMIN.MAP_STUDENT_ID, body);
+
+export const getStudentListIdTemplate = () =>
+  instance.get(ADMIN.GET_TEMPLATE_STUDENT_LIST_ID);

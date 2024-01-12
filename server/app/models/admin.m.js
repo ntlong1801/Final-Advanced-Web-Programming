@@ -110,6 +110,39 @@ module.exports = {
             console.error('Error in mapStudenId', err);;
             return null;
         }
+    },
+
+    postStudentListId: async (data) => {
+        try {
+            const updateListStudent = [];
+            for (const [index, studentId] of data.student_id_arr.entries()) {
+              const hasUser = await userM.getUserByID(data.user_id_arr[index]);
+              if (hasUser) {
+                const rs = await db.none(`
+                INSERT INTO student_id (user_id, student_id) values ($1, $2) 
+                ON CONFLICT (student_id, user_id) DO NOTHING;
+                `, [data.user_id_arr[index].toString(),studentId.toString()] )
+                updateListStudent.push(rs);
+              }
+            }
+            return updateListStudent;
+          } catch (error) {
+            console.error("Error posting csv of student list:", error);
+            return null;
+          }
+    },
+
+    getTemplateStudentListId: async () => {
+        try {
+            const rs = db.any(`
+            SELECT u.id as id, s.student_id as "StudentId" FROM users u
+            LEFT JOIN student_id s ON u.id = s.user_id;
+            `)
+            return rs;
+        } catch (err) {
+            console.log('Error in getTemplateStudentListId', err);
+            return null;
+        }
     }
 
 

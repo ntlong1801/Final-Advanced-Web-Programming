@@ -200,5 +200,10 @@ router.post('/activeClass', middlewareController.verifyToken, adminController.in
 
 router.post('/mapStudentId', middlewareController.verifyToken, adminController.mapStudentId);
 
+router.post('/postListStudentId', middlewareController.verifyToken, adminController.postStudentListId);
+
+router.get('/getStudentListIdTemplate', middlewareController.verifyToken, adminController.getTemplateStudentListId);
+
+
 
 module.exports = router;

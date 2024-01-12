@@ -38,7 +38,7 @@ export const USER = {
   FORGOT_PASSWORD: 'user/forgot-password-email',
   RENEW_PASSWORD: (token) => `user/renew-password-by-forgot-email/${token}`,
   GET_STUDENT_ID: (id) => `user/studentId?userId=${id}`,
- 
+
   TEACHER_NOTIFICATION: 'teacher/getNotification',
   STUDENT_NOTIFICATION: 'student/getNotification',
 };
@@ -76,4 +76,6 @@ export const ADMIN = {
   BAN_USER: 'admin/banUser',
   ACTIVE_CLASS: 'admin/activeClass',
   MAP_STUDENT_ID: 'admin/mapStudentId',
+  POST_LIST_STUDENT_ID: 'admin/postListStudentId',
+  GET_TEMPLATE_STUDENT_LIST_ID: 'admin/getStudentListIdTemplate',
 };

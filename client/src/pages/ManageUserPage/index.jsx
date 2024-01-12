@@ -1,13 +1,15 @@
 import Header from 'layout/header';
 import { useQuery, useMutation } from 'react-query';
 import { useMemo, useRef } from 'react';
-import { getAllUsers, banUser, deleteUser } from 'apis/admin.api';
+import { getAllUsers, banUser, deleteUser, getStudentListIdTemplate } from 'apis/admin.api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
 import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { useTranslation } from 'react-i18next';
+import UploadExcelFile from 'components/UploadExcelFile';
+import DownloadExcelFile from 'components/DownloadExcelFile';
 import AddUser from './components/AddUser';
 import EditUSer from './components/EditUser';
 import MapStudentId from './MapStudentId';
@@ -18,6 +20,7 @@ export default function ManageUserPage() {
   const addUserRef = useRef(null);
   const editUserRef = useRef(null);
   const mapStudentIdRef = useRef(null);
+  const uploadExcelFileRef = useRef(null);
 
   const {
     data: _data,
@@ -103,6 +106,13 @@ export default function ManageUserPage() {
     });
   };
 
+  const handleOpenUploadExcelFile = () => {
+    uploadExcelFileRef.current.open({
+      classId: null,
+      compositionId: null
+    });
+  };
+
   const formatHeader = () => (
     <div className="flex justify-content-end gap-2">
       <Button
@@ -111,11 +121,13 @@ export default function ManageUserPage() {
         onClick={() => handleOpenAddUserModal()}
         tooltipOptions={{ position: 'left' }}
       />
+      <DownloadExcelFile downloadFunc={getStudentListIdTemplate} isButton tooltip="Download student list id template" />
       <Button
         icon="pi pi-upload"
         tooltip="Upload student list"
         tooltipOptions={{ position: 'left' }}
-        severity="help"
+        onClick={() => handleOpenUploadExcelFile()}
+        severity="info"
       />
     </div>
   );
@@ -178,6 +190,7 @@ export default function ManageUserPage() {
       <AddUser ref={addUserRef} refetch={refetch} />
       <EditUSer ref={editUserRef} refetch={refetch} />
       <MapStudentId ref={mapStudentIdRef} refetch={refetch} />
+      <UploadExcelFile ref={uploadExcelFileRef} refetch={refetch} link="/admin/postListStudentId" />
     </div>
   );
 }
