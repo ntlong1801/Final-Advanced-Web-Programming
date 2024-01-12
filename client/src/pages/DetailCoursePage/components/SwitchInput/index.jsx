@@ -1,19 +1,39 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { InputSwitch } from 'primereact/inputswitch';
 import PropTypes from 'prop-types';
 import { postFinalized } from 'apis/grade.api';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import { Message } from 'primereact/message';
+import { useParams } from 'react-router';
+
+import { isTeacherOfClass, getClassByID } from 'apis/class.api';
+
+import io from 'socket.io-client';
+
+const socket = io('http://localhost:5000');
+const user = JSON.parse(localStorage.getItem('user_profile'));
 
 export default function SwitchInput({ compositionId, isPublic }) {
+  const { classId } = useParams();
   const [checked, setChecked] = useState(isPublic);
   const { mutate } = useMutation(postFinalized);
   const toast = useRef(null);
 
   const [visible, setVisible] = useState(false);
+  // check is teacher
+  const { data: _data } = useQuery({
+    queryKey: ['class', classId],
+    queryFn: () => getClassByID(classId),
+  });
+  useMemo(() => _data?.data ?? [], [_data]);
+  const { data: checkTeacher } = useQuery({
+    queryKey: [classId],
+    queryFn: () => isTeacherOfClass(user?.id, classId),
+  });
+  const isTeacher = useMemo(() => checkTeacher?.data?.status !== 'false', [checkTeacher]);
 
   const handleChangeFinalized = async () => {
     mutate({ compositionId, isPublic }, {
@@ -23,6 +43,10 @@ export default function SwitchInput({ compositionId, isPublic }) {
       },
       onError: () => false
     });
+    // check role is teacher and emit notification
+    if (isTeacher) {
+      socket.emit('broadcastMessage', classId, `Teacher publiced grade composition for ${classId}`);
+    }
   };
   const footerContent = (
     <div>

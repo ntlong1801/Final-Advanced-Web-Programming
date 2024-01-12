@@ -523,7 +523,7 @@ module.exports = {
         // socket.io
         if (req.body.activeClient.has(rs.studentId.id)) {
           const clientId = req.body.activeClient.get(rs.studentId.id);
-          req.body.io.to(clientId).emit('notification', 'have new notification');
+          req.body.io.to(clientId).emit('notification', 'have new notification on review feedback.');
         }
         res.send(rs.status);
       }
@@ -562,7 +562,7 @@ module.exports = {
         // socket.io
         if (req.body.activeClient.has(rs.studentId.id)) {
           const clientId = req.body.activeClient.get(rs.studentId.id);
-          req.body.io.to(clientId).emit('notification', 'have new notification');
+          req.body.io.to(clientId).emit('notification', 'have new notification in grade review.');
         }
         res.json(rs.studentGrade);
       } else {
@@ -576,5 +576,30 @@ module.exports = {
         err: error,
       });
     }
-  }
+  },
+
+  getAllNotificationsByTeacherId: async (req, res) => {
+    const { teacherId } = req.body;
+    console.log("Teacher id: ", teacherId);
+    if (teacherId === undefined) {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Missing required input data teacherId',
+      });
+    }
+
+    if (typeof teacherId !== 'string') {
+      return res.status(400).json({
+        status: 'failed',
+        error: 'Invalid data types for input (teacherId should be string)',
+      });
+    }
+
+    try {
+      const rs = await teacherModel.getAllNotificationsByTeacherId(teacherId);
+      res.json(rs);
+    } catch (error) {
+      
+    }
+  },
 };
