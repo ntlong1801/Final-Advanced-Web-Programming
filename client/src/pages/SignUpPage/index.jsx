@@ -1,22 +1,21 @@
 import './style.scss';
 
 import TextInput from 'components/FormControl/TextInput';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { useForm } from 'react-hook-form';
 import { Button } from 'primereact/button';
 import { Link } from 'react-router-dom';
-import instance from 'config';
 import checkSignUp from 'pages/validation';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Toast } from 'primereact/toast';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import Loading from 'components/Loading';
 import LanguageSelect from 'components/LanguageSelect';
 import { useTranslation } from 'react-i18next';
+import { useMutation } from 'react-query';
+import { registerByEmail } from 'apis/auth.api';
 
 export default function SignUpPage() {
   const { t } = useTranslation();
-  const [isLoading, setIsLoading] = useState(false);
   const toast = useRef(null);
 
   const {
@@ -35,19 +34,22 @@ export default function SignUpPage() {
     toast.current.show({ severity: 'error', summary: 'Fail', detail: msg, life: 3000 });
   };
 
+  const { mutate, isLoading } = useMutation(registerByEmail);
+
   const onSubmit = async (data) => {
-    setIsLoading(true);
-    const response = await instance.post('/auth/register-email', data);
-    setIsLoading(false);
-    if (response.data.status === 'failed') {
-      showError(response.data.message);
-    } else {
-      showSuccess(response.data.message);
-    }
+    mutate(data, {
+      onSuccess: (response) => {
+        if (response.data.status === 'failed') {
+          showError(response.data.message);
+        } else {
+          showSuccess(response.data.message);
+        }
+      }
+    });
   };
   return (
     <>
-      <div className="p-4 fixed right-0">
+      <div className="p-4 fixed right-0 z-3">
         <LanguageSelect />
       </div>
       <div className="flex align-items-center justify-content-center background">

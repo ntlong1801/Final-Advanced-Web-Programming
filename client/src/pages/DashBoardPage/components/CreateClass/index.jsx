@@ -6,7 +6,10 @@ import { Toast } from 'primereact/toast';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import instance from 'config';
+import { useMutation } from 'react-query';
+import { createClass, addUserToClass } from 'apis/class.api';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { checkClassName } from 'pages/validation';
 
 const CreateClass = forwardRef((props, ref) => {
   // #region Data
@@ -22,14 +25,14 @@ const CreateClass = forwardRef((props, ref) => {
     trigger,
     reset,
     formState: { errors, dirtyFields },
-  } = useForm({ mode: 'onChange' });
+  } = useForm({ mode: 'onChange', resolver: yupResolver(checkClassName) });
   // #endregion Data
 
   // #region Event
   const showError = (message) => {
     toast.current.show({
       severity: 'error',
-      summary: 'Thất bại',
+      summary: t('error.name'),
       detail: message,
       life: 4000,
     });
@@ -38,7 +41,7 @@ const CreateClass = forwardRef((props, ref) => {
   const showSuccess = (message) => {
     toast.current.show({
       severity: 'success',
-      summary: 'Thành công',
+      summary: t('success.name'),
       detail: message,
       life: 4000,
     });
@@ -57,33 +60,42 @@ const CreateClass = forwardRef((props, ref) => {
     []
   );
 
+  const { mutate: createClassMutate } = useMutation(createClass);
+  const { mutate: addUserToClassMutate } = useMutation(addUserToClass);
+
   const handleCreateClass = async () => {
     const isValidTrigger = await trigger();
     if (!isValidTrigger) {
-      showError(t('errorMessage.validationErrorMessage'));
+      showError(t('error.validationErrorMessage'));
       return;
     }
 
     const data = getValues();
-    const { userId, setRefetch } = createClassControl;
+    const { userId, refetch } = createClassControl;
     const dataSender = { ...data, userId };
-    const createClass = await instance.post('/class/addClass', dataSender);
-    if (createClass?.data?.id) {
-      const userClass = { id_class: createClass?.data?.id,
-        id_user: userId,
-        role: 'teacher' };
-      const addOwnerToClass = await instance.post('/class/addUserToClass', userClass);
-      if (addOwnerToClass?.data?.id_class) {
-        showSuccess('Tạo lớp học thành công');
-        setRefetch(true);
-      } else {
-        showError('Có lỗi xảy ra, vui lòng thử lại!');
+    createClassMutate(dataSender, {
+      onSuccess: (res) => {
+        if (res?.data?.id) {
+          const userClass = { id_class: res?.data?.id,
+            id_user: userId,
+            role: 'teacher' };
+          addUserToClassMutate(userClass, {
+            onSuccess: (res1) => {
+              if (res1?.data?.id_class) {
+                showSuccess('Tạo lớp học thành công');
+                refetch();
+                setVisible(false);
+              } else {
+                showError('Có lỗi xảy ra, vui lòng thử lại!');
+              }
+            },
+            onError: () => {
+              showError('Có lỗi xảy ra');
+            }
+          });
+        }
       }
-    } else {
-      showError('Có lỗi xảy ra, vui lòng thử lại!');
-    }
-
-    setVisible(false);
+    });
   };
 
   // #endregion Event
@@ -91,7 +103,7 @@ const CreateClass = forwardRef((props, ref) => {
   return (
     <>
       <Dialog
-        header="Tạo lớp học"
+        header={t('dashBoard.components.createClass.createClass')}
         visible={visible}
         onHide={() => {
           setVisible(false);
@@ -103,7 +115,7 @@ const CreateClass = forwardRef((props, ref) => {
           <div className="col-12">
             <TextInput
               name="name"
-              label="Tên lớp học"
+              label={t('dashBoard.components.createClass.name')}
               isRequired
               control={control}
               errors={errors}
@@ -112,8 +124,7 @@ const CreateClass = forwardRef((props, ref) => {
           <div className="col-12">
             <TextInput
               name="description"
-              label="Mô tả"
-              isRequired
+              label={t('dashBoard.components.createClass.description')}
               control={control}
               errors={errors}
             />
@@ -123,7 +134,7 @@ const CreateClass = forwardRef((props, ref) => {
 
         <div className="flex justify-content-end mt-4">
           <Button
-            label="Tạo"
+            label={t('dashBoard.components.createClass.create')}
             type="submit"
             severity="info"
             onClick={handleCreateClass}

@@ -30,17 +30,53 @@ const middlewareController = {
 
       const roleInClass = await classModel.checkTeacherByTeacherClassId(userDb.id, id_class);
 
-      if(roleInClass[0].role == "teacher" || roleInClass[0].role == 'teacher') {
+      if (roleInClass[0].role == "teacher" || roleInClass[0].role == 'teacher') {
         next()
       } else {
         return res.status(403).json("You are not teacher of this class.");
       }
       
     } catch (error) {
+      console.log(error)
       return res.status(403).json("Invite error.");
     }
 
   },
+
+  isAdminGet: async (req, res, next) => {
+    const userId = req.query.userId;
+
+    try {
+      const userDb = await userModel.getUserByID(userId);
+
+      if (userDb.role === 'admin') {
+        next();
+      } else {
+        return res.status(403).json("You are not admin.");
+      }
+    } catch (error) { 
+      console.log(error);
+      return res.status(403).json("Occur error");
+    }
+  },
+
+  isAdminPost: async (req, res, next) => {
+    const userId = req.body.userId;
+
+    try {
+      const userDb = await userModel.getUserByID(userId);
+
+      if (userDb.role === 'admin') {
+        next();
+      } else {
+        return res.status(403).json("You are not admin.");
+      }
+    } catch (error) { 
+      console.log(error);
+      return res.status(403).json("Occur error");
+    }
+  },
+
 };
 
 module.exports = middlewareController;

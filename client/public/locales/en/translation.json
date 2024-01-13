@@ -21,5 +21,212 @@
         "signInNow": "Sign in here",
         "fullName": "Full Name"
     },
-    "password": "Password"
+    "header" : {
+        "joinClass": "Join class",
+        "createClass": "Create class"
+    },
+    "password": "Password",
+    "sidebar": {
+        "teaching": "Teaching",
+        "enrolled": "Enrolled"
+    },
+    "user": {
+        "fullName": "Full name",
+        "address": "Address",
+        "phoneNumber": "Phone number",
+        "changePassword": "Change password",
+        "update": "Update"
+    },
+    "changePassword": {
+        "name": "Change password",
+        "oldPassword": "Old password",
+        "newPassword": "New password",
+        "renewPassword": "Re-new password",
+        "errorSamePassword": "Re-new password must be the same as new password"
+    },
+    "404": {
+        "notFound": "Not found",
+        "sourceNotAvailable": "Source not available",
+        "comeback": "Come back to home"
+    },
+    "dashBoard": {
+        "teachingClass": "Teaching class",
+        "enrolledClass": "Enrolled class",
+        "components": {
+            "createClass": {
+                "createClass": "Create class",
+                "name": "Class's name",
+                "description": "Description",
+                "create": "Create"
+            },
+            "joinClass": {
+                "joinClass": "Join class",
+                "classId": "Class's ID",
+                "studentId": "Student's ID",
+                "join": "Join"
+            }
+        }
+    },
+    "detail": {
+        "news": "News",
+        "members": "Members",
+        "grades": "Grades",
+        "feedbacks": "Feedbacks",
+        "components": {
+            "commentReview": {
+                "comment": "Comment",
+                "feedback": "Feedback",
+                "submit": "Submit"
+            },
+            "decision": {
+                "decision": "Decision",
+                "finalGrade": "Final grade",
+                "success": "Success",
+                "send": "Send"
+            },
+            "inputGrade": {
+                "inputGrade": "Input Grade",
+                "update": "Update"
+            },
+            "inviteStudent": {
+                "inviteStudent": "Invite Student",
+                "invite": "Invite"
+            },
+            "inviteTeacher": {
+                "inviteTeacher": "Invite Teacher",
+                "invite": "Invite"
+            },
+            "inputStudentId": {
+                "inputStudentId": "Input Student's Id",
+                "update": "Update"
+            },
+            "requestGrade": {
+                "fillInfo": "Fill information",
+                "expectedGrade":"Expected Grade",
+                "explain": "Explain",
+                "send": "Send request"
+            },
+            "switchInput": {
+                "accept": "Accept",
+                "yes": "Yes",
+                "no": "No"
+            }
+        },
+        "gradePage": {
+            "studentId": "Student's ID",
+            "fullName": "Full name",
+            "totalGrade": "Total Grade",
+            "actions": "Actions",
+            "ban": "Ban",
+            "unban": "Unban"
+        },
+        "gradeStructure": {
+            "gradeStructure": "Grade structure",
+            "name": "Name",
+            "close": "Close",
+            "save": "Save"
+        },
+        "gradeStudentPage": {
+            "studentId": "Student's ID",
+            "totalGrade": "Total Grade"
+        },
+        "newsPage": {
+            "copied": "Copied!",
+            "cantCopy": "Can't copy!",
+            "classCode": "Class's code",
+            "nothingHappen": "Nothing has happened!",
+            "postNewsForClass": "Post some news for your class"
+        },
+        "peoplePage": {
+            "teacher": "Teachers",
+            "student": "Students"
+        },
+        "viewListGradeReview": {
+            "studentId": "Student's ID",
+            "gradeComposition": "Total Grade",
+            "expectedGrade": "Expected Grade",
+            "actions": "Actions"
+        }
+    },
+    "forgotPw": {
+        "renew": "Renew"
+    },
+    "invitationPage": {
+        "studentId": "Student's ID"
+    },
+    "manageClassPage": {
+        "name": "Class's name",
+        "description": "Description",
+        "active": "Active",
+        "inactive": "Inactive",
+        "actions": "Actions"
+    },
+    "manageUserPage": {
+        "studentId": "Student ID",
+        "fullName": "Full name",
+        "address": "Address",
+        "phoneNumber": "Phone number",
+        "activation": "Activation",
+        "banned": "Banned",
+        "actions": "Actions",
+        "ban": "Ban",
+        "unban": "Unban"
+    },
+    "waitingConformForgotEmail": {
+        "newPw": "New password",
+        "reNewPw": "Re-new password",
+        "change": "Change"
+    },
+    "admin": {
+        "yes": "Yes",
+        "no": "No",
+        "user": {
+            "addUser": "Add user",
+            "editUser": "Edit user",
+            "password": "Password",
+            "fullName": "Full name",
+            "address": "Address",
+            "phoneNumber": "Phone number",
+            "add": "Add",
+            "edit": "Update",
+            "del": "Delete user",
+            "mapStudentId": "Map student id",
+            "confirm": "Confirm",
+            "ban": "Are you sure you want to ban this user?",
+            "unban": "Are you sure you want to unban this user?",
+            "delConfirm": "Are you sure you want to delete this user?",
+            "downloadStudentList": "Download student list id template",
+            "uploadStudentList": "Upload student list id"
+        },
+        "class": {
+            "keyword": "Keyword Search",
+            "byName": "Search by name",
+            "byDescription": "Search by description",
+            "selectOne": "Select one",
+            "emptyMessage": "No classes found",
+            "confirm": "Xác nhận",
+            "lock": "Are you sure you want to lock this class?",
+            "unlock": "Are you sure you want to unlock this class?"
+        }
+    },
+    "success": {
+        "name": "Success",
+        "addUser": "Add user successfully",
+        "editUser": "Update user successfully",
+        "delUser": "Delete user successfully",
+        "mapStudentId": "Map student id successfully",
+        "banUser": "Ban user successfully",
+        "unbanUser": "Unban user successfully",
+        "uploadStudentListId": "Upload student list id successfully",
+        "lockClass": "Lock class successfully",
+        "unlockClass": "Unlock class successfully"
+    },
+    "error": {
+        "name": "Failed",
+        "validationErrorMessage": "Check the red bordered boxess"
+    },
+    "warn": {
+        "name": "Rejected",
+        "detail": "Reject successfully"
+    }
 }

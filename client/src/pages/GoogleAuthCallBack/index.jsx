@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
-import instance from 'config';
-
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useQuery } from 'react-query';
+import { googleAuthCallback } from 'apis/auth.api';
 
 function GoogleAuthCallback() {
   // #region Data
@@ -9,22 +9,23 @@ function GoogleAuthCallback() {
   const navigate = useNavigate();
   const { search } = useLocation();
 
+  const { data: _data } = useQuery({
+    queryKey: [search],
+    queryFn: () => googleAuthCallback(search),
+    enabled: !!search
+  });
+
   // #endregion Data
 
   // #region Event
   useEffect(() => {
-    function getUser() {
-      instance.get(`/auth/google/callback${search}`).then((response) => {
-        const data = { ...response.data };
-        localStorage.setItem('access_token', data.accessToken);
-        localStorage.setItem('user_profile', JSON.stringify(data.user));
-        navigate('/dashboard');
-      }).catch(() => { });
+    if (_data?.data) {
+      const data = { ..._data.data };
+      localStorage.setItem('access_token', data.accessToken);
+      localStorage.setItem('user_profile', JSON.stringify(data.user));
+      navigate('/dashboard');
     }
-    if (search) {
-      getUser();
-    }
-  }, [search]);
+  }, [_data]);
   // #endregion Event
 
   return (

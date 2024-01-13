@@ -21,5 +21,213 @@
         "signInNow": "Đăng nhập tại đây",
         "fullName": "Họ và tên"
     },
-    "password": "Mật khẩu"
+    "header" : {
+        "joinClass": "Tham gia lớp học",
+        "createClass": "Tạo lớp học"
+    },
+    "password": "Mật khẩu",
+    "sidebar": {
+        "teaching": "Giảng dạy",
+        "enrolled": "Đã đăng ký"
+    },
+    "user": {
+        "fullName": "Họ và tên",
+        "address": "Địa chỉ",
+        "phoneNumber": "Số điện thoại",
+        "changePassword": "Thay đổi mật khẩu",
+        "update": "Cập nhật"
+    },
+    "changePassword": {
+        "name": "Thay đổi mật khẩu",
+        "oldPassword": "Mật khẩu cũ",
+        "newPassword": "Mật khẩu mới",
+        "renewPassword": "Nhập lại mật khẩu mới",
+        "errorSamePassword": "Xác nhận mật khẩu phải giống mật khẩu mới"
+    },
+    "404": {
+        "notFound": "Không tìm thấy",
+        "sourceNotAvailable": "Nguồn không có sẵn",
+        "comeback": "Quay trở lại trang chủ"
+    },
+    "dashBoard": {
+        "teachingClass": "Lớp học giảng dạy",
+        "enrolledClass": "Lớp học đã đăng ký",
+        "components": {
+            "createClass": {
+                "createClass": "Tạo lớp học",
+                "name": "Tên lớp",
+                "description": "Mô tả",
+                "create": "Tạo"
+            },
+            "joinClass": {
+                "joinClass": "Tham gia lớp học",
+                "classId": "Mã lớp",
+                "studentId": "Mã số sinh viên",
+                "join": "Tham gia"
+            }
+        }
+    },
+    "detail": {
+        "news": "Bảng tin",
+        "members": "Mọi người",
+        "grades": "Điểm",
+        "feedbacks": "Phản hồi",
+        "components": {
+            "commentReview": {
+                "comment": "Nhận xét",
+                "feedback": "Phản hồi",
+                "submit": "Phản hồi"
+            },
+            "decision": {
+                "decision": "Quyết định",
+                "finalGrade": "Điểm cuối cùng",
+                "success": "Đã gửi quyết định",
+                "send": "Gửi quyết định"
+            },
+            "inputGrade": {
+                "inputGrade": "Nhập điểm",
+                "update": "Cập nhật"
+            },
+            "inviteStudent": {
+                "inviteStudent": "Mời học sinh",
+                "invite": "Mời"
+            },
+            "inviteTeacher": {
+                "inviteTeacher": "Mời giáo viên",
+                "invite": "Mời"
+            },
+            "inputStudentId": {
+                "inputStudentId": "Nhập mã số sinh viên",
+                "update":"Cập nhật"
+            },
+            "requestGrade": {
+                "fillInfo": "Nhập thông tin",
+                "expectedGrade":"Số điểm mong muốn",
+                "explain": "Lý do",
+                "send": "Gửi yêu cầu"
+            },
+            "switchInput": {
+                "accept": "Xác nhận",
+                "yes": "Có",
+                "no": "Không"
+            }
+        },
+        "gradePage": {
+            "studentId": "Mã số sinh viên",
+            "fullName": "Họ và tên",
+            "totalGrade": "Tổng điểm",
+            "actions": "Tùy chọn",
+            "ban": "Cấm",
+            "unban": "Gỡ cấm"
+        },
+        "gradeStructure": {
+            "gradeStructure": "Thành phần điểm",
+            "name": "Tên",
+            "close": "Đóng",
+            "save": "Lưu"
+        },
+        "gradeStudentPage": {
+            "studentId": "Mã số sinh viên",
+            "totalGrade": "Tổng điểm"
+        },
+        "newsPage": {
+            "copied": "Sao chép thành công!",
+            "cantCopy": "Không thể sao chép!",
+            "classCode": "Mã lớp học",
+            "nothingHappen": "Chưa có gì xảy ra",
+            "postNewsForClass": "Hãy đăng gì đó cho lớp học của bạn"
+        },
+        "peoplePage": {
+            "teacher": "Giáo viên",
+            "student": "Học sinh"
+        },
+        "viewListGradeReview": {
+            "studentId": "Mã số sinh viên",
+            "gradeComposition": "Thành phần điểm",
+            "expectedGrade": "Số điểm mong muốn",
+            "actions": "Tùy chọn"
+        }
+    },
+    "forgotPw": {
+        "renew": "Đổi mật khẩu"
+    },
+    "invitationPage": {
+        "studentId": "Mã số sinh viên"
+    },
+    "manageClassPage": {
+        "name": "Tên lớp",
+        "description": "Mô tả",
+        "active": "Hoạt động",
+        "inactive": "Dừng hoạt động",
+        "actions": "Hành động"
+    },
+    "manageUserPage": {
+        "studentId":"Mã số sinh viên",
+        "fullName": "Họ và tên",
+        "address": "Địa chỉ",
+        "phoneNumber": "Số điện thoại",
+        "activation": "Kích hoạt",
+        "banned": "Cấm",
+        "actions": "Hành động",
+        "ban": "Cấm",
+        "unban":"Gỡ cấm"
+    },
+    "waitingConformForgotEmail": {
+        "newPw": "Mật khẩu mới",
+        "reNewPw": "Nhập lại mật khẩu mới",
+        "change": "Thay đổi"
+    },
+    "admin": {
+        "yes": "Có",
+        "no": "Không",
+        "user": {
+            "addUser": "Thêm người dùng",
+            "editUser": "Cập nhật người dùng",
+            "password": "Mật khẩu",
+            "fullName": "Họ và tên",
+            "address": "Địa chỉ",
+            "phoneNumber": "Số điện thoại",
+            "add": "Thêm",
+            "edit": "Cập nhật",
+            "del": "Xóa người dùng",
+            "mapStudentId": "Gán mã số sinh viên",
+            "confirm": "Xác nhận",
+            "ban": "Bạn có chắc chắn muốn cấm người dùng này?",
+            "unban": "Bạn có chắc chắn muốn gỡ cấm người dùng này?",
+            "delConfirm": "Bạn có chắc chắn muốn xóa người dùng này?",
+            "downloadStudentList": "Tải xuống danh sách mã số sinh viên mẫu",
+            "uploadStudentList": "Tải lên danh sách mã số sinh viên"
+        },
+        "class": {
+            "keyword": "Nhập từ khóa",
+            "byName": "Tìm kiếm theo tên",
+            "byDescription": "Tìm kiếm theo mô tả",
+            "selectOne": "Chọn 1",
+            "emptyMessage": "Không có lớp học nào",
+            "confirm": "Xác nhận",
+            "lock": "Bạn có chắc chắn muốn dừng hoạt động lớp học này?",
+            "unlock": "Bạn có chắc chắn muốn gỡ dừng hoạt động lớp học này?"
+        }
+    },
+    "success": {
+        "name": "Thành công",
+        "addUser": "Thêm người dùng thành công",
+        "editUser": "Cập nhật người dùng thành công",
+        "delUser": "Xóa người dùng thành công",
+        "mapStudentId": "Gán mã số sinh viên thành công",
+        "banUser": "Cấm người dùng thành công",
+        "unbanUser": "Gỡ cấm người dùng thành công",
+        "uploadStudentListId": "Tải lên danh sách mã số sinh viên thành công",
+        "lockClass": "Cấm người dùng thành công",
+        "unlockClass": "Gỡ cấm người dùng thành công"
+    },
+    "error": {
+        "name": "Thất bại",
+        "validationErrorMessage": "Kiểm tra các ô viền đỏ"
+    },
+    "warn": {
+        "name": "Từ chối",
+        "detail": "Từ chối thành công"
+    }
+
 }

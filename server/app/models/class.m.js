@@ -1,13 +1,11 @@
 const db = require("../../config/connect_db");
 const {v4 : uuidv4 } = require('uuid');
 require('dotenv').config();
+const generateRandomCode = require('../../utils/index')
 
 module.exports = {
     addClass: async (class_info) => {
-        const invitation = `${process.env.URL_CLIENT}/invite/${uuidv4()}`;
-        // *****
-        // Create invitation here!
-        // *****
+        const invitation = `${process.env.URL_CLIENT}/invite/${generateRandomCode(8)}`;
         const rs = await db.one("INSERT INTO classes (id, owner_id, name, description, invitation) VALUES ($1, $2, $3, $4, $5) RETURNING *;", [uuidv4(), class_info.owner_id, class_info.name, class_info.description, invitation]);
         return rs;
     },
@@ -22,13 +20,18 @@ module.exports = {
         return rs;
     },
 
+    getIdClassByComposition: async (composition_id) => {
+        const rs = await db.one("SELECT * FROM classes_composition WHERE id = $1;", [composition_id]);
+        return rs;
+    },
+
     updateClassInfo: async(class_info) => {
         const rs = await db.one("UPDATE classes SET name = $2, description = $3, invitation = $4 WHERE id = $1 RETURNING *;", [class_info.id, class_info.name, class_info.description, class_info.invitation]);
         return rs;
     },
 
-    addUserToClass: async(id_class, id_user, role) => {
-        const rs = await db.one("INSERT INTO class_user (id_class, id_user, role) VALUES ($1, $2, $3) RETURNING *;", [id_class, id_user, role]);
+    addUserToClass: async(id_class, id_user, role, student_id = null) => {
+        const rs = await db.one("INSERT INTO class_user (id_class, id_user, role, student_id) VALUES ($1, $2, $3, $4) RETURNING *;", [id_class, id_user, role, student_id]);
         return rs;
     },
     

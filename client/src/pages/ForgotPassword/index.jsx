@@ -4,13 +4,15 @@ import TextInput from 'components/FormControl/TextInput';
 import { useForm } from 'react-hook-form';
 import { Button } from 'primereact/button';
 import { Link } from 'react-router-dom';
-import instance from 'config';
 import { Toast } from 'primereact/toast';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import Loading from 'components/Loading';
+import { useMutation } from 'react-query';
+import { forgotPassword } from 'apis/user.api';
+import { useTranslation } from 'react-i18next';
 
 export default function ForgotPassword() {
-  const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
   const toast = useRef(null);
 
   const {
@@ -29,15 +31,18 @@ export default function ForgotPassword() {
     toast.current.show({ severity: 'error', summary: 'Fail', detail: msg, life: 3000 });
   };
 
+  const { mutate, isLoading } = useMutation(forgotPassword);
+
   const onSubmit = async (data) => {
-    setIsLoading(true);
-    const response = await instance.post('/user/forgot-password-email', data);
-    setIsLoading(false);
-    if (response.data.status === 'failed') {
-      showError(response.data.message);
-    } else {
-      showSuccess(response.data.message);
-    }
+    mutate(data, {
+      onSuccess: (response) => {
+        if (response.data.status === 'failed') {
+          showError(response.data.message);
+        } else {
+          showSuccess(response.data.message);
+        }
+      }
+    });
   };
   return (
     <div className="flex align-items-center justify-content-center background">
@@ -60,7 +65,7 @@ export default function ForgotPassword() {
             errorMessage={errors.email?.message || ''}
           />
           <div className="text-center mt-4">
-            <Button label="Renew" type="submit" />
+            <Button label={t('forgotPw.renew')} type="submit" />
           </div>
         </form>
 

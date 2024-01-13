@@ -6,8 +6,9 @@ import { Toast } from 'primereact/toast';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import instance from 'config';
 import Loading from 'components/Loading';
+import { useMutation } from 'react-query';
+import { inviteByEmail } from 'apis/class.api';
 
 const InviteTeacher = forwardRef((props, ref) => {
   // #region Data
@@ -15,7 +16,6 @@ const InviteTeacher = forwardRef((props, ref) => {
   const toast = useRef(null);
 
   const [inviteTeacherControl, setInviteTeacherControl] = useState();
-  const [isLoading, setIsLoading] = useState(false);
   const [visible, setVisible] = useState(false);
 
   const {
@@ -46,6 +46,8 @@ const InviteTeacher = forwardRef((props, ref) => {
     });
   };
 
+  const { mutate, isLoading } = useMutation(inviteByEmail);
+
   useImperativeHandle(
     ref,
     () => ({
@@ -75,19 +77,15 @@ const InviteTeacher = forwardRef((props, ref) => {
       roleUser: 'teacher',
     };
     // invite user by email
-    try {
-      setIsLoading(true); // Thêm setIsLoading(true) khi bắt đầu request
-      const response = await instance.post('/class/inviteByMail', dataSender);
-      setIsLoading(false);
-      if (response.data.status === 'failed') {
-        showError(response.data.message);
-      } else {
-        showSuccess('Gửi email thành công');
+    mutate(dataSender, {
+      onSuccess: (response) => {
+        if (response.data.status === 'failed') {
+          showError(response.data.message);
+        } else {
+          showSuccess('Gửi email tới giáo viên thành công');
+        }
       }
-    } catch (error) {
-      setIsLoading(false);
-    }
-
+    });
     setVisible(false);
   };
 
@@ -97,7 +95,7 @@ const InviteTeacher = forwardRef((props, ref) => {
     <>
       {isLoading && <Loading />}
       <Dialog
-        header="Mời giáo viên"
+        header={t('detail.components.inviteTeacher.inviteTeacher')}
         visible={visible}
         onHide={() => {
           setVisible(false);
@@ -120,7 +118,7 @@ const InviteTeacher = forwardRef((props, ref) => {
 
         <div className="flex justify-content-end mt-4">
           <Button
-            label="Mời"
+            label={t('detail.components.inviteTeacher.invite')}
             type="submit"
             severity="info"
             onClick={handleInviteTeacher}

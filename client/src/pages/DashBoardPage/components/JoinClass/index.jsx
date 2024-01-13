@@ -6,7 +6,8 @@ import { Toast } from 'primereact/toast';
 import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-// import instance from 'config';
+import { useMutation } from 'react-query';
+import { joinClassByCode } from 'apis/class.api';
 
 const JoinClass = forwardRef((props, ref) => {
   // #region Data
@@ -16,10 +17,11 @@ const JoinClass = forwardRef((props, ref) => {
   // eslint-disable-next-line no-unused-vars
   const [joinClassControl, setJoinClassControl] = useState();
   const [visible, setVisible] = useState(false);
+  const [studentId, setStudentId] = useState(null);
 
   const {
     control,
-    // getValues,
+    getValues,
     trigger,
     reset,
     formState: { errors, dirtyFields },
@@ -30,26 +32,27 @@ const JoinClass = forwardRef((props, ref) => {
   const showError = (message) => {
     toast.current.show({
       severity: 'error',
-      summary: 'Thất bại',
+      summary: t('error.name'),
       detail: message,
       life: 4000,
     });
   };
 
-  // const showSuccess = (message) => {
-  //   toast.current.show({
-  //     severity: 'success',
-  //     summary: 'Thành công',
-  //     detail: message,
-  //     life: 4000,
-  //   });
-  // };
+  const showSuccess = (message) => {
+    toast.current.show({
+      severity: 'success',
+      summary: t('success.name'),
+      detail: message,
+      life: 4000,
+    });
+  };
 
   useImperativeHandle(
     ref,
     () => ({
       open: (_joinClassControl) => {
         setJoinClassControl(_joinClassControl);
+        setStudentId(_joinClassControl.studentId);
         reset();
         setVisible(true);
       },
@@ -58,14 +61,29 @@ const JoinClass = forwardRef((props, ref) => {
     []
   );
 
+  const { mutate } = useMutation(joinClassByCode);
+
   const handleJoinClass = async () => {
     const isValidTrigger = await trigger();
     if (!isValidTrigger) {
       showError(t('errorMessage.validationErrorMessage'));
       return;
     }
-
-    setVisible(false);
+    const { userId, refetch, refetchStudentId } = joinClassControl;
+    const classCode = getValues('classCode');
+    const studentIdInput = getValues('studentId');
+    mutate({ userId, studentId: studentIdInput, classCode }, {
+      onSuccess: (res) => {
+        if (res?.data.status === 'success') {
+          refetch();
+          refetchStudentId();
+          setVisible(false);
+          showSuccess(res?.data.message);
+        } else {
+          showError(res?.data.message);
+        }
+      }
+    });
   };
 
   // #endregion Event
@@ -73,7 +91,7 @@ const JoinClass = forwardRef((props, ref) => {
   return (
     <>
       <Dialog
-        header="Tham gia lớp học"
+        header={t('dashBoard.components.joinClass.joinClass')}
         visible={visible}
         onHide={() => {
           setVisible(false);
@@ -84,19 +102,32 @@ const JoinClass = forwardRef((props, ref) => {
         <div className="grid p-fluid">
           <div className="col-12">
             <TextInput
-              name="name"
-              label="Mã lớp"
+              name="classCode"
+              label={t('dashBoard.components.joinClass.classId')}
               isRequired
               control={control}
               errors={errors}
             />
           </div>
 
+          {!studentId && (
+            <div className="col-12">
+              <TextInput
+                name="studentId"
+                label={t('dashBoard.components.joinClass.studentId')}
+                isRequired
+                control={control}
+                errors={errors}
+                defaultValue={studentId}
+              />
+            </div>
+          )}
+
         </div>
 
         <div className="flex justify-content-end mt-4">
           <Button
-            label="Tham gia"
+            label={t('dashBoard.components.joinClass.join')}
             type="submit"
             severity="info"
             onClick={handleJoinClass}
