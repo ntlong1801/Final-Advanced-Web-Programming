@@ -30,6 +30,6 @@ app.use(cors());
 authenticate(app);
 
 router(app);
-server.listen(port, () => {
+app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
