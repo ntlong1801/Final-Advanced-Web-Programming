@@ -27,8 +27,8 @@ module.exports = {
       const updateListStudent = [];
       for (const [index, studentId] of data.student_id_arr.entries()) {
         
-        const rs = await db.one(`
-        INSERT INTO student_list (istudent_id, class_id, full_name) values ($1, $2, $3) 
+        const rs = await db.oneOrNone(`
+        INSERT INTO student_list (student_id, class_id, full_name) values ($1, $2, $3) 
         ON CONFLICT (student_id, class_id)
         DO UPDATE SET full_name = $3
         WHERE student_list.student_id = $1 AND student_list.class_id = $2 AND student_list.isMap = false
@@ -327,9 +327,9 @@ module.exports = {
     }
   },
 
-  mapStudentIdWithStudentAccount: async (id = null, class_id, student_id, user_id, old_student_id = null) => {
+  mapStudentIdWithStudentAccount: async (class_id, student_id, user_id, old_student_id = null) => {
     try {
-      const rs = await db.one(
+      const rs = await db.oneOrNone(
         `
         UPDATE class_user 
         SET student_id = $1
@@ -339,19 +339,14 @@ module.exports = {
       );
       const full_name = await db.one(`
       SELECT full_name FROM users WHERE id = $1;`, [user_id]);
-      if (id) {
-        await db.none(
-          `
-          UPDATE student_list SET student_id = $1, full_name = $2 WHERE id = $3;`, [student_id, full_name.full_name, id]
-        )
-      } else {
+
         await db.one(
           `
-          INSERT INTO student_list (id, student_id, class_id, full_name, ismap) 
-          VALUES ($1, $2, $3, $4, $5) RETURNING*;`, [uuidv4(), student_id, class_id, full_name.full_name, true]
+          INSERT INTO student_list (student_id, class_id, full_name, ismap) 
+          VALUES ($1, $2, $3, $4) ON CONFLICT (student_id, class_id) DO UPDATE
+          SET full_name = $3, ismap = $4 WHERE student_list.student_id = $1 AND student_list.class_id = $2 RETURNING*;`, [student_id, class_id, full_name.full_name, true]
         )
         
-      }
       await db.one(`
         INSERT INTO student_id (user_id, student_id) VALUES ($1, $2) RETURNING*;`, [user_id, student_id]);
       
@@ -547,6 +542,15 @@ module.exports = {
         throw err;
       }
     }
-  }
+  },
+
+  getStudentNotMapStudentId: async (class_id) => {
+    try {
+      const rs = await db.any('SELECT u.id, u.email as "name" FROM class_user cu JOIN users u ON cu.id_user = u.id WHERE id_class = $1 AND student_id is null AND cu.role = $2;', [class_id, 'student'] );
+      return rs;
+    } catch (err) {
+      return null;
+    }
+  },
 
 };

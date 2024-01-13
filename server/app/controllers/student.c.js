@@ -96,7 +96,7 @@ module.exports = {
       const className = await classModel.getClass(classDb.class_id);
       const link = `http://localhost:3000/c/${classDb.class_id}?tab=3`;
       const content = `Student requested to review grade ${classDb.name} for class ${className.name}`;
-      const { rs, teacherList } =
+      const { rs } =
         await studentModel.postRequestCompositionReview(
           student_id,
           composition_id,

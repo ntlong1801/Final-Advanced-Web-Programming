@@ -39,3 +39,6 @@ export const postFeedbackOnReview = (body = {}) =>
 
 export const postFinalizedDecision = (body = {}) =>
   instance.post(GRADE.POST_FINALIZED_DECISION, body);
+
+export const getStudentNotMapStudentId = (id) =>
+  instance.get(GRADE.GET_STUDENT_NOT_MAP_STUDENT_ID(id));

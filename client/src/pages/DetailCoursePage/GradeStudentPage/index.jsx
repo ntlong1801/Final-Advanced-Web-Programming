@@ -77,7 +77,7 @@ export default function GradeStudentPage() {
     let grade = null;
     const gradeTemp = value[classComposition];
     if (gradeTemp === null) {
-      grade = 0;
+      grade = 'Chưa chấm điểm';
     } else if (gradeTemp === undefined) {
       grade = 'Chưa công bố';
     } else {

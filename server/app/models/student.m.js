@@ -10,7 +10,7 @@ module.exports = {
         "SELECT * FROM classes_grades WHERE class_id = $1 AND student_id = $2 AND composition_id = $3;",
         [class_id, student_id, composition_id]
       );
-      const isRequest = await db.one(`
+      const isRequest = await db.oneOrNone(`
       SELECT * FROM grades_reviews
       WHERE student_id = $1 AND composition_id = $2;
       `, [student_id, composition_id])
@@ -19,6 +19,7 @@ module.exports = {
         ...rs
       };
     } catch (err) {
+      console.log(err);
       if (err.code === 0) {
         return null;
       } else {
@@ -29,14 +30,15 @@ module.exports = {
 
   postRequestCompositionReview: async (student_id, composition_id, student_expected_grade, student_explain, content, link) => {
     try {
-      const currentGrade = await db.one(`SELECT grade 
+      console.log(student_id, composition_id, student_expected_grade, student_explain, content, link);
+      const currentGrade = await db.oneOrNone(`SELECT grade 
       FROM classes_grades 
       WHERE student_id = $1 AND composition_id = $2;`, [student_id, composition_id])
       const rs = await db.one(
         `INSERT INTO grades_reviews (id, student_id, composition_id,current_grade, student_expected_grade, student_explain) 
         VALUES ($1, $2, $3, $4, $5, $6)
         RETURNING *`,
-        [uuidv4(), student_id, composition_id,currentGrade.grade, student_expected_grade, student_explain]
+        [uuidv4(), student_id, composition_id,currentGrade?.grade ?? null, student_expected_grade, student_explain]
       );
 
 

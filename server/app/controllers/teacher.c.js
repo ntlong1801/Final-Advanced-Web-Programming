@@ -440,11 +440,10 @@ module.exports = {
   },
 
   mapStudentId: async (req, res) => {
-    const { id, classId, userId, studentId, oldStudentId } = req.body;
+    const {classId, userId, studentId, oldStudentId } = req.body;
 
     try {
       const rs = await teacherModel.mapStudentIdWithStudentAccount(
-        id,
         classId,
         studentId,
         userId,
@@ -677,4 +676,15 @@ module.exports = {
       res.json(rs);
     } catch (error) {}
   },
+
+  getStudentNotMapStudentId: async (req, res) => { 
+    const { classId } = req.query;
+
+    try {
+      const rs = await teacherModel.getStudentNotMapStudentId(classId);
+      return res.json(rs);
+    } catch (error) {
+      return res.json(error);
+    }
+  }
 };

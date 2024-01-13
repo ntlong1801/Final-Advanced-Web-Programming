@@ -15,7 +15,7 @@ import DownloadExcelFile from 'components/DownloadExcelFile';
 import UploadExcelFile from 'components/UploadExcelFile';
 import SwitchInput from 'pages/DetailCoursePage/components/SwitchInput';
 import InputGrade from '../components/InputGrade';
-import MapStudentId from '../components/MapStudentId';
+import MapStudentIdByTeacher from '../components/MapStudentIdByTeacher';
 
 export default function GradePage() {
   const { t } = useTranslation();
@@ -67,6 +67,12 @@ export default function GradePage() {
     });
   };
 
+  const handleOpenMapStudentId = (studentId) => {
+    mapStudentId.current.open({
+      studentId
+    });
+  };
+
   const formatGrade = (value, index) => {
     const idx = parseInt(index.field.split('_')[1], 10) - 2;
     const gradeArray = value.gradeArray.sort((a, b) => a.order_id - b.order_id);
@@ -114,7 +120,7 @@ export default function GradePage() {
   );
 
   const formatAction = (value) => (
-    value.is_map ? <span>Đã map</span> : <Button type="button" />
+    value.is_map ? <span>Đã map</span> : <Button type="button" icon="pi pi-map" onClick={() => handleOpenMapStudentId(value.student_id)} />
   );
 
   return (
@@ -162,7 +168,7 @@ export default function GradePage() {
       </DataTable>
       <UploadExcelFile ref={uploadFile} link={link} refetch={refetch} />
       <InputGrade ref={inputGrade} refetch={refetch} oldGrade={0} />
-      <MapStudentId ref={mapStudentId} refetch={refetch} />
+      <MapStudentIdByTeacher ref={mapStudentId} refetch={refetch} />
       <Toast ref={toast} />
     </div>
   );
