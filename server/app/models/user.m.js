@@ -92,5 +92,17 @@ module.exports = {
         throw err;
       }
     }
-}
+  },
+  getFullNameOfUser: async (userId) => {
+    try {
+      const rs = await db.one("SELECT * FROM users WHERE id = $1;", [userId]);
+      return rs;
+    } catch (err) {
+      if (err.code === 0) {
+        return null;
+      } else {
+        throw err;
+      }
+    }
+  }
 };

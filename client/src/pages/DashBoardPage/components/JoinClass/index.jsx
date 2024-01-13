@@ -112,18 +112,17 @@ const JoinClass = forwardRef((props, ref) => {
             />
           </div>
 
-          {!studentId && (
-            <div className="col-12">
-              <TextInput
-                name="studentId"
-                label={t('dashBoard.components.joinClass.studentId')}
-                isRequired
-                control={control}
-                errors={errors}
-                defaultValue={studentId}
-              />
-            </div>
-          )}
+          <div className="col-12">
+            <TextInput
+              name="studentId"
+              label={t('dashBoard.components.joinClass.studentId')}
+              isRequired
+              control={control}
+              errors={errors}
+              defaultValue={studentId?.student_id}
+              disabled={studentId}
+            />
+          </div>
 
         </div>
 

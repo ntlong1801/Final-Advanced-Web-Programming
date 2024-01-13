@@ -44,7 +44,7 @@ export default function InvitationPage() {
       link
     };
     if (studentId) {
-      dataSender.studentId = studentId;
+      dataSender.studentId = studentId.student_id;
     }
     mutate(dataSender, {
       onSuccess: (res) => {
