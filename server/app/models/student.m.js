@@ -27,7 +27,7 @@ module.exports = {
     }
   },
 
-  postRequestCompositionReview: async (student_id, composition_id, student_expected_grade, student_explain) => {
+  postRequestCompositionReview: async (student_id, composition_id, student_expected_grade, student_explain, content, link) => {
     try {
       const currentGrade = await db.one(`SELECT grade 
       FROM classes_grades 
@@ -53,9 +53,9 @@ module.exports = {
         const makeNotification = await db.any(
           `
           INSERT
-          INTO teacher_notifications (notification_id, teacher_id, notification_type)
-          VALUES ($1, $2, $3);
-        `, [uuidv4(), teacher.id, 'RequestCompositionReview ' + rs.id]);
+          INTO teacher_notifications (notification_id, teacher_id, notification_type, content, link)
+          VALUES ($1, $2, $3, $4, $5);
+        `, [uuidv4(), teacher.id, `RequestCompositionReview ${rs.id}`, content, link]);
       }
 
       return {
@@ -71,7 +71,7 @@ module.exports = {
     }
   },
 
-  commentGradeReview: async (composition_id, feedback) => {
+  commentGradeReview: async (composition_id, feedback, content, link) => {
     try {
       const rs = await db.one(
         "UPDATE grades_reviews SET feedback = feedback || $2::jsonb WHERE composition_id = $1 RETURNING *",
@@ -91,9 +91,9 @@ module.exports = {
         const makeNotification = await db.any(
           `
           INSERT
-          INTO teacher_notifications (notification_id, teacher_id, notification_type)
-          VALUES ($1, $2, $3);
-        `, [uuidv4(), teacher.id, 'CommentGradeReview ' + rs.id]);
+          INTO teacher_notifications (notification_id, teacher_id, notification_type, content, link)
+          VALUES ($1, $2, $3, $4, $5);
+        `, [uuidv4(), teacher.id, `CommentGradeReview ${rs.id}`, content, link]);
       }
 
       return {

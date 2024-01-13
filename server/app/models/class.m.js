@@ -20,6 +20,11 @@ module.exports = {
         return rs;
     },
 
+    getIdClassByComposition: async (composition_id) => {
+        const rs = await db.one("SELECT * FROM classes_composition WHERE id = $1;", [composition_id]);
+        return rs;
+    },
+
     updateClassInfo: async(class_info) => {
         const rs = await db.one("UPDATE classes SET name = $2, description = $3, invitation = $4 WHERE id = $1 RETURNING *;", [class_info.id, class_info.name, class_info.description, class_info.invitation]);
         return rs;

@@ -372,6 +372,22 @@ module.exports = {
     }
   },
 
+  getReviewById: async (id) => {
+    try {
+      const rs = await db.any(
+        "SELECT * FROM grades_reviews WHERE id = $1;",
+        [id]
+      );
+      return rs;
+    } catch (err) {
+      if (err.code === 0) {
+        return null;
+      } else {
+        throw err;
+      }
+    }
+  },
+
   getDetailGradeReview: async (review_id) => {
     try {
       const detailReview = await db.one(`
@@ -401,7 +417,7 @@ module.exports = {
     }
   },
 
-  postFeedbackOnReview: async (review_id, feedback) => {
+  postFeedbackOnReview: async (review_id, feedback, content, link) => {
     try {
       const rs = await db.none(`
       UPDATE grades_reviews
@@ -422,9 +438,9 @@ module.exports = {
       const makeNotification = await db.any(
         `
         INSERT
-        INTO student_notifications (notification_id, student_id, notification_type)
-        VALUES ($1, $2, $3);
-      `, [uuidv4(), studentId.id, 'FeedBackOnReview']);
+        INTO student_notifications (notification_id, student_id, notification_type, content, link)
+        VALUES ($1, $2, $3, $4, $5);
+      `, [uuidv4(), studentId.id, 'FeedBackOnReview', content, link]);
 
       return {
         status: "success",
