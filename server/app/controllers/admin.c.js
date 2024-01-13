@@ -26,6 +26,12 @@ const adminController = {
                 activation: true,
             };
             const rs = await adminM.addAccount(user);
+            if (!rs) {
+                return res.json({
+                    status: 'failed',
+                    message: 'User already exists'
+                }) 
+            }
             return res.json({
                 status: 'success',
                 data: rs,
@@ -33,7 +39,6 @@ const adminController = {
             })
 
         } catch (err) {
-            console.log(err);
             return res.json({
                 status: 'failed',
                 message: err
@@ -247,7 +252,22 @@ const adminController = {
                 err: err,
             })
         }
-    }
+    },
+
+    getQuantityUserAndClass: async (req, res) => {
+        try {
+            const rs = await adminM.getQuantityUserAndClass();
+            return res.json({
+                status: 'success',
+                data: rs
+            })
+        } catch (err) {
+            return res.json({
+                status: "failed",
+                err: err,
+            })
+        }
+     }
 };
 
 module.exports = adminController;

@@ -10,6 +10,8 @@ import { useMutation } from 'react-query';
 import { updateUser } from 'apis/admin.api';
 import PropTypes from 'prop-types';
 import TextInput from 'components/FormControl/TextInput';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { checkPhoneNumber } from 'pages/validation';
 
 const EditUSer = forwardRef((props, ref) => {
   // #region Data
@@ -27,7 +29,7 @@ const EditUSer = forwardRef((props, ref) => {
     handleSubmit,
     // eslint-disable-next-line no-unused-vars
     formState: { errors, dirtyFields },
-  } = useForm({ mode: 'onChange' });
+  } = useForm({ mode: 'onChange', resolver: yupResolver(checkPhoneNumber) });
   // #endregion Data
 
   // #region Event
@@ -90,7 +92,7 @@ const EditUSer = forwardRef((props, ref) => {
     <>
       {isLoading && <Loading />}
       <Dialog
-        header="Edit user"
+        header={t('admin.user.editUser')}
         visible={visible}
         onHide={() => {
           setVisible(false);
@@ -112,7 +114,7 @@ const EditUSer = forwardRef((props, ref) => {
             </div>
             <div className="col-12">
               <TextInput
-                label="Password"
+                label={t('admin.user.password')}
                 name="password"
                 type="password"
                 control={control}
@@ -125,7 +127,7 @@ const EditUSer = forwardRef((props, ref) => {
             </div>
             <div className="col-12">
               <TextInput
-                label="Full name"
+                label={t('admin.user.fullName')}
                 name="fullName"
                 control={control}
                 errors={errors}
@@ -134,7 +136,7 @@ const EditUSer = forwardRef((props, ref) => {
             </div>
             <div className="col-12">
               <TextInput
-                label="Address"
+                label={t('admin.user.address')}
                 name="address"
                 control={control}
                 errors={errors}
@@ -143,7 +145,7 @@ const EditUSer = forwardRef((props, ref) => {
             </div>
             <div className="col-12">
               <TextInput
-                label="Phone number"
+                label={t('admin.user.phoneNumber')}
                 name="phoneNumber"
                 control={control}
                 errors={errors}
@@ -154,7 +156,7 @@ const EditUSer = forwardRef((props, ref) => {
 
           <div className="flex justify-content-end mt-4">
             <Button
-              label="Cập nhật"
+              label={t('admin.user.edit')}
               type="submit"
               severity="info"
               className="w-8rem"

@@ -159,14 +159,16 @@
         "description": "Mô tả",
         "active": "Hoạt động",
         "inactive": "Dừng hoạt động",
-        "actions": "Tùy chọn"
+        "actions": "Hành động"
     },
     "manageUserPage": {
+        "studentId":"Mã số sinh viên",
         "fullName": "Họ và tên",
+        "address": "Địa chỉ",
         "phoneNumber": "Số điện thoại",
         "activation": "Kích hoạt",
         "banned": "Cấm",
-        "actions": "Tùy chọn",
+        "actions": "Hành động",
         "ban": "Cấm",
         "unban":"Gỡ cấm"
     },
@@ -174,6 +176,57 @@
         "newPw": "Mật khẩu mới",
         "reNewPw": "Nhập lại mật khẩu mới",
         "change": "Thay đổi"
+    },
+    "admin": {
+        "yes": "Có",
+        "no": "Không",
+        "user": {
+            "addUser": "Thêm người dùng",
+            "editUser": "Cập nhật người dùng",
+            "password": "Mật khẩu",
+            "fullName": "Họ và tên",
+            "address": "Địa chỉ",
+            "phoneNumber": "Số điện thoại",
+            "add": "Thêm",
+            "edit": "Cập nhật",
+            "del": "Xóa người dùng",
+            "mapStudentId": "Gán mã số sinh viên",
+            "confirm": "Xác nhận",
+            "ban": "Bạn có chắc chắn muốn cấm người dùng này?",
+            "unban": "Bạn có chắc chắn muốn gỡ cấm người dùng này?",
+            "delConfirm": "Bạn có chắc chắn muốn xóa người dùng này?",
+            "downloadStudentList": "Tải xuống danh sách mã số sinh viên mẫu",
+            "uploadStudentList": "Tải lên danh sách mã số sinh viên"
+        },
+        "class": {
+            "keyword": "Nhập từ khóa",
+            "byName": "Tìm kiếm theo tên",
+            "byDescription": "Tìm kiếm theo mô tả",
+            "selectOne": "Chọn 1",
+            "emptyMessage": "Không có lớp học nào",
+            "confirm": "Xác nhận",
+            "lock": "Bạn có chắc chắn muốn dừng hoạt động lớp học này?",
+            "unlock": "Bạn có chắc chắn muốn gỡ dừng hoạt động lớp học này?"
+        }
+    },
+    "success": {
+        "name": "Thành công",
+        "addUser": "Thêm người dùng thành công",
+        "editUser": "Cập nhật người dùng thành công",
+        "delUser": "Xóa người dùng thành công",
+        "mapStudentId": "Gán mã số sinh viên thành công",
+        "banUser": "Cấm người dùng thành công",
+        "unbanUser": "Gỡ cấm người dùng thành công",
+        "uploadStudentListId": "Tải lên danh sách mã số sinh viên thành công",
+        "lockClass": "Cấm người dùng thành công",
+        "unlockClass": "Gỡ cấm người dùng thành công"
+    },
+    "error": {
+        "name": "Thất bại"
+    },
+    "warn": {
+        "name": "Từ chối",
+        "detail": "Từ chối thành công"
     }
 
 }

@@ -9,9 +9,11 @@ import Loading from 'components/Loading';
 import { ScrollTop } from 'primereact/scrolltop';
 import { useQuery } from 'react-query';
 import { getAllClassOfUser } from 'apis/class.api';
+import Header from 'layout/header';
+import DashBoardAdmin from './components/DashboardAdmin';
 
 export default function DashBoardPage() {
-  const userId = JSON.parse(localStorage.getItem('user_profile')).id;
+  const user = JSON.parse(localStorage.getItem('user_profile'));
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -20,7 +22,7 @@ export default function DashBoardPage() {
 
   const { data, isLoading, refetch, isFetching } = useQuery({
     queryKey: ['dashBoard',],
-    queryFn: () => getAllClassOfUser(userId)
+    queryFn: () => getAllClassOfUser(user.id)
   });
   const classes = useMemo(() => {
     if (data?.data?.length > 0) {
@@ -42,55 +44,61 @@ export default function DashBoardPage() {
   const header = (
     <img alt="Card" src="https://www.gstatic.com/classroom/themes/img_graduation.jpg" />
   );
+  if (user.role === 'admin') {
+    return (
+      <>
+        <Header isDashBoard />
+        <DashBoardAdmin />
+      </>
+    );
+  }
 
   return (
-    <div>
-      <Layout isDashBoard refetch={refetch} isRefetch={isFetching}>
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <div>
-            {isHasClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>{t('dashBoard.teachingClass')}</div> }
-            <div className="card flex flex-wrap">
+    <Layout isDashBoard refetch={refetch} isRefetch={isFetching}>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <div>
+          {isHasClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>{t('dashBoard.teachingClass')}</div> }
+          <div className="card flex flex-wrap">
 
-              {classes?.map((item) => (item?.role === 'teacher' && (
-                <Card
-                  id={item?.id}
-                  header={header}
-                  title={item?.name}
-                  subTitle={item.description || '.'}
-                  className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
-                  onClick={() => {
-                    navigate(`/c/${item?.id}`);
-                  }}
-                />
-              )
-              )
-              )}
-            </div>
-            {isHasClass && isRegisterClass && <hr className="mt-4 ml-2" />}
-            {isRegisterClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>{t('dashBoard.enrolledClass')}</div>}
-            <div className="card flex flex-wrap">
-              {classes?.map((item) => (item?.role === 'student' && (
-                <Card
-                  id={item?.id}
-                  header={header}
-                  title={item?.name}
-                  subTitle={item.description || '.'}
-                  className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
-                  onClick={() => {
-                    navigate(`/c/${item?.id}`);
-                  }}
-                />
-              )
-              )
-              )}
-            </div>
-            <ScrollTop />
-
+            {classes?.map((item) => (item?.role === 'teacher' && (
+              <Card
+                id={item?.id}
+                header={header}
+                title={item?.name}
+                subTitle={item.description || '.'}
+                className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
+                onClick={() => {
+                  navigate(`/c/${item?.id}`);
+                }}
+              />
+            )
+            )
+            )}
           </div>
-        )}
-      </Layout>
-    </div>
+          {isHasClass && isRegisterClass && <hr className="mt-4 ml-2" />}
+          {isRegisterClass && <div className="text-center text-primary-color mt-5" style={{ fontSize: '2rem' }}>{t('dashBoard.enrolledClass')}</div>}
+          <div className="card flex flex-wrap">
+            {classes?.map((item) => (item?.role === 'student' && (
+              <Card
+                id={item?.id}
+                header={header}
+                title={item?.name}
+                subTitle={item.description || '.'}
+                className="md:w-25rem m-wml-4 cursor-pointer ml-4 mt-4"
+                onClick={() => {
+                  navigate(`/c/${item?.id}`);
+                }}
+              />
+            )
+            )
+            )}
+          </div>
+          <ScrollTop />
+
+        </div>
+      )}
+    </Layout>
   );
 }

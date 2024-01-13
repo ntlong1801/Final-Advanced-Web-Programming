@@ -58,35 +58,22 @@ export default function ManageClassesPage() {
     mutate(dataSender, {
       onSuccess: (res) => {
         refetch();
-        toast.current.show({ severity: 'success', summary: 'Success', detail: res.data.message, life: 3000 });
+        toast.current.show({ severity: 'success', summary: t('success.name'), detail: res.data.message, life: 3000 });
       }
     });
   };
 
   const reject = () => {
-    toast.current.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
+    toast.current.show({ severity: 'warn', summary: t('warn.name'), detail: t('warn.detail'), life: 3000 });
   };
 
   const confirmActive = (value) => {
     confirmDialog({
-      message: 'Are you sure you want to proceed?',
-      header: 'Confirmation',
+      message: !value.inactive ? t('admin.class.lock') : t('admin.class.unlock'),
+      header: t('admin.class.confirm'),
       icon: 'pi pi-exclamation-triangle',
       accept: () => acceptActive(value),
       reject
-    });
-  };
-
-  const acceptGoToHome = () => {
-    navigate('/dashboard');
-  };
-
-  const confirmGoToHome = () => {
-    confirmDialog({
-      message: 'Are you sure you want to proceed?',
-      header: 'Go home',
-      icon: 'pi pi-exclamation-triangle',
-      accept: () => acceptGoToHome(),
     });
   };
 
@@ -94,9 +81,9 @@ export default function ManageClassesPage() {
     <div className="flex justify-content-center">
       <Button
         type="button"
-        tooltip={t('manageClassPage.inactive')}
+        tooltip={!value.inactive ? t('manageClassPage.inactive') : t('manageClassPage.active')}
         tooltipOptions={{ position: 'left' }}
-        icon="pi pi-lock"
+        icon={!value.inactive ? 'pi pi-lock' : 'pi pi-lock-open'}
         onClick={() => confirmActive(value)}
       />
     </div>
@@ -106,13 +93,21 @@ export default function ManageClassesPage() {
     <div className="flex justify-content-end">
       <span className="p-input-icon-left">
         <i className="pi pi-search" />
-        <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
+        <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder={t('admin.class.keyword')} />
       </span>
     </div>
   );
 
   const inactiveRowFilterTemplate = (options) => (
-    <Dropdown value={options.value} options={['true', 'false']} onChange={(e) => options.filterApplyCallback(e.value)} placeholder="Select One" className="p-column-filter" showClear style={{ minWidth: '12rem' }} />
+    <Dropdown
+      value={options.value}
+      options={['true', 'false']}
+      onChange={(e) => options.filterApplyCallback(e.value)}
+      placeholder={t('admin.class.selectOne')}
+      className="p-column-filter"
+      showClear
+      style={{ minWidth: '12rem' }}
+    />
   );
 
   useEffect(() => {
@@ -120,9 +115,8 @@ export default function ManageClassesPage() {
       navigate('/signin');
     }
     if (user?.role !== 'admin') {
-      confirmGoToHome();
+      navigate('/dashboard');
     }
-    console.log(user);
   }, []);
 
   return (
@@ -137,7 +131,7 @@ export default function ManageClassesPage() {
           filters={filters}
           filterDisplay="row"
           globalFilterFields={['name', 'description']}
-          emptyMessage="No customers found."
+          emptyMessage={t('admin.class.emptyMessage')}
           header={renderHeader}
           tableStyle={{ minWidth: '50rem' }}
           className="p-4"
@@ -150,7 +144,7 @@ export default function ManageClassesPage() {
             header={t('manageClassPage.name')}
             sortable
             filter
-            filterPlaceholder="Search by name"
+            filterPlaceholder={t('admin.class.byName')}
             headerStyle={{ textAlign: 'center' }}
           />
           <Column
@@ -158,7 +152,7 @@ export default function ManageClassesPage() {
             header={t('manageClassPage.description')}
             sortable
             filter
-            filterPlaceholder="Search by description"
+            filterPlaceholder={t('admin.class.byDescription')}
             headerStyle={{ textAlign: 'center' }}
           />
           <Column
@@ -168,6 +162,7 @@ export default function ManageClassesPage() {
             filter
             filterElement={inactiveRowFilterTemplate}
             headerStyle={{ textAlign: 'center' }}
+            style={{ minWidth: 160, width: 160 }}
           />
           <Column
             body={formatAction}
