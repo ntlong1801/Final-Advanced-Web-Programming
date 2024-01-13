@@ -292,14 +292,6 @@ module.exports = {
       const finalizedComposition = rs.finalizedComposition;
       const studentList = rs.studentList;
 
-      // socket.io
-      // for (const student of studentList) {
-      //   if (req.body.activeClient.has(student.id)) {
-      //     const clientId = req.body.activeClient.get(student.id);
-      //     req.body.io.to(clientId).emit("notification", compositionId);
-      //   }
-      // }
-
       res.status(200).json({
         status: "success",
         finalizedComposition,
@@ -635,11 +627,6 @@ module.exports = {
       );
 
       if (rs != null) {
-        // socket.io
-        // if (req.body.activeClient.has(rs.studentId.id)) {
-        //   const clientId = req.body.activeClient.get(rs.studentId.id);
-        //   req.body.io.to(clientId).emit('notification', 'have new notification on review feedback.');
-        // }
         res.send(rs.status);
       } else {
         res.json({
@@ -678,13 +665,6 @@ module.exports = {
         newGrade
       );
       if (rs != null) {
-        // socket.io
-        if (req.body.activeClient.has(rs.studentId.id)) {
-          const clientId = req.body.activeClient.get(rs.studentId.id);
-          req.body.io
-            .to(clientId)
-            .emit("notification", "have new notification in grade review.");
-        }
         res.json(rs.studentGrade);
       } else {
         res.json({
