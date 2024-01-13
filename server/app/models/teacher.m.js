@@ -193,7 +193,7 @@ module.exports = {
     }
   },
 
-  postFinalizedComposition: async (composition_id, isPublic) => {
+  postFinalizedComposition: async (composition_id, isPublic, content, link) => {
     try {
       const finalizedComposition = await db.one(
         `
@@ -216,9 +216,9 @@ module.exports = {
         const makeNotification = await db.any(
           `
           INSERT
-          INTO student_notifications (notification_id, student_id, notification_type)
-          VALUES ($1, $2, $3);
-        `, [uuidv4(), student.id, 'FinalizeGradeComposition']);
+          INTO student_notifications (notification_id, student_id, notification_type, content, link)
+          VALUES ($1, $2, $3, $4, $5);
+        `, [uuidv4(), student.id, 'FinalizeGradeComposition', content, link]);
       }
 
       return {

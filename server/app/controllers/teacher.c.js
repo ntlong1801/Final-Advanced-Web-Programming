@@ -278,9 +278,16 @@ module.exports = {
     }
 
     try {
+      // get class id and class name
+      const classDb = await classModel.getIdClassByComposition(compositionId);
+      const className = await classModel.getClass(classDb.class_id);
+      const content = `Teacher posted grade composition ${classDb.name} for class ${className.name}`;
+      const link = `http://localhost:3000/c/${classDb.class_id}?tab=2`;
       const rs = await teacherModel.postFinalizedComposition(
         compositionId,
-        isPublic
+        isPublic,
+        content,
+        link
       );
       const finalizedComposition = rs.finalizedComposition;
       const studentList = rs.studentList;
@@ -612,7 +619,9 @@ module.exports = {
       // get composition id
       const reviewDb = await teacherModel.getReviewById(review_id);
       // get class id and class name
-      const classDb = await classModel.getIdClassByComposition(reviewDb[0].composition_id);
+      const classDb = await classModel.getIdClassByComposition(
+        reviewDb[0].composition_id
+      );
 
       const className = await classModel.getClass(classDb.class_id);
       const content = `You have a response from review grade ${classDb.name} from teacher for class ${className.name}`;
@@ -692,7 +701,7 @@ module.exports = {
 
   getAllNotificationsByTeacherId: async (req, res) => {
     const { teacherId } = req.body;
-    console.log("Teacher id: ", teacherId);
+    // console.log("Teacher id: ", teacherId);
     if (teacherId === undefined) {
       return res.status(400).json({
         status: "failed",
