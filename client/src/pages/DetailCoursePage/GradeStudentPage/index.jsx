@@ -86,7 +86,7 @@ export default function GradeStudentPage() {
     return (
       <div>
         <span className="text-primary mr-2 ">{grade}</span>
-        {grade !== 'Chưa công bố' && value[classComposition]?.isRequest === undefined &&
+        {grade !== 'Chưa công bố' && value[classComposition]?.isRequest === null &&
           <i className="pi pi-pencil cursor-pointer text-2xl" onClick={() => handleOpenRequest(classComposition)} />}
         {grade !== 'Chưa công bố' && value[classComposition]?.isRequest && (
           <i className="pi pi-comments cursor-pointer text-2xl" onClick={() => handleOpenComment(value[classComposition].isRequest)}>

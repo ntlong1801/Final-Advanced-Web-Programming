@@ -47,7 +47,7 @@ module.exports = {
         }
       }
       dataGrade["student_id"] = student_id;
-      dataGrade["totalGrade"] = totalGrade;
+      dataGrade["totalGrade"] = totalGrade.toFixed(2);
 
       return res.json({
         classComposition: compositionDb,

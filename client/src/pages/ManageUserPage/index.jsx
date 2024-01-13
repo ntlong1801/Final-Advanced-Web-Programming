@@ -188,6 +188,9 @@ export default function ManageUserPage() {
     if (!user) {
       navigate('/signin');
     }
+    if (user.role !== 'admin') {
+      navigate('/dashboard');
+    }
   }, []);
 
   return (
