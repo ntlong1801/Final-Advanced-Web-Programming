@@ -27,7 +27,7 @@ const router = require("express").Router();
  *     '500':
  *       description: Internal server error
  */
-router.get('/getAllUsers', middlewareController.verifyToken, adminController.getAllAccount);
+router.get('/getAllUsers', middlewareController.verifyToken, middlewareController.isAdminGet, adminController.getAllAccount);
 
 /**
  * @swagger
@@ -202,7 +202,7 @@ router.post('/mapStudentId', middlewareController.verifyToken, adminController.m
 
 router.post('/postListStudentId', middlewareController.verifyToken, adminController.postStudentListId);
 
-router.get('/getStudentListIdTemplate', middlewareController.verifyToken, adminController.getTemplateStudentListId);
+router.get('/getStudentListIdTemplate', middlewareController.verifyToken, middlewareController.isAdminGet, adminController.getTemplateStudentListId);
 
 
 

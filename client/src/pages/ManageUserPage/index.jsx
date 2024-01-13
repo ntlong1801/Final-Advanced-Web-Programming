@@ -1,6 +1,6 @@
 import Header from 'layout/header';
 import { useQuery, useMutation } from 'react-query';
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useEffect } from 'react';
 import { getAllUsers, banUser, deleteUser, getStudentListIdTemplate } from 'apis/admin.api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
@@ -10,12 +10,15 @@ import { Toast } from 'primereact/toast';
 import { useTranslation } from 'react-i18next';
 import UploadExcelFile from 'components/UploadExcelFile';
 import DownloadExcelFile from 'components/DownloadExcelFile';
+import { useNavigate } from 'react-router';
 import AddUser from './components/AddUser';
 import EditUSer from './components/EditUser';
 import MapStudentId from './MapStudentId';
 
 export default function ManageUserPage() {
+  const user = JSON.parse(localStorage.getItem('user_profile'));
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const toast = useRef(null);
   const addUserRef = useRef(null);
   const editUserRef = useRef(null);
@@ -27,7 +30,7 @@ export default function ManageUserPage() {
     refetch
   } = useQuery({
     queryKey: ['allUsers'],
-    queryFn: () => getAllUsers()
+    queryFn: () => getAllUsers(user?.id)
   });
   const data = useMemo(() => _data?.data ?? null, [_data]);
 
@@ -163,6 +166,12 @@ export default function ManageUserPage() {
       />
     </div>
   );
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/signin');
+    }
+  }, []);
 
   return (
     <div>

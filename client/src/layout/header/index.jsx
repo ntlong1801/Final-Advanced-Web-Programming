@@ -115,7 +115,7 @@ export default function Header({ isDashBoard, refetch }) {
             </>
           ) : (
             <>
-              {isDashBoard && (
+              {isDashBoard && user.role !== 'admin' && (
                 <Button
                   icon="pi pi-plus"
                   severity="help"
@@ -150,7 +150,8 @@ export default function Header({ isDashBoard, refetch }) {
                   </OverlayPanel>
                 </Button>
               )}
-              <ConnectNotification />
+              {user.role !== 'admin' &&
+              <ConnectNotification />}
               <Button
                 icon="pi pi-user"
                 severity="help"

@@ -1,6 +1,6 @@
 import Header from 'layout/header';
 import { useQuery, useMutation } from 'react-query';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { getAllClass } from 'apis/class.api';
 import { activeClass } from 'apis/admin.api';
 import { DataTable } from 'primereact/datatable';
@@ -12,9 +12,12 @@ import { InputText } from 'primereact/inputtext';
 import { FilterMatchMode } from 'primereact/api';
 import { Dropdown } from 'primereact/dropdown';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 
 export default function ManageClassesPage() {
+  const user = JSON.parse(localStorage.getItem('user_profile'));
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const toast = useRef(null);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -74,6 +77,19 @@ export default function ManageClassesPage() {
     });
   };
 
+  const acceptGoToHome = () => {
+    navigate('/dashboard');
+  };
+
+  const confirmGoToHome = () => {
+    confirmDialog({
+      message: 'Are you sure you want to proceed?',
+      header: 'Go home',
+      icon: 'pi pi-exclamation-triangle',
+      accept: () => acceptGoToHome(),
+    });
+  };
+
   const formatAction = (value) => (
     <div className="flex justify-content-center">
       <Button
@@ -98,6 +114,16 @@ export default function ManageClassesPage() {
   const inactiveRowFilterTemplate = (options) => (
     <Dropdown value={options.value} options={['true', 'false']} onChange={(e) => options.filterApplyCallback(e.value)} placeholder="Select One" className="p-column-filter" showClear style={{ minWidth: '12rem' }} />
   );
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/signin');
+    }
+    if (user?.role !== 'admin') {
+      confirmGoToHome();
+    }
+    console.log(user);
+  }, []);
 
   return (
     <div>

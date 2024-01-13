@@ -34,7 +34,7 @@ module.exports = {
   },
   getUserByID: async (id) => {
     try {
-      const rs = await db.one("SELECT id, email, full_name FROM users WHERE id = $1;", [id]);
+      const rs = await db.one("SELECT * FROM users WHERE id = $1;", [id]);
       return rs;
     } catch (err) {
       if (err.code === 0) {

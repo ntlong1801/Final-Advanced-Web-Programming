@@ -1,8 +1,8 @@
 import instance from 'config';
 import { ADMIN } from './_constant';
 
-export const getAllUsers = () =>
-  instance.get(ADMIN.GET_ALL_USERS);
+export const getAllUsers = (userId) =>
+  instance.get(ADMIN.GET_ALL_USERS, { params: { userId } });
 
 export const addUser = (body = {}) =>
   instance.post(ADMIN.ADD_NEW_USER, body);
