@@ -105,14 +105,6 @@ module.exports = {
           content,
           link
         );
-
-      // for (const teacher of teacherList) {
-      //   if (req.body.activeClient.has(teacher.id)) {
-      //     const clientId = req.body.activeClient.get(teacher.id);
-      //     req.body.io.to(clientId).emit("notification", "have new notification!");
-      //   }
-      // }
-
       res.json(rs);
     } catch (error) {
       console.log(error);
@@ -167,13 +159,6 @@ module.exports = {
         content,
         link
       );
-
-      // for (const teacher of teacherList) {
-      //   if (req.body.activeClient.has(teacher.id)) {
-      //     const clientId = req.body.activeClient.get(teacher.id);
-      //     req.body.io.to(clientId).emit("notification", "have new notification!");
-      //   }
-      // }
       res.json(rs);
     } catch (error) {
       res.json(error);
