@@ -8,6 +8,8 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { createClass, addUserToClass } from 'apis/class.api';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { checkClassName } from 'pages/validation';
 
 const CreateClass = forwardRef((props, ref) => {
   // #region Data
@@ -23,14 +25,14 @@ const CreateClass = forwardRef((props, ref) => {
     trigger,
     reset,
     formState: { errors, dirtyFields },
-  } = useForm({ mode: 'onChange' });
+  } = useForm({ mode: 'onChange', resolver: yupResolver(checkClassName) });
   // #endregion Data
 
   // #region Event
   const showError = (message) => {
     toast.current.show({
       severity: 'error',
-      summary: 'Thất bại',
+      summary: t('error.name'),
       detail: message,
       life: 4000,
     });
@@ -39,7 +41,7 @@ const CreateClass = forwardRef((props, ref) => {
   const showSuccess = (message) => {
     toast.current.show({
       severity: 'success',
-      summary: 'Thành công',
+      summary: t('success.name'),
       detail: message,
       life: 4000,
     });
@@ -64,7 +66,7 @@ const CreateClass = forwardRef((props, ref) => {
   const handleCreateClass = async () => {
     const isValidTrigger = await trigger();
     if (!isValidTrigger) {
-      showError(t('errorMessage.validationErrorMessage'));
+      showError(t('error.validationErrorMessage'));
       return;
     }
 
@@ -123,7 +125,6 @@ const CreateClass = forwardRef((props, ref) => {
             <TextInput
               name="description"
               label={t('dashBoard.components.createClass.description')}
-              isRequired
               control={control}
               errors={errors}
             />

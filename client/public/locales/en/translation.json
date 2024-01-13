@@ -222,7 +222,8 @@
         "unlockClass": "Unlock class successfully"
     },
     "error": {
-        "name": "Failed"
+        "name": "Failed",
+        "validationErrorMessage": "Check the red bordered boxess"
     },
     "warn": {
         "name": "Rejected",

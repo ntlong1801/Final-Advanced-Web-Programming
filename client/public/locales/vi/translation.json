@@ -222,7 +222,8 @@
         "unlockClass": "Gỡ cấm người dùng thành công"
     },
     "error": {
-        "name": "Thất bại"
+        "name": "Thất bại",
+        "validationErrorMessage": "Kiểm tra các ô viền đỏ"
     },
     "warn": {
         "name": "Từ chối",

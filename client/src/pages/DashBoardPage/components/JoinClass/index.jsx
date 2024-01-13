@@ -32,7 +32,7 @@ const JoinClass = forwardRef((props, ref) => {
   const showError = (message) => {
     toast.current.show({
       severity: 'error',
-      summary: 'Thất bại',
+      summary: t('error.name'),
       detail: message,
       life: 4000,
     });
@@ -41,7 +41,7 @@ const JoinClass = forwardRef((props, ref) => {
   const showSuccess = (message) => {
     toast.current.show({
       severity: 'success',
-      summary: 'Thành công',
+      summary: t('success.name'),
       detail: message,
       life: 4000,
     });
@@ -77,14 +77,13 @@ const JoinClass = forwardRef((props, ref) => {
         if (res?.data.status === 'success') {
           refetch();
           refetchStudentId();
+          setVisible(false);
           showSuccess(res?.data.message);
         } else {
           showError(res?.data.message);
         }
       }
     });
-
-    setVisible(false);
   };
 
   // #endregion Event

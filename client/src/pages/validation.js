@@ -18,4 +18,8 @@ export const checkPhoneNumber = yup.object().shape({
   phoneNumber: yup.string().matches(phoneRegExp, 'Phone number is not valid')
 });
 
+export const checkClassName = yup.object().shape({
+  name: yup.string().required(),
+});
+
 export default checkSignUp;
