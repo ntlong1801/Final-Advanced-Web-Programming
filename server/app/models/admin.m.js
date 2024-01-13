@@ -134,13 +134,47 @@ module.exports = {
 
     getTemplateStudentListId: async () => {
         try {
-            const rs = db.any(`
-            SELECT u.id as id, s.student_id as "StudentId" FROM users u
+            const rs = await db.any(`
+            SELECT u.id as id, u.email as "Email", s.student_id as "StudentId" FROM users u
             LEFT JOIN student_id s ON u.id = s.user_id;
             `)
             return rs;
         } catch (err) {
             console.log('Error in getTemplateStudentListId', err);
+            return null;
+        }
+    },
+
+    getQuantityUserAndClass: async () => { 
+        try {
+            const rs = [];
+            const quantity_User = await db.one(`
+            SELECT count(*) FROM users;
+            `);
+            const quantity_Class = await db.one(`
+            SELECT count(*) FROM classes;
+            `);
+            const quantity_User_Active = await db.one(`
+            SELECT count(*) FROM users WHERE activation = 'true';`);
+            const quantity_Class_Active = await db.one(`
+            SELECT count(*) FROM classes WHERE inactive = 'true';`);
+            const quantity_User_ban = await db.one(`
+            SELECT count(*) FROM users WHERE banned = 'true';`);
+            rs.push({
+                total: quantity_User,
+                active: quantity_User_Active,
+                ban: quantity_User_ban
+
+            })
+            rs.push({
+                total: quantity_Class,
+                active: quantity_Class_Active,
+                ban: null
+            })
+            return rs;
+        } catch (err)
+        {
+            console.log('Error in getQuantityUserAndClass', err);
             return null;
         }
     }

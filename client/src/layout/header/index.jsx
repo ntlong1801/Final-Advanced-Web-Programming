@@ -25,6 +25,7 @@ export default function Header({ isDashBoard, refetch }) {
   const classRef = useRef(null);
   const createClassRef = useRef(null);
   const joinClassRef = useRef(null);
+  const manageRef = useRef(null);
 
   const { data, refetch: refetchStudentId } = useQuery({
     queryKey: ['studentId', user?.id],
@@ -41,6 +42,9 @@ export default function Header({ isDashBoard, refetch }) {
   };
   const showClassModal = (event) => {
     classRef.current.toggle(event);
+  };
+  const showManageModal = (event) => {
+    manageRef.current.toggle(event);
   };
   const showCreateClassModal = () => {
     createClassRef.current.open({
@@ -152,6 +156,38 @@ export default function Header({ isDashBoard, refetch }) {
               )}
               {user.role !== 'admin' &&
               <ConnectNotification />}
+              {user.role === 'admin' && (
+                <Button
+                  label="Quản lý"
+                  severity="help"
+                  type="button"
+                  onClick={showManageModal}
+                >
+                  <OverlayPanel
+                    ref={manageRef}
+                    appendTo={typeof window !== 'undefined' ? document.body : null}
+                    showCloseIcon={false}
+                    id="overlay_panel_manage"
+                  >
+                    <ul className="profile-menu list-none p-0 m-0">
+                      <Link to="/admin/manageUser" className="text-color">
+                        <li className="hover:surface-200 p-2">
+                          <i className="pi pi-users mr-3" />
+                          Quản lý người dùng
+                        </li>
+                      </Link>
+
+                      <hr />
+                      <Link to="/admin/manageClasses" className="text-color">
+                        <li className="hover:surface-200 p-2">
+                          <i className="pi pi-book mr-3" />
+                          Quản lý lớp học
+                        </li>
+                      </Link>
+                    </ul>
+                  </OverlayPanel>
+                </Button>
+              )}
               <Button
                 icon="pi pi-user"
                 severity="help"

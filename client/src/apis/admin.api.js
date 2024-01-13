@@ -22,5 +22,8 @@ export const activeClass = (body = {}) =>
 export const mapStudentId = (body = {}) =>
   instance.post(ADMIN.MAP_STUDENT_ID, body);
 
-export const getStudentListIdTemplate = () =>
-  instance.get(ADMIN.GET_TEMPLATE_STUDENT_LIST_ID);
+export const getStudentListIdTemplate = ({ userId }) =>
+  instance.get(ADMIN.GET_TEMPLATE_STUDENT_LIST_ID(userId));
+
+export const getQuantityUserAndClass = (userId) =>
+  instance.get(ADMIN.GET_QUANTITY_USER_AND_CLASS, { params: { userId } });

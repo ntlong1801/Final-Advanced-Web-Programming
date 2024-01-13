@@ -46,10 +46,25 @@ const middlewareController = {
   isAdminGet: async (req, res, next) => {
     const userId = req.query.userId;
 
-    console.log(userId);
     try {
       const userDb = await userModel.getUserByID(userId);
-      console.log(userDb);
+
+      if (userDb.role === 'admin') {
+        next();
+      } else {
+        return res.status(403).json("You are not admin.");
+      }
+    } catch (error) { 
+      console.log(error);
+      return res.status(403).json("Occur error");
+    }
+  },
+
+  isAdminPost: async (req, res, next) => {
+    const userId = req.body.userId;
+
+    try {
+      const userDb = await userModel.getUserByID(userId);
 
       if (userDb.role === 'admin') {
         next();

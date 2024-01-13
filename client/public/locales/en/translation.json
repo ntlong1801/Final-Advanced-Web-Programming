@@ -162,7 +162,9 @@
         "actions": "Actions"
     },
     "manageUserPage": {
+        "studentId": "Student ID",
         "fullName": "Full name",
+        "address": "Address",
         "phoneNumber": "Phone number",
         "activation": "Activation",
         "banned": "Banned",
@@ -174,5 +176,56 @@
         "newPw": "New password",
         "reNewPw": "Re-new password",
         "change": "Change"
+    },
+    "admin": {
+        "yes": "Yes",
+        "no": "No",
+        "user": {
+            "addUser": "Add user",
+            "editUser": "Edit user",
+            "password": "Password",
+            "fullName": "Full name",
+            "address": "Address",
+            "phoneNumber": "Phone number",
+            "add": "Add",
+            "edit": "Update",
+            "del": "Delete user",
+            "mapStudentId": "Map student id",
+            "confirm": "Confirm",
+            "ban": "Are you sure you want to ban this user?",
+            "unban": "Are you sure you want to unban this user?",
+            "delConfirm": "Are you sure you want to delete this user?",
+            "downloadStudentList": "Download student list id template",
+            "uploadStudentList": "Upload student list id"
+        },
+        "class": {
+            "keyword": "Keyword Search",
+            "byName": "Search by name",
+            "byDescription": "Search by description",
+            "selectOne": "Select one",
+            "emptyMessage": "No classes found",
+            "confirm": "Xác nhận",
+            "lock": "Are you sure you want to lock this class?",
+            "unlock": "Are you sure you want to unlock this class?"
+        }
+    },
+    "success": {
+        "name": "Success",
+        "addUser": "Add user successfully",
+        "editUser": "Update user successfully",
+        "delUser": "Delete user successfully",
+        "mapStudentId": "Map student id successfully",
+        "banUser": "Ban user successfully",
+        "unbanUser": "Unban user successfully",
+        "uploadStudentListId": "Upload student list id successfully",
+        "lockClass": "Lock class successfully",
+        "unlockClass": "Unlock class successfully"
+    },
+    "error": {
+        "name": "Failed"
+    },
+    "warn": {
+        "name": "Rejected",
+        "detail": "Reject successfully"
     }
 }

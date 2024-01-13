@@ -204,6 +204,7 @@ router.post('/postListStudentId', middlewareController.verifyToken, adminControl
 
 router.get('/getStudentListIdTemplate', middlewareController.verifyToken, middlewareController.isAdminGet, adminController.getTemplateStudentListId);
 
+router.get('/quantityUserAndClass', middlewareController.verifyToken, middlewareController.isAdminGet, adminController.getQuantityUserAndClass);
 
 
 module.exports = router;

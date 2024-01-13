@@ -77,5 +77,6 @@ export const ADMIN = {
   ACTIVE_CLASS: 'admin/activeClass',
   MAP_STUDENT_ID: 'admin/mapStudentId',
   POST_LIST_STUDENT_ID: 'admin/postListStudentId',
-  GET_TEMPLATE_STUDENT_LIST_ID: 'admin/getStudentListIdTemplate',
+  GET_TEMPLATE_STUDENT_LIST_ID: (id) => `admin/getStudentListIdTemplate?userId=${id}`,
+  GET_QUANTITY_USER_AND_CLASS: 'admin/quantityUserAndClass',
 };

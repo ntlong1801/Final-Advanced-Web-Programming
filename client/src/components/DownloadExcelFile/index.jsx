@@ -6,7 +6,7 @@ import { useMutation } from 'react-query';
 import { Tooltip } from 'primereact/tooltip';
 
 export default function DownloadExcelFile({
-  downloadFunc, classId, compositionId, isButton, severity, tooltip
+  downloadFunc, classId, compositionId, userId, isButton, severity, tooltip
 }) {
   const { mutate } = useMutation(downloadFunc);
   const dataSender = {
@@ -14,6 +14,9 @@ export default function DownloadExcelFile({
   };
   if (compositionId) {
     dataSender.compositionId = compositionId;
+  }
+  if (userId) {
+    dataSender.userId = userId;
   }
 
   const handleDownload = () => {
@@ -69,7 +72,8 @@ DownloadExcelFile.propTypes = {
   compositionId: PropTypes.string,
   isButton: PropTypes.bool,
   severity: PropTypes.string,
-  tooltip: PropTypes.string
+  tooltip: PropTypes.string,
+  userId: PropTypes.string,
 };
 
 DownloadExcelFile.defaultProps = {
@@ -78,5 +82,6 @@ DownloadExcelFile.defaultProps = {
   compositionId: null,
   isButton: true,
   severity: 'help',
-  tooltip: ''
+  tooltip: '',
+  userId: null,
 };
