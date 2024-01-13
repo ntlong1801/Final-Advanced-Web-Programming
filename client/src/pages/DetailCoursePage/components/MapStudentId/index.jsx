@@ -73,7 +73,7 @@ const MapStudentId = forwardRef((props, ref) => {
       return;
     }
 
-    const { classId, userId } = mapStudentIdControl;
+    const { id, classId, userId } = mapStudentIdControl;
     const studentId = getValues('studentId');
 
     const dataSender = {
@@ -82,6 +82,11 @@ const MapStudentId = forwardRef((props, ref) => {
       userId,
       oldStudentId
     };
+    if (id) {
+      dataSender.id = id;
+    } else {
+      dataSender.id = null;
+    }
 
     mutate(dataSender, {
       onSuccess: (response) => {
@@ -128,7 +133,7 @@ const MapStudentId = forwardRef((props, ref) => {
             severity="info"
             onClick={handleMapStudentId}
             className="w-8rem"
-            // disabled={!Object.keys(dirtyFields)?.length}
+            disabled={!Object.keys(dirtyFields)?.length}
           />
         </div>
       </Dialog>

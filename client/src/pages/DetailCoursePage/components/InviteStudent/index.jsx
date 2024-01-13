@@ -9,6 +9,8 @@ import { useTranslation } from 'react-i18next';
 import Loading from 'components/Loading';
 import { useMutation } from 'react-query';
 import { inviteByEmail } from 'apis/class.api';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { checkChangeProfile } from 'pages/validation';
 
 const InviteStudent = forwardRef((props, ref) => {
   // #region Data
@@ -24,7 +26,7 @@ const InviteStudent = forwardRef((props, ref) => {
     trigger,
     reset,
     formState: { errors, dirtyFields },
-  } = useForm({ mode: 'onChange' });
+  } = useForm({ mode: 'onChange', resolver: yupResolver(checkChangeProfile) });
   // #endregion Data
 
   // #region Event

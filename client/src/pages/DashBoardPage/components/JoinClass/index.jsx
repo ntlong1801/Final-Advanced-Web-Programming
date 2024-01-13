@@ -8,6 +8,8 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useMutation } from 'react-query';
 import { joinClassByCode } from 'apis/class.api';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { checkStudentId } from 'pages/validation';
 
 const JoinClass = forwardRef((props, ref) => {
   // #region Data
@@ -25,7 +27,7 @@ const JoinClass = forwardRef((props, ref) => {
     trigger,
     reset,
     formState: { errors, dirtyFields },
-  } = useForm({ mode: 'onChange' });
+  } = useForm({ mode: 'onChange', resolver: yupResolver(checkStudentId) });
   // #endregion Data
 
   // #region Event
@@ -66,7 +68,7 @@ const JoinClass = forwardRef((props, ref) => {
   const handleJoinClass = async () => {
     const isValidTrigger = await trigger();
     if (!isValidTrigger) {
-      showError(t('errorMessage.validationErrorMessage'));
+      showError(t('error.validationErrorMessage'));
       return;
     }
     const { userId, refetch, refetchStudentId } = joinClassControl;

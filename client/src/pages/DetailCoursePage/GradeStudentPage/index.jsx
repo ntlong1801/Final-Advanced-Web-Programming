@@ -7,8 +7,10 @@ import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { useTranslation } from 'react-i18next';
 import { Badge } from 'primereact/badge';
+import { Button } from 'primereact/button';
 import RequestGrade from '../components/RequestGrade';
 import CommentReview from '../components/CommentReview';
+import MapStudentId from '../components/MapStudentId';
 
 export default function GradeStudentPage() {
   const { t } = useTranslation();
@@ -18,13 +20,14 @@ export default function GradeStudentPage() {
 
   const requestRef = useRef(null);
   const commentRef = useRef(null);
+  const mapStudentIdRef = useRef(null);
 
-  const { data: _stuedntId } = useQuery({
+  const { data: _stuedntId, refetch: refetchStudentId } = useQuery({
     queryKey: ['studentId', userId],
     queryFn: () => getStudentId(userId)
 
   });
-  const studentId = useMemo(() => _stuedntId?.data.studentId.student_id ?? null, [_stuedntId]);
+  const studentId = useMemo(() => _stuedntId?.data?.studentId?.student_id ?? null, [_stuedntId]);
   const { data,
     isLoading,
     refetch } = useQuery({
@@ -52,6 +55,13 @@ export default function GradeStudentPage() {
     });
   };
 
+  const handleMapStudentId = () => {
+    mapStudentIdRef.current.open({
+      oldSID: '',
+      classId,
+      userId
+    });
+  };
   const formatColHeader = (classcomposition) => (
     <div className="text-center">
       <span>
@@ -89,6 +99,7 @@ export default function GradeStudentPage() {
 
   return (
     <>
+      {studentId === null && <Button type="button" label="Map student id" onClick={() => handleMapStudentId()} />}
       <DataTable
         value={gradeStructureOfStudent}
         showGridlines
@@ -109,6 +120,7 @@ export default function GradeStudentPage() {
       </DataTable>
       <RequestGrade ref={requestRef} />
       <CommentReview ref={commentRef} />
+      <MapStudentId ref={mapStudentIdRef} refetch={refetchStudentId} />
     </>
   );
 }

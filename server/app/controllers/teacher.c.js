@@ -448,35 +448,11 @@ module.exports = {
   },
 
   mapStudentId: async (req, res) => {
-    const { classId, userId, studentId, oldStudentId } = req.body;
-    if (
-      classId === undefined ||
-      userId === undefined ||
-      studentId === undefined ||
-      oldStudentId === undefined
-    ) {
-      return res.status(400).json({
-        status: "failed",
-        error:
-          "Missing required input data (classId, userId, studentId, oldStudentId)",
-      });
-    }
-
-    if (
-      typeof classId !== "string" ||
-      typeof userId !== "string" ||
-      typeof studentId !== "string" ||
-      typeof oldStudentId !== "string"
-    ) {
-      return res.status(400).json({
-        status: "failed",
-        error:
-          "Invalid data types for input (classId should be string, userId should be string, studentId should be string, oldStudentId should be string)",
-      });
-    }
+    const { id, classId, userId, studentId, oldStudentId } = req.body;
 
     try {
       const rs = await teacherModel.mapStudentIdWithStudentAccount(
+        id,
         classId,
         studentId,
         userId,

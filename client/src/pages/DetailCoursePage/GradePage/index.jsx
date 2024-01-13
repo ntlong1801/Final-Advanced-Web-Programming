@@ -8,7 +8,6 @@ import { getGradeStructure } from 'apis/class.api';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
-import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 import { useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -27,14 +26,6 @@ export default function GradePage() {
   const uploadFile = useRef(null);
   const dt = useRef(null);
   const [link, setLink] = useState('');
-
-  const accept = () => {
-    toast.current.show({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
-  };
-
-  const reject = () => {
-    toast.current.show({ severity: 'warn', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-  };
 
   const {
     data: _data,
@@ -61,29 +52,11 @@ export default function GradePage() {
   [gradeStructureData]
   );
 
-  const confirmBan = () => {
-    confirmDialog({
-      message: 'Are you sure you want to proceed?',
-      header: 'Confirmation',
-      icon: 'pi pi-exclamation-triangle',
-      accept,
-      reject
-    });
-  };
-
   const openModalInputGrade = (info, idx) => {
     inputGrade.current.open({
       idx,
       info,
       classId,
-    });
-  };
-
-  const openModalMapStudentId = (info) => {
-    mapStudentId.current.open({
-      userId: info.id_user,
-      classId,
-      oldSID: info.student_id
     });
   };
 
@@ -93,12 +66,6 @@ export default function GradePage() {
       compositionId
     });
   };
-
-  const formatStudentId = (value) => (
-    <span className="cursor-pointer text-primary" onClick={() => openModalMapStudentId(value)}>
-      {value?.student_id || 'Map studentId'}
-    </span>
-  );
 
   const formatGrade = (value, index) => {
     const idx = parseInt(index.field.split('_')[1], 10) - 2;
@@ -147,22 +114,7 @@ export default function GradePage() {
   );
 
   const formatAction = (value) => (
-    <div>
-      {value?.banned ? (
-        <Button
-          type="button"
-          label={t('detail.gradePage.unban')}
-          onClick={confirmBan}
-        />
-      ) : (
-        <Button
-          type="button"
-          label={t('detail.gradePage.ban')}
-          onClick={confirmBan}
-        />
-      )}
-
-    </div>
+    value.is_map ? <span>Đã map</span> : <Button type="button" />
   );
 
   return (
@@ -200,19 +152,18 @@ export default function GradePage() {
         className="p-2"
         loading={isLoading || gradeStructureLoading}
       >
-        <Column field="student_id" body={formatStudentId} header={t('detail.gradePage.studentId')} />
+        <Column field="student_id" header={t('detail.gradePage.studentId')} />
         <Column field="full_name" header={t('detail.gradePage.fullName')} />
         {classcompositions?.map((classcomposition) =>
           <Column body={formatGrade} header={() => formatColHeader(classcomposition)} className="text-center" />
         )}
-        <Column field="totalGrade" header={t('detail.gradePage.totalGrade')} className="text-center" />
+        <Column field="totalGrade" header={t('detail.gradePage.totalGrade')} />
         <Column body={formatAction} header={t('detail.gradePage.actions')} />
       </DataTable>
       <UploadExcelFile ref={uploadFile} link={link} refetch={refetch} />
       <InputGrade ref={inputGrade} refetch={refetch} oldGrade={0} />
       <MapStudentId ref={mapStudentId} refetch={refetch} />
       <Toast ref={toast} />
-      <ConfirmDialog />
     </div>
   );
 }
