@@ -100,7 +100,7 @@ const CommentReview = forwardRef((props, ref) => {
           refetch();
           refetchComment();
           reset();
-          showSuccess('Cập nhật điểm thành công');
+          showSuccess('Phản hồi thành công');
         }
       }
     });

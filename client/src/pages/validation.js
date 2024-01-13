@@ -22,4 +22,8 @@ export const checkClassName = yup.object().shape({
   name: yup.string().required(),
 });
 
+export const checkStudentId = yup.object().shape({
+  studentId: yup.string().required(),
+});
+
 export default checkSignUp;

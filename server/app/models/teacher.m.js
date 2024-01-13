@@ -27,7 +27,7 @@ module.exports = {
       const updateListStudent = [];
       for (const [index, studentId] of data.student_id_arr.entries()) {
         
-        const rs = await db.one(`
+        const rs = await db.oneOrNone(`
         INSERT INTO student_list (student_id, class_id, full_name) values ($1, $2, $3) 
         ON CONFLICT (student_id, class_id)
         DO UPDATE SET full_name = $3
@@ -84,6 +84,7 @@ module.exports = {
           student_id: student.student_id,
           id_user: student.id_user,
           full_name: student.full_name,
+          is_map: student.ismap,
           gradeArray: gradeOfStudent,
           totalGrade: parseFloat(totalGrade)
         });
@@ -193,7 +194,7 @@ module.exports = {
     }
   },
 
-  postFinalizedComposition: async (composition_id, isPublic) => {
+  postFinalizedComposition: async (composition_id, isPublic, content, link) => {
     try {
       const finalizedComposition = await db.one(
         `
@@ -216,9 +217,9 @@ module.exports = {
         const makeNotification = await db.any(
           `
           INSERT
-          INTO student_notifications (notification_id, student_id, notification_type)
-          VALUES ($1, $2, $3);
-        `, [uuidv4(), student.id, 'FinalizeGradeComposition']);
+          INTO student_notifications (notification_id, student_id, notification_type, content, link)
+          VALUES ($1, $2, $3, $4, $5);
+        `, [uuidv4(), student.id, 'FinalizeGradeComposition', content, link]);
       }
 
       return {
@@ -248,7 +249,7 @@ module.exports = {
   },
 
   addNewGradeCompositionForClass: async (grade_composition) => {
-    const rs = await db.one("INSERT INTO classes_composition (id, class_id, name, grade_scale) VALUES ($1, $2, $3, $4) RETURNING *;", [grade_composition.id, grade_composition.class_id, grade_composition.name, grade_composition.grade_scale]);
+    const rs = await db.one("INSERT INTO classes_composition (id, class_id, name, grade_scale, order_id) VALUES ($1, $2, $3, $4, $5) RETURNING *;", [grade_composition.id, grade_composition.class_id, grade_composition.name, grade_composition.grade_scale, grade_composition.order_id]);
     return rs;
   },
 
@@ -326,9 +327,9 @@ module.exports = {
     }
   },
 
-  mapStudentIdWithStudentAccount: async (class_id, student_id, user_id, old_student_id) => {
+  mapStudentIdWithStudentAccount: async (class_id, student_id, user_id, old_student_id = null) => {
     try {
-      const rs = db.one(
+      const rs = await db.oneOrNone(
         `
         UPDATE class_user 
         SET student_id = $1
@@ -336,8 +337,21 @@ module.exports = {
         `,
         [student_id, class_id, user_id]
       );
+      const full_name = await db.one(`
+      SELECT full_name FROM users WHERE id = $1;`, [user_id]);
+
+        await db.one(
+          `
+          INSERT INTO student_list (student_id, class_id, full_name, ismap) 
+          VALUES ($1, $2, $3, $4) ON CONFLICT (student_id, class_id) DO UPDATE
+          SET full_name = $3, ismap = $4 WHERE student_list.student_id = $1 AND student_list.class_id = $2 RETURNING*;`, [student_id, class_id, full_name.full_name, true]
+        )
+        
+      await db.one(`
+        INSERT INTO student_id (user_id, student_id) VALUES ($1, $2) RETURNING*;`, [user_id, student_id]);
+      
       if (old_student_id) {
-        const rs1 = db.any(
+        const rs1 = await db.any(
           `
           UPDATE classes_grades
           SET student_id = $1
@@ -528,6 +542,15 @@ module.exports = {
         throw err;
       }
     }
-  }
+  },
+
+  getStudentNotMapStudentId: async (class_id) => {
+    try {
+      const rs = await db.any('SELECT u.id, u.email as "name" FROM class_user cu JOIN users u ON cu.id_user = u.id WHERE id_class = $1 AND student_id is null AND cu.role = $2;', [class_id, 'student'] );
+      return rs;
+    } catch (err) {
+      return null;
+    }
+  },
 
 };

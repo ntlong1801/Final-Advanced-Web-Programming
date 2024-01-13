@@ -58,7 +58,8 @@ export const GRADE = {
   POST_FINALIZED: 'teacher/postFinalizedComposition',
   MAP_STUDENT_ID: 'teacher/mapStudentId',
   POST_FEEDBACK_ON_REVIEWS: 'teacher/postFeedbackOnReview',
-  POST_FINALIZED_DECISION: 'teacher/postFinalizedGradeReview'
+  POST_FINALIZED_DECISION: 'teacher/postFinalizedGradeReview',
+  GET_STUDENT_NOT_MAP_STUDENT_ID: (id) => `teacher/getStudentNotMapStudentId?classId=${id}`,
 };
 
 export const STUDENT = {

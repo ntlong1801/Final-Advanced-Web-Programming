@@ -472,4 +472,6 @@ router.post("/postFinalizedGradeReview", middlewareController.verifyToken, teach
 
 router.post("/getNotification", teacherController.getAllNotificationsByTeacherId);
 
+router.get('/getStudentNotMapStudentId', middlewareController.verifyToken, teacherController.getStudentNotMapStudentId);
+
 module.exports = router; 

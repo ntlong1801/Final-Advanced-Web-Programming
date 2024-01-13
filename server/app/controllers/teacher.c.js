@@ -278,20 +278,19 @@ module.exports = {
     }
 
     try {
+      // get class id and class name
+      const classDb = await classModel.getIdClassByComposition(compositionId);
+      const className = await classModel.getClass(classDb.class_id);
+      const content = `Teacher posted grade composition ${classDb.name} for class ${className.name}`;
+      const link = `http://localhost:3000/c/${classDb.class_id}?tab=2`;
       const rs = await teacherModel.postFinalizedComposition(
         compositionId,
-        isPublic
+        isPublic,
+        content,
+        link
       );
       const finalizedComposition = rs.finalizedComposition;
       const studentList = rs.studentList;
-
-      // socket.io
-      // for (const student of studentList) {
-      //   if (req.body.activeClient.has(student.id)) {
-      //     const clientId = req.body.activeClient.get(student.id);
-      //     req.body.io.to(clientId).emit("notification", compositionId);
-      //   }
-      // }
 
       res.status(200).json({
         status: "success",
@@ -441,32 +440,7 @@ module.exports = {
   },
 
   mapStudentId: async (req, res) => {
-    const { classId, userId, studentId, oldStudentId } = req.body;
-    if (
-      classId === undefined ||
-      userId === undefined ||
-      studentId === undefined ||
-      oldStudentId === undefined
-    ) {
-      return res.status(400).json({
-        status: "failed",
-        error:
-          "Missing required input data (classId, userId, studentId, oldStudentId)",
-      });
-    }
-
-    if (
-      typeof classId !== "string" ||
-      typeof userId !== "string" ||
-      typeof studentId !== "string" ||
-      typeof oldStudentId !== "string"
-    ) {
-      return res.status(400).json({
-        status: "failed",
-        error:
-          "Invalid data types for input (classId should be string, userId should be string, studentId should be string, oldStudentId should be string)",
-      });
-    }
+    const {classId, userId, studentId, oldStudentId } = req.body;
 
     try {
       const rs = await teacherModel.mapStudentIdWithStudentAccount(
@@ -612,7 +586,9 @@ module.exports = {
       // get composition id
       const reviewDb = await teacherModel.getReviewById(review_id);
       // get class id and class name
-      const classDb = await classModel.getIdClassByComposition(reviewDb[0].composition_id);
+      const classDb = await classModel.getIdClassByComposition(
+        reviewDb[0].composition_id
+      );
 
       const className = await classModel.getClass(classDb.class_id);
       const content = `You have a response from review grade ${classDb.name} from teacher for class ${className.name}`;
@@ -626,11 +602,6 @@ module.exports = {
       );
 
       if (rs != null) {
-        // socket.io
-        // if (req.body.activeClient.has(rs.studentId.id)) {
-        //   const clientId = req.body.activeClient.get(rs.studentId.id);
-        //   req.body.io.to(clientId).emit('notification', 'have new notification on review feedback.');
-        // }
         res.send(rs.status);
       } else {
         res.json({
@@ -669,13 +640,6 @@ module.exports = {
         newGrade
       );
       if (rs != null) {
-        // socket.io
-        if (req.body.activeClient.has(rs.studentId.id)) {
-          const clientId = req.body.activeClient.get(rs.studentId.id);
-          req.body.io
-            .to(clientId)
-            .emit("notification", "have new notification in grade review.");
-        }
         res.json(rs.studentGrade);
       } else {
         res.json({
@@ -692,7 +656,7 @@ module.exports = {
 
   getAllNotificationsByTeacherId: async (req, res) => {
     const { teacherId } = req.body;
-    console.log("Teacher id: ", teacherId);
+    // console.log("Teacher id: ", teacherId);
     if (teacherId === undefined) {
       return res.status(400).json({
         status: "failed",
@@ -712,4 +676,15 @@ module.exports = {
       res.json(rs);
     } catch (error) {}
   },
+
+  getStudentNotMapStudentId: async (req, res) => { 
+    const { classId } = req.query;
+
+    try {
+      const rs = await teacherModel.getStudentNotMapStudentId(classId);
+      return res.json(rs);
+    } catch (error) {
+      return res.json(error);
+    }
+  }
 };

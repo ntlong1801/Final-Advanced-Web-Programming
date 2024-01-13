@@ -270,7 +270,8 @@ const classController = {
       // add studentId
       if (studentId) { 
         const createStudentId = await userM.postStudentId(userDb?.id, studentId);
-        if (!createStudentId) {
+        const studentIdExist = await userM.getStudentId(userDb.id);
+        if (!createStudentId && !studentIdExist) {
           return res.json({
             status: "failed",
             message: "StudentId already exists",
@@ -278,11 +279,25 @@ const classController = {
         }
       }
       // join user to class
-      await classModel.addUserToClass(classInfo[0].id, userDb.id, role);
+      const rs = await classModel.addUserToClass(classInfo[0].id, userDb.id, role);
+      if (rs) {
+        const full_name = await userM.getFullNameOfUser(userDb.id);
+        if (studentId) {
+          const studentIdExist = await userM.getStudentId(userDb.id);
+          if (studentIdExist) {
+            await classM.addUserToStudentList(studentId, classByLink[0].id, full_name.full_name, true);
+          }
+        } 
+        return res.json({
+          status: "success",
+          message: "Join class successfully!",
+        });
+      }
       return res.json({
-        status: "success",
-        message: "Join class successfully!",
+        status: "failed",
+        message: "Join class failed!",
       });
+      
     } catch (err) {
       return res.json({
         status: "failed",
@@ -505,7 +520,8 @@ const classController = {
       }
       if (studentId) { 
         const createStudentId = await userM.postStudentId(userId, studentId);
-        if (!createStudentId) {
+        const studentIdExist = await userM.getStudentId(userId);
+        if (!createStudentId && !studentIdExist) {
           return res.json({
             status: "failed",
             message: "StudentId already exists",
@@ -514,6 +530,13 @@ const classController = {
       }
       const rs = await classM.addUserToClass(classByLink[0].id, userId, "student", studentId);
       if (rs) {
+        const full_name = await userM.getFullNameOfUser(userId);
+        if (studentId) {
+          await classM.addUserToStudentList(studentId, classByLink[0].id, full_name.full_name, true);
+        } else {
+          const studentIdExist = await userM.getStudentId(userId);
+          await classM.addUserToStudentList(studentIdExist.student_id, classByLink[0].id, full_name.full_name, true);
+        }
         return res.json({
           status: "success",
           message: "Join class successfully"

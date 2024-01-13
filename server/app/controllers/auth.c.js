@@ -303,7 +303,6 @@ const authController = {
         });
 
         const { password, ...others } = user;
-        req.body.activeClient.set(others.id, req.body.clientId);
         res.json({
           user: others,
           accessToken,
@@ -373,7 +372,6 @@ const authController = {
     refreshTokens = refreshTokens.filter(
       (token) => token !== req.cookies.refreshToken
     );
-    req.body.activeClient.delete(id);
     res.clearCookie("refreshToken");
     res.status(200).json("Logged out successfully!");
   },

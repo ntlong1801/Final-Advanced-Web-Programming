@@ -47,7 +47,7 @@ module.exports = {
         }
       }
       dataGrade["student_id"] = student_id;
-      dataGrade["totalGrade"] = totalGrade;
+      dataGrade["totalGrade"] = totalGrade.toFixed(2);
 
       return res.json({
         classComposition: compositionDb,
@@ -96,7 +96,7 @@ module.exports = {
       const className = await classModel.getClass(classDb.class_id);
       const link = `http://localhost:3000/c/${classDb.class_id}?tab=3`;
       const content = `Student requested to review grade ${classDb.name} for class ${className.name}`;
-      const { rs, teacherList } =
+      const { rs } =
         await studentModel.postRequestCompositionReview(
           student_id,
           composition_id,
@@ -105,14 +105,6 @@ module.exports = {
           content,
           link
         );
-
-      // for (const teacher of teacherList) {
-      //   if (req.body.activeClient.has(teacher.id)) {
-      //     const clientId = req.body.activeClient.get(teacher.id);
-      //     req.body.io.to(clientId).emit("notification", "have new notification!");
-      //   }
-      // }
-
       res.json(rs);
     } catch (error) {
       console.log(error);
@@ -167,13 +159,6 @@ module.exports = {
         content,
         link
       );
-
-      // for (const teacher of teacherList) {
-      //   if (req.body.activeClient.has(teacher.id)) {
-      //     const clientId = req.body.activeClient.get(teacher.id);
-      //     req.body.io.to(clientId).emit("notification", "have new notification!");
-      //   }
-      // }
       res.json(rs);
     } catch (error) {
       res.json(error);

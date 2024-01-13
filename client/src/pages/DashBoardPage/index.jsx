@@ -44,7 +44,7 @@ export default function DashBoardPage() {
   const header = (
     <img alt="Card" src="https://www.gstatic.com/classroom/themes/img_graduation.jpg" />
   );
-  if (user.role === 'admin') {
+  if (user?.role === 'admin') {
     return (
       <>
         <Header isDashBoard />

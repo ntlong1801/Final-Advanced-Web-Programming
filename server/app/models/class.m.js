@@ -34,7 +34,7 @@ module.exports = {
         const rs = await db.one("INSERT INTO class_user (id_class, id_user, role, student_id) VALUES ($1, $2, $3, $4) RETURNING *;", [id_class, id_user, role, student_id]);
         return rs;
     },
-    
+
     getClassesByUserId: async(id_user) => {
         const rs = await db.any("SELECT * FROM classes c JOIN class_user cu ON c.id = cu.id_class WHERE cu.id_user = $1;", [id_user]);
         return rs;
@@ -63,5 +63,11 @@ module.exports = {
     checkTeacherOfClassById: async (class_id, user_id) => { 
         const rs = await db.any("SELECT * FROM class_user WHERE id_class = $1 AND id_user = $2 AND role = $3;", [class_id, user_id, 'teacher']);
         return rs;
+    },
+
+    addUserToStudentList: async (student_id, class_id, full_name, ismap) => {
+        const rs = await db.one(`INSERT INTO student_list (student_id, class_id, full_name, ismap)
+        VALUES ($1, $2, $3, $4) RETURNING*;`, [student_id, class_id, full_name, ismap])
+        return rs; 
     }
 }
