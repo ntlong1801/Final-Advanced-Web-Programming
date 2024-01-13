@@ -8,8 +8,6 @@ const swaggerUi = require("swagger-ui-express");
 const swaggerOptions = require("./config/swaggerConfig");
 const session = require('express-session');
 const authenticate = require('./app/models/auth.m')
-const { createServer } = require("http");
-const { Server } = require("socket.io");
 
 require("dotenv").config();
 
