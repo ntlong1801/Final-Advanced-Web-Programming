@@ -290,6 +290,9 @@ const authController = {
         if (!user.activation) {
           return res.json({ status: "failed", message: "Please check your email to activate your account!" });
         }
+        if (user.banned) {
+          return res.json({ status: "failed", message: "Your account has been banned" });
+        }
         const accessToken = authController.generateAccessToken(user);
         const refreshToken = authController.generateRefreshToken(user);
 

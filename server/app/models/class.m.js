@@ -36,7 +36,7 @@ module.exports = {
     },
 
     getClassesByUserId: async(id_user) => {
-        const rs = await db.any("SELECT * FROM classes c JOIN class_user cu ON c.id = cu.id_class WHERE cu.id_user = $1;", [id_user]);
+        const rs = await db.any("SELECT * FROM classes c JOIN class_user cu ON c.id = cu.id_class WHERE cu.id_user = $1 AND c.inactive = false;", [id_user]);
         return rs;
     },
 
