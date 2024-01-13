@@ -266,12 +266,12 @@ module.exports = {
       const studentList = rs.studentList;
 
       // socket.io
-      for (const student of studentList) {
-        if (req.body.activeClient.has(student.id)) {
-          const clientId = req.body.activeClient.get(student.id);
-          req.body.io.to(clientId).emit("notification", compositionId);
-        }
-      }
+      // for (const student of studentList) {
+      //   if (req.body.activeClient.has(student.id)) {
+      //     const clientId = req.body.activeClient.get(student.id);
+      //     req.body.io.to(clientId).emit("notification", compositionId);
+      //   }
+      // }
 
       res.status(200).json({
         status: "success",

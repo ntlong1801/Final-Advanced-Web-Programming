@@ -96,6 +96,8 @@ CREATE TABLE student_notifications (
     student_id character varying(100),
     notification_type character varying(100),
     is_read boolean DEFAULT false,
+    content character varying(200),
+    link character varying(200),
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT student_notifications_pkey PRIMARY KEY (notification_id)	
 );
@@ -106,6 +108,8 @@ CREATE TABLE teacher_notifications (
     teacher_id character varying(100),
     notification_type character varying(100),
     is_read boolean DEFAULT false,
+    content character varying(200),
+    link character varying(200),
     created_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT teacher_notifications_pkey PRIMARY KEY (notification_id)
 );

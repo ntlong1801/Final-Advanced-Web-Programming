@@ -137,6 +137,19 @@ module.exports = {
         throw err;
       }
     }
-  }
+  },
+
+  getAllNotificationsByUserId: async (userId) => {
+    try {
+      const rs = await db.any("SELECT * FROM student_notifications WHERE student_notifications.student_id = $1 UNION ALL SELECT * FROM teacher_notifications WHERE teacher_notifications.teacher_id = $1;", [userId]);
+      return rs;
+    } catch (err) {
+      if (err.code === 0) {
+        return null;
+      } else {
+        throw err;
+      }
+    }
+  },
 
 };
