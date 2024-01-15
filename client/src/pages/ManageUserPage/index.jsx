@@ -113,7 +113,8 @@ export default function ManageUserPage() {
   const handleOpenUploadExcelFile = () => {
     uploadExcelFileRef.current.open({
       classId: null,
-      compositionId: null
+      compositionId: null,
+      header: 'Upload student list ID'
     });
   };
 

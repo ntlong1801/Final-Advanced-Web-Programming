@@ -13,6 +13,7 @@ import { logout } from 'apis/auth.api';
 import { useMutation, useQuery } from 'react-query';
 
 import { getStudentId } from 'apis/user.api';
+import Loading from 'components/Loading';
 import ConnectNotification from './ConnectNotification';
 
 export default function Header({ isDashBoard, refetch }) {
@@ -62,7 +63,7 @@ export default function Header({ isDashBoard, refetch }) {
     });
   };
 
-  const { mutate } = useMutation(logout);
+  const { mutate, isLoading } = useMutation(logout);
 
   const handleLogout = async () => {
     mutate(
@@ -252,6 +253,7 @@ export default function Header({ isDashBoard, refetch }) {
           <JoinClass ref={joinClassRef} />
         </div>
       </div>
+      {isLoading && <Loading />}
     </div>
   );
 }

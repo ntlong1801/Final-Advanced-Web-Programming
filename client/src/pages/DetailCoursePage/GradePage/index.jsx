@@ -61,10 +61,11 @@ export default function GradePage() {
     });
   };
 
-  const handleOpenUploadFile = (compositionId) => {
+  const handleOpenUploadFile = (compositionId, header) => {
     uploadFile.current.open({
       classId,
-      compositionId
+      compositionId,
+      header
     });
   };
 
@@ -101,7 +102,7 @@ export default function GradePage() {
           style={{ fontSize: '2rem' }}
           onClick={() => {
             setLink('/teacher/postAllGradesAssignment');
-            handleOpenUploadFile(classcomposition.id);
+            handleOpenUploadFile(classcomposition.id, 'Upload grade');
           }}
           data-pr-tooltip="Upload grade"
         />
@@ -143,7 +144,7 @@ export default function GradePage() {
           rounded
           onClick={() => {
             setLink('/teacher/postStudentList');
-            handleOpenUploadFile(null);
+            handleOpenUploadFile(null, 'Upload student list');
           }}
         />
         <DownloadExcelFile

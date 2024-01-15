@@ -472,6 +472,7 @@ const classController = {
         return res.json({
           status: "failed",
           message: "Server is error now",
+          err: error
         });
       } else {
         return res.json({

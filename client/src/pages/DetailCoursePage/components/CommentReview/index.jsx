@@ -31,7 +31,7 @@ const CommentReview = forwardRef((props, ref) => {
     formState: { errors },
   } = useForm({ mode: 'onChange' });
 
-  const { data, refetch: refetchComment } = useQuery({
+  const { data, isLoading: isDataLoading, refetch: refetchComment } = useQuery({
     queryKey: ['commentReview', info?.id],
     queryFn: () => getDetailGradeReviews(info?.id),
     enabled: !!info?.id
@@ -110,7 +110,7 @@ const CommentReview = forwardRef((props, ref) => {
 
   return (
     <>
-      {isLoading && <Loading />}
+      {(isLoading || isDataLoading) && <Loading />}
       <Dialog
         header={t('detail.components.commentReview.comment')}
         visible={visible}

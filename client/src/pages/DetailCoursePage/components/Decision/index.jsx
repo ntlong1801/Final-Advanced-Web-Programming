@@ -28,7 +28,7 @@ const Decision = forwardRef((props, ref) => {
     formState: { errors },
   } = useForm({ mode: 'onChange' });
 
-  const { data, refetch: refetchComment } = useQuery({
+  const { data, isLoading: isDataLoading, refetch: refetchComment } = useQuery({
     queryKey: ['Decision', info?.id],
     queryFn: () => getDetailGradeReviews(info?.id),
     enabled: !!info?.id
@@ -105,7 +105,7 @@ const Decision = forwardRef((props, ref) => {
 
   return (
     <>
-      {isLoading && <Loading />}
+      {(isLoading || isDataLoading) && <Loading />}
       <Dialog
         header={t('detail.components.decision.decision')}
         visible={visible}

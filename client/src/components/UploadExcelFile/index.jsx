@@ -39,8 +39,8 @@ const UploadExcelFile = forwardRef((props, ref) => {
     ref,
     () => ({
       open: (_uploadExcelFileControl) => {
-        const { classId, compositionId } = _uploadExcelFileControl;
-        setAdditionalData({ classId, compositionId });
+        const { classId, compositionId, header } = _uploadExcelFileControl;
+        setAdditionalData({ classId, compositionId, header });
         reset();
         setVisible(true);
       },
@@ -55,6 +55,7 @@ const UploadExcelFile = forwardRef((props, ref) => {
     event.formData.append('classId', additionalData.classId);
     event.formData.append('compositionId', additionalData.compositionId);
   };
+  const formatHeader = () => <span>{additionalData.header}</span>;
 
   const onUpload = () => {
     props.refetch();
@@ -64,7 +65,7 @@ const UploadExcelFile = forwardRef((props, ref) => {
   return (
     <>
       <Dialog
-        header="Tải lên điểm thành phần"
+        header={formatHeader}
         visible={visible}
         onHide={() => {
           setVisible(false);
