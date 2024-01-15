@@ -8,10 +8,11 @@ import { Dialog } from 'primereact/dialog';
 import { Toast } from 'primereact/toast';
 import { Message } from 'primereact/message';
 import { useTranslation } from 'react-i18next';
+import Loading from 'components/Loading';
 
 export default function SwitchInput({ compositionId, isPublic, refetch }) {
   const { t } = useTranslation();
-  const { mutate } = useMutation(postFinalized);
+  const { mutate, isLoading } = useMutation(postFinalized);
   const toast = useRef(null);
   const [visible, setVisible] = useState(false);
 
@@ -43,8 +44,8 @@ export default function SwitchInput({ compositionId, isPublic, refetch }) {
 
   return (
     <>
+      {isLoading && <Loading />}
       <Toast ref={toast} />
-
       <div className="card flex justify-content-center">
         <InputSwitch
           id={compositionId}

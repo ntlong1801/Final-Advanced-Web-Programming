@@ -10,6 +10,7 @@ import { useMutation } from 'react-query';
 import { joinClassByCode } from 'apis/class.api';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { checkStudentId } from 'pages/validation';
+import Loading from 'components/Loading';
 
 const JoinClass = forwardRef((props, ref) => {
   // #region Data
@@ -63,7 +64,7 @@ const JoinClass = forwardRef((props, ref) => {
     []
   );
 
-  const { mutate } = useMutation(joinClassByCode);
+  const { mutate, isLoading: isJoinClassLoading } = useMutation(joinClassByCode);
 
   const handleJoinClass = async () => {
     const isValidTrigger = await trigger();
@@ -92,6 +93,7 @@ const JoinClass = forwardRef((props, ref) => {
 
   return (
     <>
+      {isJoinClassLoading && <Loading />}
       <Dialog
         header={t('dashBoard.components.joinClass.joinClass')}
         visible={visible}

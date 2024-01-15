@@ -75,34 +75,6 @@ module.exports = {
         });
       }
     });
-
-    // try {
-    //   const { student_id, full_name, id_class } = req.body;
-    //   if (student_id === undefined || full_name === undefined || id_class === undefined) {
-    //     return res.status(400).json({
-    //       status: 'failed',
-    //       error: 'Missing required input data (student_id, full_name, id_class)',
-    //     });
-    //   }
-
-    //   if (typeof student_id !== 'string' || typeof full_name !== 'string' || typeof id_class !== 'string') {
-    //     return res.status(400).json({
-    //       status: 'failed',
-    //       error: 'Invalid data types for input (student_id should be string, full_name should be string, id_class should be string)',
-    //     });
-    //   }
-    //   var csvData = student_id.map(function (id_student, index) {
-    //     return { student_id: id_student, full_name: full_name[index] };
-    //   });
-    //   const updateList = await teacherModel.postStudentList(csvData, id_class);
-
-    //   res.json({ updateList: updateList });
-    // } catch (err) {
-    //   res.json({
-    //     status: "failed",
-    //     err: err,
-    //   });
-    // }
   },
 
   getClassGradeBoard: async (req, res) => {
@@ -282,7 +254,7 @@ module.exports = {
       const classDb = await classModel.getIdClassByComposition(compositionId);
       const className = await classModel.getClass(classDb.class_id);
       const content = `Teacher posted grade composition ${classDb.name} for class ${className.name}`;
-      const link = `http://localhost:3000/c/${classDb.class_id}?tab=2`;
+      const link = `${process.env.URLSEVER}/c/${classDb.class_id}?tab=2`;
       const rs = await teacherModel.postFinalizedComposition(
         compositionId,
         isPublic,
@@ -592,7 +564,7 @@ module.exports = {
 
       const className = await classModel.getClass(classDb.class_id);
       const content = `You have a response from review grade ${classDb.name} from teacher for class ${className.name}`;
-      const link = `http://localhost:3000/c/${classDb.class_id}?tab=2`;
+      const link = `${process.env.URLSEVER}/c/${classDb.class_id}?tab=2`;
 
       const rs = await teacherModel.postFeedbackOnReview(
         review_id,

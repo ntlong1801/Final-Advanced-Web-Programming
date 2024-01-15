@@ -451,9 +451,11 @@ const classController = {
       from: process.env.EMAIL_ADDRESS || "webnangcao.final@gmail.com",
       to: emailReceiver,
       subject: "Email Verification - Localhost Website",
-      text: `From ${emailSend} invited you to class. Click on this link to enter this classroom
-     ${URLClient}/inviteByEmail?token=${token}.
-     Thanks`,
+    //   text: `From ${emailSend} invited you to class. Click on this link to enter this classroom.
+    //  Thanks`,
+     html: `<p>From ${emailSend} invited you to class. Click on this link to enter this classroom</p>
+     <a href='${URLClient}/inviteByEmail?token=${token}'>Click here</a>
+     <p>Thanks!</p>`
     };
 
     const transporter = nodemailer.createTransport({
@@ -466,6 +468,7 @@ const classController = {
 
     transporter.sendMail(mailConfigurations, function (error) {
       if (error) {
+        console.log(error);
         return res.json({
           status: "failed",
           message: "Server is error now",

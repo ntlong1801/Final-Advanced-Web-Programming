@@ -60,7 +60,7 @@ export default function InvitationEmailPage() {
   }, [_data]);
   return (
     <div>
-      {(isLoading) && <Loading />}
+      {isLoading && <Loading />}
       <Header />
       <Toast ref={toast} />
       <div className="text-center mb-5">

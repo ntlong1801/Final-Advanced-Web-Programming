@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQuery } from 'react-query';
 import { googleAuthCallback } from 'apis/auth.api';
+import Loading from 'components/Loading';
 
 function GoogleAuthCallback() {
   // #region Data
@@ -9,7 +10,7 @@ function GoogleAuthCallback() {
   const navigate = useNavigate();
   const { search } = useLocation();
 
-  const { data: _data } = useQuery({
+  const { data: _data, isLoading } = useQuery({
     queryKey: [search],
     queryFn: () => googleAuthCallback(search),
     enabled: !!search
@@ -41,6 +42,7 @@ function GoogleAuthCallback() {
           </div>
         </div>
       </div>
+      {isLoading && <Loading />}
     </div>
   );
 }

@@ -48,7 +48,7 @@ export default function ManageClassesPage() {
   });
   const data = useMemo(() => _data?.data ?? null, [_data]);
 
-  const { mutate } = useMutation(activeClass);
+  const { mutate, isLoading: isActiveClassLoading } = useMutation(activeClass);
 
   const acceptActive = (value) => {
     const dataSender = {
@@ -135,7 +135,7 @@ export default function ManageClassesPage() {
           header={renderHeader}
           tableStyle={{ minWidth: '50rem' }}
           className="p-4"
-          loading={isLoading}
+          loading={isLoading || isActiveClassLoading}
           removableSort
           showGridlines
         >

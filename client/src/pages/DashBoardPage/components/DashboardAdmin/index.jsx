@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Card } from 'primereact/card';
 import { getQuantityUserAndClass } from 'apis/admin.api';
 import { useNavigate } from 'react-router';
+import Loading from 'components/Loading';
 
 export default function DashBoardAdmin() {
   const userId = JSON.parse(localStorage.getItem('user_profile')).id;
@@ -10,7 +11,7 @@ export default function DashBoardAdmin() {
   const header = (
     <img alt="Card" src="https://primefaces.org/cdn/primereact/images/usercard.png" />
   );
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['adminDashboard'],
     queryFn: () => getQuantityUserAndClass(userId)
   });
@@ -47,7 +48,7 @@ export default function DashBoardAdmin() {
 
         </Card>
       ))}
-
+      {isLoading && <Loading />}
     </div>
   );
 }

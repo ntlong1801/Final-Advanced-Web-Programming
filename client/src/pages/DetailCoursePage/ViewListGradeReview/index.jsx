@@ -15,7 +15,7 @@ export default function ViewListGradeReview() {
   const commentRef = useRef(null);
   const decisionRef = useRef(null);
 
-  const { data, refetch } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['studentReviews', userId],
     queryFn: () => getListGradeReviews(userId)
   });
@@ -64,6 +64,7 @@ export default function ViewListGradeReview() {
       <DataTable
         value={studentReviews}
         showGridlines
+        loading={isLoading}
       >
         <Column field="student_id" header={t('detail.viewListGradeReview.studentId')} style={{ textAlign: 'center' }} />
         <Column field="composition_name" header={t('detail.viewListGradeReview.gradeComposition')} style={{ textAlign: 'center' }} />

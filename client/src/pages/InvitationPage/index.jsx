@@ -28,7 +28,7 @@ export default function InvitationPage() {
 
   const studentId = useMemo(() => data?.data?.studentId ?? null, [data]);
 
-  const { mutate } = useMutation(joinClassByLink);
+  const { mutate, isLoading: _isLoading } = useMutation(joinClassByLink);
 
   const showSuccess = (msg) => {
     toast.current.show({ severity: 'success', summary: 'Success', detail: msg, life: 3000 });
@@ -89,7 +89,7 @@ export default function InvitationPage() {
           </Button>
         </div>
       </form>
-      {isLoading && <Loading />}
+      {(isLoading || _isLoading) && <Loading />}
     </div>
   );
 }

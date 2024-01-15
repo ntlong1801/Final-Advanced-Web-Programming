@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { facbookAuthCallback } from 'apis/auth.api';
 import { useQuery } from 'react-query';
+import Loading from 'components/Loading';
 
 function FacebookAuthCallBack() {
   // #region Data
@@ -11,7 +12,7 @@ function FacebookAuthCallBack() {
   const { search } = useLocation();
 
   // #endregion Data
-  const { data: _data } = useQuery({
+  const { data: _data, isLoading } = useQuery({
     queryKey: [search],
     queryFn: () => facbookAuthCallback(search),
     enabled: !!search
@@ -43,6 +44,7 @@ function FacebookAuthCallBack() {
           </div>
         </div>
       </div>
+      {isLoading && <Loading />}
     </div>
   );
 }

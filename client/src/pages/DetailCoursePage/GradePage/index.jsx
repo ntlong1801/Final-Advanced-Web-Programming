@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import DownloadExcelFile from 'components/DownloadExcelFile';
 import UploadExcelFile from 'components/UploadExcelFile';
 import SwitchInput from 'pages/DetailCoursePage/components/SwitchInput';
+import { Tooltip } from 'primereact/tooltip';
 import InputGrade from '../components/InputGrade';
 import MapStudentIdByTeacher from '../components/MapStudentIdByTeacher';
 
@@ -96,13 +97,15 @@ export default function GradePage() {
           tooltip="Download grade template"
         />
         <i
-          className="pi pi-fw pi-file-import cursor-pointer mr-1"
+          className="pi pi-fw pi-file-import cursor-pointer mr-1 custom-target-icon"
           style={{ fontSize: '2rem' }}
           onClick={() => {
             setLink('/teacher/postAllGradesAssignment');
             handleOpenUploadFile(classcomposition.id);
           }}
+          data-pr-tooltip="Upload grade"
         />
+        <Tooltip target=".custom-target-icon" />
         <SwitchInput
           compositionId={classcomposition.id}
           isPublic={classcomposition.public_grade}
@@ -135,12 +138,13 @@ export default function GradePage() {
           type="button"
           icon="pi pi-upload"
           severity="success"
+          tooltip="Upload student list"
+          tooltipOptions={{ position: 'left' }}
           rounded
           onClick={() => {
             setLink('/teacher/postStudentList');
             handleOpenUploadFile(null);
           }}
-          data-pr-tooltip="XLS"
         />
         <DownloadExcelFile
           downloadFunc={getGradeBoard}

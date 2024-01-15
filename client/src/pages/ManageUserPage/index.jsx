@@ -27,6 +27,7 @@ export default function ManageUserPage() {
 
   const {
     data: _data,
+    isLoading,
     refetch
   } = useQuery({
     queryKey: ['allUsers'],
@@ -34,8 +35,8 @@ export default function ManageUserPage() {
   });
   const data = useMemo(() => _data?.data ?? null, [_data]);
 
-  const { mutate: mutateBanUser } = useMutation(banUser);
-  const { mutate: mutateDeleteUser } = useMutation(deleteUser);
+  const { mutate: mutateBanUser, isLoading: isBanUserLoading } = useMutation(banUser);
+  const { mutate: mutateDeleteUser, isLoading: isDeleteUserLoading } = useMutation(deleteUser);
 
   const acceptBan = (value) => {
     const dataSender = {
@@ -204,6 +205,7 @@ export default function ManageUserPage() {
         header={formatHeader}
         paginator
         rows={5}
+        loading={isLoading || isBanUserLoading || isDeleteUserLoading}
       >
         <Column field="email" header="Email" headerStyle={{ textAlign: 'center' }} sortable />
         <Column field="student_id" header={t('manageUserPage.studentId')} headerStyle={{ textAlign: 'center' }} />

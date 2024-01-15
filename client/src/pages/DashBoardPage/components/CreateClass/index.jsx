@@ -10,6 +10,7 @@ import { useMutation } from 'react-query';
 import { createClass, addUserToClass } from 'apis/class.api';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { checkClassName } from 'pages/validation';
+import Loading from 'components/Loading';
 
 const CreateClass = forwardRef((props, ref) => {
   // #region Data
@@ -60,8 +61,9 @@ const CreateClass = forwardRef((props, ref) => {
     []
   );
 
-  const { mutate: createClassMutate } = useMutation(createClass);
-  const { mutate: addUserToClassMutate } = useMutation(addUserToClass);
+  const { mutate: createClassMutate, isLoading: isCreateClassLoading } = useMutation(createClass);
+  const { mutate: addUserToClassMutate,
+    isLoading: isAddUserToClassLoading } = useMutation(addUserToClass);
 
   const handleCreateClass = async () => {
     const isValidTrigger = await trigger();
@@ -102,6 +104,7 @@ const CreateClass = forwardRef((props, ref) => {
 
   return (
     <>
+      {(isCreateClassLoading || isAddUserToClassLoading) && <Loading />}
       <Dialog
         header={t('dashBoard.components.createClass.createClass')}
         visible={visible}

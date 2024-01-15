@@ -94,7 +94,7 @@ module.exports = {
       // get class id and class name
       const classDb = await classModel.getIdClassByComposition(composition_id);
       const className = await classModel.getClass(classDb.class_id);
-      const link = `http://localhost:3000/c/${classDb.class_id}?tab=3`;
+      const link = `${process.env.URLSEVER}/c/${classDb.class_id}?tab=3`;
       const content = `Student requested to review grade ${classDb.name} for class ${className.name}`;
       const { rs } =
         await studentModel.postRequestCompositionReview(
@@ -152,7 +152,7 @@ module.exports = {
       const classDb = await classModel.getIdClassByComposition(composition_id);
       const className = await classModel.getClass(classDb.class_id);
       const content = `You have a response from review grade composition for class ${className.name}`;
-      const link = `http://localhost:3000/c/${classDb.class_id}?tab=3`;
+      const link = `${process.env.URLSEVER}/c/${classDb.class_id}?tab=3`;
       const { rs, teacherList } = await studentModel.commentGradeReview(
         composition_id,
         feedback,

@@ -4,11 +4,12 @@ import { Button } from 'primereact/button';
 import PropTypes from 'prop-types';
 import { useMutation } from 'react-query';
 import { Tooltip } from 'primereact/tooltip';
+import Loading from 'components/Loading';
 
 export default function DownloadExcelFile({
   downloadFunc, classId, compositionId, userId, isButton, severity, tooltip
 }) {
-  const { mutate } = useMutation(downloadFunc);
+  const { mutate, isLoading } = useMutation(downloadFunc);
   const dataSender = {
     classId
   };
@@ -42,6 +43,7 @@ export default function DownloadExcelFile({
 
   return (
     <div>
+      {isLoading && <Loading />}
       {isButton ? (
         <Button
           type="button"

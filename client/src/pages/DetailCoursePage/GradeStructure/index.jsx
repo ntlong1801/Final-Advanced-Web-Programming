@@ -12,6 +12,7 @@ import './style.scss';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useTranslation } from 'react-i18next';
 import { Toast } from 'primereact/toast';
+import Loading from 'components/Loading';
 
 function GradeStructure() {
   const user = JSON.parse(localStorage.getItem('user_profile'));
@@ -40,15 +41,15 @@ function GradeStructure() {
     });
   };
 
-  const { mutate } = useMutation(getGradeStructure);
-  const { mutate: mutateHandleSave } = useMutation(editGradeStructure);
+  const { mutate, isLoading } = useMutation(getGradeStructure);
+  const { mutate: mutateHandleSave, isLoading: _isLoading } = useMutation(editGradeStructure);
 
-  const { data: _data } = useQuery({
+  const { data: _data, isLoading: isDataLoading } = useQuery({
     queryKey: ['class', classId],
     queryFn: () => getClassByID(classId),
   });
   useMemo(() => _data?.data ?? [], [_data]);
-  const { data: checkTeacher } = useQuery({
+  const { data: checkTeacher, isLoading: isCheckTeacherLoading } = useQuery({
     queryKey: [classId],
     queryFn: () => isTeacherOfClass(user?.id, classId),
   });
@@ -121,6 +122,7 @@ function GradeStructure() {
   };
   return (
     <>
+      {(isLoading || _isLoading || isDataLoading || isCheckTeacherLoading) && <Loading />}
       <DragDropContext onDragEnd={handleDragEnd}>
         <div className="grade-structure">
           <button type="button" onClick={showForm}>
